@@ -1,0 +1,14 @@
+;; Emacs-W3 HTTP cookies file
+;; Automatically generated file!!! DO NOT EDIT!!!
+
+(setq url-cookie-storage
+ 'nil)
+(setq url-cookie-secure-storage
+ '(("feedbin.com"
+  [url-cookie "_feedbin_session" "Wsc4p12hrulPYFg759QgQC1QfY0FW9Pc4nuEsCY7a9p3EVERbZw36K78n9ifj6GZMHOAgs976LVNMn%2BH6jCbiJx3mktaRs3OIrisUUtVxLJde9PlSO5TxsSyjcjBbrWiQCTwT9xeGzBlRZY75q%2FmFuD1TltNB1ojgS6%2BQdHnUuRF1ukfhY2jJnby3NdFSbhUbmUPPJSlYGmGIr1m8or8TUzq31pOe0%2BnqTnZvV3EbgRBeDuhiHGXmKCgII5SV1i803Dg%2BnB39M2hjixhX8NfG0q%2Bj9o5lPqceQ%3D%3D--Zhb2%2BMzFaRmd1fim--d8FHWaa2xfgJn%2BZubA%2FufA%3D%3D" "Sat, 18 Apr 2020 18:41:23 GMT" "/" "feedbin.com" t]))
+)
+
+;; Local Variables:
+;; version-control: never
+;; no-byte-compile: t
+;; End:
