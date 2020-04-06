@@ -9,7 +9,7 @@
  (position . 11929))
 ("org-capture-last-stored"
  (filename . "~/ncloud/org/inbox.org")
- (front-context-string . "** TODO Ideen fü")
- (rear-context-string . "be :Innovation:\n")
- (position . 3479))
+ (front-context-string . "** TODO Entfeuch")
+ (rear-context-string . "<2020-04-04 Sa>\n")
+ (position . 33525))
 )
