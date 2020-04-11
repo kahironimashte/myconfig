@@ -1,13 +1,14 @@
 ;; -*- mode: elisp -*-
 
-(require 'org)
-(org-babel-load-file "~/.emacs.d/configuration.org")
-
-
-
+;;
+;;
+;;
+;;
+;;
 ;; Package-Manager (Sources)
 ;;(add-to-list 'package-archives
 ;;             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
 ;; temp. Fix für 26.2
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
@@ -23,20 +24,8 @@
 ;; Enable transient mark mode
 (transient-mark-mode 1)
 
-;; Default Modes ON
-(global-visual-line-mode t)
+;; CUSTOM
 
-;; Start in Fullscreen
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-
-;; Keys
-;; (global-set-key "\C-cl" 'org-store-link)
-;; (global-set-key "\C-ca" 'org-agenda)
-;; (global-set-key "\C-cc" 'org-capture)
-
-;; Display - funktioniert das hier?
-;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -47,8 +36,7 @@
     ("~/ncloud/org/htasks.org" "~/ncloud/org/inbox.org" "~/ncloud/org/atasks.org" "~/ncloud/org/ziele.org" "~/ncloud/org/tickler.org")))
  '(package-selected-packages
    (quote
-    (ztree async csv-mode darkroom dts-mode json-mode minimap soap-client spinner transcribe yasnippet js2-mode)))
-)
+    (use-package moody org-bullets ztree async csv-mode darkroom dts-mode json-mode minimap soap-client spinner transcribe yasnippet js2-mode))))
 
 ;; FONTS
 ;; -----
@@ -61,6 +49,7 @@
  '(fixed-pitch ((t (:family "Monospace" :foundry "outline" :slant normal :weight normal :height 171 :width normal))))
  '(org-block-begin-line ((t (:inherit org-meta-line :foreground "gray" :height 0.5))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :height 1.3 :underline nil))))
+ '(org-ellipsis ((t (:foreground "turquoise1" :underline nil))))
  '(org-level-1 ((t (:inherit default :foreground "dark gray" :height 1.5))))
  '(org-level-2 ((t (:inherit default :foreground "dark cyan" :height 1.3))))
  '(org-level-3 ((t (:inherit default :foreground "RoyalBlue3"))))
@@ -70,4 +59,10 @@
  '(org-level-7 ((t (:inherit default :foreground "black"))))
  '(org-level-8 ((t (:inherit default :foreground "black"))))
  '(org-list-dt ((t (:foreground "#440000"))))
+ '(org-tag ((t (:foreground "dim gray" :weight normal :height 0.6))))
  '(variable-pitch ((t (:family "Liberation Sans" :height 171 :weight normal)))))
+
+
+;; LOAD Configuration.org
+(require 'org)
+(org-babel-load-file "~/.emacs.d/configuration.org")
