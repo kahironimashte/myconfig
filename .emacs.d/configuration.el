@@ -76,13 +76,7 @@ There are two things you can do about this warning:
 
 (global-prettify-symbols-mode t)
 
-(add-hook 'focus-in-hook 
-  (lambda () (progn 
-    (setq org-tags-column (- 5 (window-body-width)))) (org-align-all-tags)))
-
-(add-hook 'focus-out-hook 
-  (lambda () (progn 
-    (setq org-tags-column (- 5 (window-body-width)))) (org-align-all-tags)))
+(setq org-tags-column 0)
 
 ;; Locale Shortcuts für die Agenda
 (add-hook 'org-agenda-mode-hook
@@ -143,7 +137,7 @@ There are two things you can do about this warning:
 ;; lokale Shortcuts für den org-mode
 (add-hook 'org-mode-hook
   (lambda ()
-    (define-key org-mode-map "\C-_" 'org-toggle-timestamp-type)
+    (define-key org-mode-map "\C-c_" 'org-toggle-timestamp-type)
     ))
 
 ;; Rechtschreibung

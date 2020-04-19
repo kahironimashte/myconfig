@@ -1,16 +1,26 @@
 * Weg zur perfekten Config
 ** Look 
-*** Schrift auf IBM umstellen und Größen anpassen
+*** DONE Schrift auf IBM umstellen und Größen anpassen
+    - Verschiedene Schriftgewichtungen möglich
+**** TODO Hier steht was neues, wenn es dann geschafft ist.
+alkjsdf
+***** Asdf
+****** Asdf
+******* Asdf
+******** Asdf
+**** 
 *** Theme - Farben aussuchen und anpassen
 *** DONE Bullets verschönern
 ** Editing
-*** Cheatsheet für Etiting-Befehle
+*** Cheatsheet für Editing-Befehle
 *** Tastenkürzel anpassen
 ** TODO Versionierung (git)
 ** TODO Termine Synchronisieren (tickler)
 ** TODO File-Struktur überarbeiten (arbeit/home/someday)
 ** Erweiterungen
 *** Super Agenda
+*** General.el
+*** Hydra.el / hercules.el
 *** Rechtschreibung
 *** Export-Templates
 *** Suche per Ivy/Helm/ripgrep
@@ -33,7 +43,7 @@
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
 * Packages
-** COMMENT Use-Package                                        :packages:
+** COMMENT Use-Package :packages:
 #+BEGIN_SRC emacs-lisp
 (eval-when-compile
   ;; Following line is not needed if use-package.el is in ~/.emacs.d
@@ -58,7 +68,7 @@ There are two things you can do about this warning:
   ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   )
 #+END_SRC
-* Basic Settings                                            :appearance:
+* Basic Settings :appearance:
 ** Saving Desktop Sessions
  #+BEGIN_SRC emacs-lisp
  ;; SAVING DESKTOP SESSIONS
@@ -87,7 +97,7 @@ There are two things you can do about this warning:
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
 * Appearance
-** [#A] Schriftart                                          :appearance:
+** [#A] Schriftart :appearance:
  #+BEGIN_SRC  emacs-lisp
  ;; Set variable-pitch font using customize-face variable-pitch
  ;; Set the fonts to format correctly for specific modes. Default is set for fixed
@@ -108,15 +118,15 @@ There are two things you can do about this warning:
  (add-hook 'Info-mode-hook 'set-buffer-variable-pitch)
  #+END_SRC
 
-** [#A] Org                                             :org:appearance:
+** [#A] Org :org:appearance:
 
 *** Hide emphasis marker and leading stars
  #+BEGIN_SRC emacs-lisp
  (setq org-hide-emphasis-markers t ;; hide Markers like *this* for bold
        org-hide-leading-stars t)   ;; hide all but one star
  #+END_SRC
-*** Org-Bullets                                :appearance:packages:org:
-  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
+*** Org-Bullets :appearance:packages:org:
+  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften 
   #+BEGIN_SRC emacs-lisp
   (require 'org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -124,12 +134,12 @@ There are two things you can do about this warning:
   ;; set custom bullets
  (setq org-bullets-bullet-list '("⚜" "⚙" "❖" "✿" "❄" "❋" "★" "⚛")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
  #+END_SRC
-*** Set custom ellipsis (...)                           :appearance:org:
+*** Set custom ellipsis (...) :appearance:org:
  #+BEGIN_SRC emacs-lisp
  (setq org-ellipsis "⤵")
   #+END_SRC
 
-*** COMMENT Electric Pair mode                          :appearance:org:
+*** COMMENT Electric Pair mode :appearance:org:
  #+BEGIN_SRC emacs-lisp
  ;; ELECTRIC PAIR MODE (BUILT IN)
  ;; ----------------------------
@@ -144,7 +154,7 @@ There are two things you can do about this warning:
 
  ;; (add-hook 'org-mode-hook 'org-add-electric-pairs)
  #+END_SRC
-** [#B] Tweak window chrome                                 :appearance:
+** [#B] Tweak window chrome :appearance:
 
     I don't usually use the menu or scroll bar, and they take up useful space.
 
@@ -161,7 +171,7 @@ There are two things you can do about this warning:
    (set-window-scroll-bars (minibuffer-window) nil nil)
  #+end_src
 
-** [#B] Use =moody= for a beautiful modeline       :appearance:packages:
+** [#B] Use =moody= for a beautiful modeline :appearance:packages:
 
 This gives me a truly lovely ribbon-based modeline.
 
@@ -176,13 +186,16 @@ This gives me a truly lovely ribbon-based modeline.
 
 
 #+end_src
-** [#C] Use fancy lambdas                                   :appearance:
+** [#C] Use fancy lambdas :appearance:
 Ersetzt lamba ( ) mit dem Lambda-Symbol
 
 #+begin_src emacs-lisp
   (global-prettify-symbols-mode t)
 #+end_src
-** Align Tags                                           :org:appearance:
+** Align Tags :org:appearance:
+   Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten mit variablen Breiten ergibt sich allerdings nie ein einheitliches Bild. Daher setze ich den Wert auf 0, so dass die Tags direkt an den Überschriften anschließen. 
+*** COMMENT auf Fensterbreite anordnen
+- schwierig mit variable pitch
 - [[https://stackoverflow.com/questions/6210840/tag-position-in-org-mode][Quelle Stack Overflow]]
 #+BEGIN_SRC emacs-lisp
 (add-hook 'focus-in-hook 
@@ -193,8 +206,12 @@ Ersetzt lamba ( ) mit dem Lambda-Symbol
   (lambda () (progn 
     (setq org-tags-column (- 5 (window-body-width)))) (org-align-all-tags)))
 #+END_SRC
+*** simpel auf 0 gesetzt
+    #+BEGIN_SRC emacs-lisp
+ (setq org-tags-column 0)
+    #+END_SRC
 * Agenda
-** Shortcuts                                               :agenda:keys:
+** Shortcuts :agenda:keys:
  #+BEGIN_SRC emacs-lisp
  ;; Locale Shortcuts für die Agenda
  (add-hook 'org-agenda-mode-hook
@@ -203,7 +220,7 @@ Ersetzt lamba ( ) mit dem Lambda-Symbol
      (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
      ))
  #+END_SRC
-** Custom Agendas                                               :agenda:
+** Custom Agendas :agenda:
  #+BEGIN_SRC emacs-lisp
  (setq org-agenda-custom-commands '(
          ("g" tags-tree "g" ((org-show-context-detail 'ancestors)))
@@ -219,7 +236,7 @@ Ersetzt lamba ( ) mit dem Lambda-Symbol
          nil nil)
  ))
  #+END_SRC
-**** COMMENT Patch for Ancestors-View                :el_patch:packages:
+**** COMMENT Patch for Ancestors-View :el_patch:packages:
 #+BEGIN_SRC emacs-lisp
 (el-patch-defun org-show-set-visibility (detail)
   "Set visibility around point according to DETAIL.
@@ -257,7 +274,7 @@ information."
         (when (memq detail '(tree canonical t)) (org-show-children))))))
 #+END_SRC
 
-** General Settings                                             :agenda:
+** General Settings :agenda:
 #+BEGIN_SRC emacs-lisp
  (setq org-agenda-skip-scheduled-if-done t)
  (setq org-agenda-skip-deadline-if-done t)
@@ -271,7 +288,7 @@ information."
 #+END_SRC
 
 * Org mode
-** Refile targets                                                  :org:
+** Refile targets :org:
 #+BEGIN_SRC emacs-lisp
 ;; setting Refile Target
  (setq org-refile-targets '(
@@ -279,7 +296,7 @@ information."
    ("~/ncloud/org/asomeday.org" :maxlevel . 1))) ;; include all Agenda-Files and all Heading up to ** 
  (setq org-refile-allow-creating-parent-nodes 'confirm)        ;;allow creating nodes. Refile has to end with /newheadingname
 #+END_SRC
-** Org-Keys belegen                                                :org:
+** Org-Keys belegen :org:
 Die grundlegnden Tastenkürzel für den Org-Mode.
 #+BEGIN_SRC emacs-lisp
 ;; Keys
@@ -287,12 +304,12 @@ Die grundlegnden Tastenkürzel für den Org-Mode.
  (global-set-key "\C-ca" 'org-agenda)
  (global-set-key "\C-cc" 'org-capture)
 #+END_SRC
-** Plain lists                                                     :org:
+** Plain lists :org:
 #+BEGIN_SRC emacs-lisp
   ;; Activate plain list cycle
   (setq org-list-use-circular-motion t)
 #+END_SRC
-** Capture Templates                                               :org:
+** Capture Templates :org:
 #+BEGIN_SRC emacs-lisp
 ;; Capture Templates
 (setq org-capture-templates '(
@@ -308,12 +325,12 @@ Die grundlegnden Tastenkürzel für den Org-Mode.
   ("R" "Scheduled Tickler" entry (file+headline "~/ncloud/org/tickler.org" "Tickler") "** %^{Title} \n SCHEDULED: %^t")
  ))
 #+END_SRC
-** Lokale Shortcuts                                                :org:
+** Lokale Shortcuts :org:
 #+BEGIN_SRC emacs-lisp
 ;; lokale Shortcuts für den org-mode
 (add-hook 'org-mode-hook
   (lambda ()
-    (define-key org-mode-map "\C-c _" 'org-toggle-timestamp-type)
+    (define-key org-mode-map "\C-c_" 'org-toggle-timestamp-type)
     ))
 #+END_SRC
 * Rechtschreibung
@@ -329,3 +346,4 @@ Die grundlegnden Tastenkürzel für den Org-Mode.
  (autoload 'flyspell-mode "flyspell" "On-the-fly ispell." t)
  (setq flyspell-issue-welcome-flag nil)
 #+END_SRC
+

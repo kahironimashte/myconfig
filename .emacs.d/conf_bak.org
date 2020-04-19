@@ -1,18 +1,10 @@
 * Weg zur perfekten Config
 ** Look 
-*** TODO Schrift auf IBM umstellen und Größen anpassen
-    - Verschiedene Schriftgewichtungen möglich
-**** TODO Asdf SDF
-     alkjsdf
-***** Asdf
-****** Asdf
-******* Asdf
-******** Asdf
-**** 
+*** Schrift auf IBM umstellen und Größen anpassen
 *** Theme - Farben aussuchen und anpassen
 *** DONE Bullets verschönern
 ** Editing
-*** Cheatsheet für Editing-Befehle
+*** Cheatsheet für Etiting-Befehle
 *** Tastenkürzel anpassen
 ** TODO Versionierung (git)
 ** TODO Termine Synchronisieren (tickler)
@@ -126,7 +118,7 @@ There are two things you can do about this warning:
        org-hide-leading-stars t)   ;; hide all but one star
  #+END_SRC
 *** Org-Bullets :appearance:packages:org:
-  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften 
+  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
   #+BEGIN_SRC emacs-lisp
   (require 'org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
