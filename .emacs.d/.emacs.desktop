@@ -2,12 +2,12 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Sun Apr 19 00:18:38 2020
+;; Created Sun Apr 19 10:46:49 2020
 ;; Desktop file format version 208
 ;; Emacs version 26.3
 
 ;; Global section:
-(setq desktop-saved-frameset [frameset 1 (24219 31934 248600 516000) (desktop . "208") "fabian@zeppelin" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font-backend xft x) (font . "-IBM -IBM Plex Mono-light-normal-normal-*-20-*-*-*-m-0-iso10646-1") (font-parameter) (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "black") (background-color . "white") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground) (scroll-bar-background) (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen . maximized) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . light) (cursor-color . "black") (sticky) (frameset--id . "48A9-490E-8706-EBD2") (frameset--mini t) (modeline . t) (unsplittable) (icon-name) (display . ":0.0") (explicit-name) (height . 20) (width . 84) (left . 0) (top . 31)) ((min-height . 4) (min-width . 10) (min-height-ignore . 3) (min-width-ignore . 4) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 108) (min-pixel-width . 120) (min-pixel-height-ignore . 81) (min-pixel-width-ignore . 48) (min-pixel-height-safe . 27) (min-pixel-width-safe . 24)) leaf (pixel-width . 1024) (pixel-height . 518) (total-width . 85) (total-height . 19) (normal-height . 1.0) (normal-width . 1.0) (buffer "*scratch*" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 149) (start . 148))) (((minibuffer . t) (undecorated) (override-redirect) (font-backend xft x) (font . "-IBM -IBM Plex Mono-light-normal-normal-*-20-*-*-*-m-0-iso10646-1") (font-parameter) (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "black") (background-color . "white") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground) (scroll-bar-background) (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen . maximized) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . light) (cursor-color . "black") (sticky) (environment) (frameset--id . "DB4D-6655-8E11-A0D3") (frameset--mini t . t) (modeline . t) (unsplittable) (icon-name) (display . ":0.0") (explicit-name) (height . 20) (width . 84) (left . 0) (top . 31)) ((min-height . 4) (min-width . 10) (min-height-ignore . 3) (min-width-ignore . 4) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 108) (min-pixel-width . 120) (min-pixel-height-ignore . 81) (min-pixel-width-ignore . 48) (min-pixel-height-safe . 27) (min-pixel-width-safe . 24)) leaf (pixel-width . 1024) (pixel-height . 518) (total-width . 85) (total-height . 19) (normal-height . 1.0) (normal-width . 1.0) (buffer ".emacs" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1638) (start . 1638))))])
+(setq desktop-saved-frameset [frameset 1 (24220 4089 996961 607000) (desktop . "208") "fabian@zeppelin" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font-backend xft x) (font . "-IBM -IBM Plex Mono-light-normal-normal-*-20-*-*-*-m-0-iso10646-1") (font-parameter) (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "black") (background-color . "white") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground) (scroll-bar-background) (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen . maximized) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . light) (cursor-color . "black") (sticky) (frameset--id . "48A9-490E-8706-EBD2") (frameset--mini t) (modeline . t) (unsplittable) (icon-name) (display . ":0.0") (explicit-name) (height . 20) (width . 84) (left . 0) (top . 31)) ((min-height . 4) (min-width . 10) (min-height-ignore . 3) (min-width-ignore . 4) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 108) (min-pixel-width . 120) (min-pixel-height-ignore . 81) (min-pixel-width-ignore . 48) (min-pixel-height-safe . 27) (min-pixel-width-safe . 24)) leaf (pixel-width . 1024) (pixel-height . 518) (total-width . 85) (total-height . 19) (normal-height . 1.0) (normal-width . 1.0) (buffer "*scratch*" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 146) (start . 1))) (((minibuffer . t) (undecorated) (override-redirect) (font-backend xft x) (font . "-IBM -IBM Plex Mono-light-normal-normal-*-20-*-*-*-m-0-iso10646-1") (font-parameter) (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "black") (background-color . "white") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground) (scroll-bar-background) (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen . maximized) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . light) (cursor-color . "black") (sticky) (environment) (frameset--id . "DB4D-6655-8E11-A0D3") (frameset--mini t . t) (modeline . t) (unsplittable) (icon-name) (display . ":0.0") (explicit-name) (height . 20) (width . 84) (left . 0) (top . 31)) ((min-height . 8) (min-width . 10) (min-height-ignore . 7) (min-width-ignore . 4) (min-height-safe . 2) (min-width-safe . 2) (min-pixel-height . 216) (min-pixel-width . 120) (min-pixel-height-ignore . 189) (min-pixel-width-ignore . 48) (min-pixel-height-safe . 54) (min-pixel-width-safe . 24)) vc (pixel-width . 1024) (pixel-height . 518) (total-width . 85) (total-height . 19) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 1024) (pixel-height . 248) (total-width . 85) (total-height . 9) (normal-height . 0.5) (normal-width . 1.0) (buffer ".emacs" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1739) (start . 1638))) (leaf (last . t) (pixel-width . 1024) (pixel-height . 270) (total-width . 85) (total-height . 10) (normal-height . 0.5) (normal-width . 1.0) (buffer "*Buffer List*" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 158) (start . 1)))))])
 (setq desktop-missing-file-warning nil)
 (setq tags-file-name nil)
 (setq tags-table-list nil)
@@ -22,12 +22,12 @@
   ".emacs"
   'emacs-lisp-mode
   '(visual-line-mode eldoc-mode which-key-mode)
-  1638
+  1739
   '(1638 nil)
   nil
   nil
-  '((buffer-display-time 24219 31628 721678 567000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
-  '((mark-ring (1638 1638 1638 1638 700 1638 1638 1638 1638 1638 700 700 700 700 700 1638))))
+  '((buffer-display-time 24220 3998 108231 799000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (1638 1638 1638 1638 700 1638 1638 1638 1638 1638 700 700 700 700 700 1697))))
 
 (desktop-create-buffer 208
   "/home/fabian/.emacs.d/configuration.org"
@@ -38,7 +38,7 @@
   '(4 nil)
   nil
   nil
-  '((buffer-display-time 24219 13389 319400 404000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((buffer-display-time 24219 50950 830119 905000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
   '((mark-ring (339 4040 4370 545 4269 1258 8 339 214 52 49 73 65 58 18 50))))
 
 (desktop-create-buffer 208
@@ -50,7 +50,7 @@
   '(561037 nil)
   nil
   nil
-  '((buffer-display-time 24218 55796 829871 977000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((buffer-display-time 24219 27823 491563 938000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
   '((mark-ring (3368 920697 553555 920697 850398 916938 553548 553547 261787 261276 58717 920697 58717 56455 22 561073))))
 
 (desktop-create-buffer 208
@@ -62,7 +62,7 @@
   '(1 nil)
   nil
   nil
-  '((buffer-display-time 24218 47683 483320 456000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((buffer-display-time 24219 19710 161888 147000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
   '((mark-ring (1 1))))
 
 (desktop-create-buffer 208
@@ -74,7 +74,7 @@
   '(nil nil)
   t
   nil
-  '((buffer-display-time 24217 57284 797812 381000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((buffer-display-time 24218 29311 565225 108000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
   '((mark-ring nil)))
 
 (desktop-create-buffer 208
@@ -86,7 +86,7 @@
   '(nil nil)
   nil
   nil
-  '((buffer-display-time 24217 56560 537598 575000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((buffer-display-time 24218 28587 335710 726000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
   '((mark-ring nil)))
 
 (desktop-create-buffer 208
@@ -98,7 +98,7 @@
   '(551 nil)
   t
   '("/home/fabian/Downloads/")
-  '((buffer-display-time 24219 31628 706283 163000) (truncate-lines))
+  '((buffer-display-time 24220 3961 363551 162000) (truncate-lines))
   '((mark-ring nil)))
 
 (desktop-create-buffer 208
@@ -110,6 +110,6 @@
   '(nil nil)
   t
   '("dir" "Top" nil)
-  '((tab-width . 8) (buffer-display-time 24219 31629 209712 22000) (case-fold-search . t) (truncate-lines))
+  '((tab-width . 8) (buffer-display-time 24220 3656 234102 949000) (case-fold-search . t) (truncate-lines))
   '((mark-ring nil)))
 
