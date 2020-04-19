@@ -62,7 +62,7 @@
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :height 1.3 :underline nil))))
  '(org-done ((t (:inherit org-todo :foreground "honeydew2"))))
  '(org-ellipsis ((t (:foreground "turquoise1" :underline nil :height 0.65))))
- '(org-level-1 ((t (:family "IBM Plex Serif" :foundry "outline" :slant normal :weight light :foreground "dark gray" :height 230))))
+ '(org-level-1 ((t (:family "IBM Plex Serif" :foundry "outline" :slant normal :weight medium :foreground "dark gray" :height 200))))
  '(org-level-2 ((t (:inherit org-level-1 :foreground "dark cyan" :height 0.9))))
  '(org-level-3 ((t (:inherit org-level-1 :foreground "DeepSkyBlue4" :height 0.8))))
  '(org-level-4 ((t (:inherit org-level-1 :foreground "midnight blue" :height 0.75))))
