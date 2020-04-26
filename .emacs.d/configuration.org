@@ -1,4 +1,4 @@
-
+#+TODO: FEHLER | OK
 * Weg zur perfekten Config
 ** Look 
 *** Schrift auf IBM umstellen und Größen anpassen
@@ -33,107 +33,67 @@
 ** Gestalten
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
-* Package
-** Enable Pakages from the MELPA Repositories
-#+BEGIN_SRC emacs-lisp
-(require 'package)
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
-       (proto (if no-ssl "http" "https")))
-  (when no-ssl (warn "\
-Your version of Emacs does not support SSL connections,
-which is unsafe because it allows man-in-the-middle attacks.
-There are two things you can do about this warning:
-1. Install an Emacs version that does support SSL and be safe.
-2. Remove this warning from your init file so you won't see it again."))
-  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://melpa.org/packages/")) t)
-  ;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
-  ;; and `package-pinned-packages`. Most users will not need or want to do this.
-  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
-  )
-#+END_SRC
-** Initialize
-This initializes all packages. 
-
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-#+BEGIN_SRC emacs-lisp
-(package-initialize)
-#+END_SRC
-* Appearance
-** Fonts and Faces
-#+BEGIN_SRC emacs-lisp
- ;; Fonts and Faces
- ;;----------------
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Noto Mono" :foundry "outline" :slant normal :weight normal :height 158 :width normal))))
- '(fixed-pitch ((t (:family "Noto Mono" :foundry "outline" :slant normal :weight normal :height 158 :width normal))))
- '(org-document-title ((t (:inherit default :weight normal :foreground "dim gray" :height 1.3 :underline nil))))
- '(org-level-1 ((t (:inherit default :foreground "dark gray" :height 1.5))))
- '(org-level-2 ((t (:inherit default :foreground "dark cyan" :height 1.3))))
- '(org-level-3 ((t (:inherit default :foreground "RoyalBlue3"))))
- '(org-level-4 ((t (:inherit default :foreground "blue violet"))))
- '(org-level-5 ((t (:inherit default :foreground "DarkGoldenrod"))))
- '(org-level-6 ((t (:inherit default :weight bold :foreground "black"))))
- '(org-level-7 ((t (:inherit default :weight bold :foreground "black"))))
- '(org-level-8 ((t (:inherit default :weight bold :foreground "black"))))
- '(variable-pitch ((t (:family "Liberation Sans" :height 171 :weight normal)))))
-#+END_SRC
-
-** Force default Font
-#+BEGIN_SRC  emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Noto Mono-15" ))
-(set-face-attribute 'default t :font "Noto Mono-15" )
-;; To see available fonts evaluate the following in the *scratch* buffer
-;; (message (mapconcat (quote identity) (sort (font-family-list) #'string-lessp) "\n"))
-
-#+END_SRC
-** Set variable pitch font
-#+BEGIN_SRC emacs-lisp
-
-;; Set variable-pitch font using customize-face variable-pitch
-;; Set the fonts to format correctly for specific modes. Default is set for fixed
-;; so we only need to have the exceptions
-(defun set-buffer-variable-pitch ()
-  (interactive)
-  (variable-pitch-mode t)
-  (setq line-spacing 3)
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-link nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
-  )
-
-(add-hook 'org-mode-hook 'set-buffer-variable-pitch)
-(add-hook 'Info-mode-hook 'set-buffer-variable-pitch)
-
-#+END_SRC
-** Org Meta Line (#+-Lines)
-#+BEGIN_SRC emacs-lisp
-(set-face-attribute 'org-meta-line nil :height 0.5 :slant 'normal :foreground "LavenderBlush3")
-#+END_SRC
-
 * Org Mode Settings
 ** General
- #+BEGIN_SRC emacs-lisp
+***  Keys and Shortcuts
+#+BEGIN_SRC emacs-lisp
+
  ;; Org-mode settings
  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
  (global-set-key "\C-cl" 'org-store-link)
  (global-set-key "\C-ca" 'org-agenda)
  (global-set-key "\C-cc" 'org-capture)
  (global-font-lock-mode 1)
+ ;; Setting custom Keys
+ (global-set-key (kbd "C-c s") 'org-sparse-tree)
+ (global-set-key (kbd "C-c x") 'other-window)
+ (global-set-key (kbd "C-c y") 'delete-other-windows)
+
+ (global-set-key (kbd "C-c n") 'org-narrow-to-subtree)
+ (global-set-key (kbd "C-c m") 'widen)
+ (global-set-key (kbd "C-c i") 'org-clock-in)
+ (global-set-key (kbd "C-c o") 'org-clock-out)
+ (global-set-key (kbd "C-c j") 'org-clock-goto)
 
   ;; Activate plain list cycle
   (setq org-list-use-circular-motion t)
  #+END_SRC
+**** Split und Switch
+     - Gibt eine Schnelle übersicht in einem halben Fenster. 
+#+BEGIN_SRC emacs-lisp
+ (defun kahiro-split-and-switch ()
+  "Split the window and switch to the other window in sequence."
+  (interactive)
+  (split-window-right)
+  (org-tree-to-indirect-buffer)
+  (other-window -1))
+ (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
+
+#+END_SRC
+**** Switch und Close
+     - Kehrt wieder zum Übersichtsbuffer zurück. 
+#+BEGIN_SRC emacs-lisp
+ (defun kahiro-switch-and-close ()
+  "Split the window and switch to the other window in sequence."
+  (interactive)
+  (kill-buffer)
+  (other-window -1)
+  (delete-other-windows))
+
+ (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
+#+END_SRC
+** Clocking / Aufwand
+#+BEGIN_SRC emacs-lisp
+;; CLOCKING: global Effort estimate values
+(setq org-global-properties
+      '(("Effort_ALL" .
+         "1:00 2:00 3:00 4:00 5:00 0:10 0:20 0:30 0:45 0:00 6:00 7:20 8:00 9:00 10:00")))
+;;        1    2    3    4    5    6    7    8    9    0
+;; These are the hotkeys
+
+;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
+(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TAGS %TODO")
+#+END_SRC
 ** Agenda-Mode
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-skip-scheduled-if-done t
@@ -262,6 +222,190 @@ information."
  (setq org-ellipsis "⤵")
   #+END_SRC
 
+* Moving around
+**  Jump in the document
+   "Move cursor to last mark position of current buffer.
+   Call this repeatedly will cycle all positions in `mark-ring'.
+   URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
+   Version 2016-04-04"
+ #+BEGIN_SRC emacs-lisp
+   (defun xah-pop-local-mark-ring ()
+     (interactive)
+     (set-mark-command t))
+   (global-set-key (kbd "<f8>") 'pop-global-mark)
+   (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
+ #+END_SRC 
+
+** RYO Key settings
+
+*** Basics
+ #+BEGIN_SRC emacs-lisp
+     (use-package ryo-modal
+       :commands ryo-modal-mode
+       :bind ("#" . ryo-modal-mode)
+       :config
+       (ryo-modal-keys
+	("," ryo-modal-repeat)
+	("q" ryo-modal-mode))
+	
+       (ryo-modal-keys
+	;; First argument to ryo-modal-keys may be a list of keywords.
+	;; These keywords will be applied to all keybindings.
+	(:norepeat t)
+        ("u" universal-argument)
+	("h" backward-char)
+	("j" next-line)
+	("k" previous-line)
+	("l" forward-char)
+	("e" "C-e")
+	("a" "C-a")
+	("E" "M->")
+	("A" "M-<")
+	("0" "M-0")
+	("1" "M-1")
+	("2" "M-2")
+	("3" "M-3")
+	("4" "M-4")
+	("5" "M-5")
+	("6" "M-6")
+	("7" "M-7")
+	("8" "M-8")
+	("9" "M-9"))
+
+   )
+ #+End_SRC
+
+*** Additional Keys
+#+BEGIN_SRC emacs-lisp
+    (ryo-modal-keys 
+    ("y" "C-y")
+    ("w" "M-w")
+    ("W" "C-w")
+    ("ö" org-cycle)
+    ("SPC"
+    (("SPC" set-mark-command)))
+    ("z"
+     (("z" org-time-stamp)
+      ("t" org-time-stamp-inactive)
+      ("c" org-toggle-timestamp-type)))
+    ("d"
+     (("u" outline-up-heading)
+      ("l" org-forward-heading-same-level)
+      ("h" org-backward-heading-same-level)
+      ("j" org-next-visible-heading)
+      ("k" org-previous-visible-heading)))
+    ("s"
+     (("s" save-some-buffers)
+      ("S" org-sparse-tree)))
+    ("g"
+     (("a" org-agenda)
+      ("g" switch-to-buffer)
+      ("o" other-window)
+      ("f" kahiro-split-and-switch)
+      ("k" kahiro-switch-and-close)
+      ("w" delete-other-windows)))
+    )
+
+(define-key universal-argument-map (kbd "u") 'universal-argument-more)
+#+END_SRC
+* Package
+** COMMENT Enable Pakages from the MELPA Repositories
+#+BEGIN_SRC emacs-lisp
+#+END_SRC
+** COMMENT Initialize
+This initializes all packages. 
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+#+BEGIN_SRC emacs-lisp(package-initialize)
+#+END_SRC
+* Fokus
+** Apply :Archive: Tag to DONE Tasks
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-state-tags-triggers
+  (quote 
+  (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
+   ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
+  )))
+#+END_SRC
+* Appearance
+** Style Tags based on Regular Expressions :one:
+*** Code
+#+BEGIN_SRC emacs-lisp
+;; (require 'org)
+(set-face-attribute 'org-tag nil :height 0.5 :slant 'normal :weight 'normal :foreground "LavenderBlush3")
+
+(add-to-list 'org-tag-faces '("@.*" . (:foreground "cyan" :height 0.8)))
+
+;; Reset the global variable to nil, just in case org-mode has already beeen used.
+(when org-tags-special-faces-re
+  (setq org-tags-special-faces-re nil))
+
+(defun org-get-tag-face (kwd)
+  "Get the right face for a TODO keyword KWD.
+If KWD is a number, get the corresponding match group."
+  (if (numberp kwd) (setq kwd (match-string kwd)))
+  (let ((special-tag-face (or (cdr (assoc kwd org-tag-faces))
+                              (and (string-match "^@.*" kwd)
+                                   (cdr (assoc "@.*" org-tag-faces))))))
+    (or (org-face-from-face-or-color 'tag 'org-tag special-tag-face)
+        'org-tag)))
+#+END_SRC
+*** Info from [[https://stackoverflow.com/questions/40876294/color-tags-based-on-regex-emacs-org-mode][Stackoverflow]]
+The following answer uses the built-in mechanisms of org-mode. The variable org-tag-faces accepts a regexp for the tag, which is the car of the cons cell. The function org-set-tag-faces sets a global variable org-tags-special-faces-re, which combines the tags of the aforementioned cons cell(s). The global variable org-tags-special-faces-re is used by org-font-lock-add-tag-faces to re-search-forward through the org-mode buffer -- locating the matching tags and applying the appropriate face based on the function org-get-tag-face. The original version of the function org-get-tag-face looked for an exact match of the tag found (i.e., the key argument to the function assoc). The revised version of org-get-tag-face adds an additional key search for @.* and returns the proper face if the key is found -- this is necessary because the tag itself will usually look something like @home or @office, whereas our context regexp is @.*.
+
+Wow, thank's a lot, that's cool even if I don't understand everything (my knowledges about lisp and emacs-lisp are very limited ^^). Now, say that I want to do the same with other regex, can you explain me (in the simpliest way) how do I do ? – boehm_s Dec 1 '16 at 20:43
+
+The car of each cons cell of org-tag-faces is by its very nature a regexp, which gets processed into something that eventually looks like this: ":\\(@.*\\|TOP\\|HIGH\\|MEDIUM\\|LOW\\|NEGATIVE):" So, it is already set up to work with regexp out-of-the-box. The change that needs to be made is how org-get-tag-face locates a match within org-tag-faces. You could add additional entries to org-tag-faces with your regexp, and add additional entries to org-get-tag-face -- e.g., just above (cdr (assoc "@.*" org-tag-faces)). – lawlist Dec 1 '16 at 20:50
+
+For example, (add-to-list 'org-tag-faces '("MYREGEX" . (:foreground "red"))) and just above (cdr (assoc "@.*" org-tag-faces)) in org-get-tag-face, insert (cdr (assoc "MYREGEX" org-tag-faces)) The function assoc is using equal to find an exact key match. – lawlist Dec 1 '16 at 20:55
+
+I changed (cdr (assoc "@.*" org-tag-faces)) to (and (string-match "^@.*" kwd) (cdr (assoc "@.*" org-tag-faces))) to ensure that kwd is indeed a context tag before testing to see if a context tag regexp is a car of one of the cons cells that make up org-tag-faces. This will be important if you decide to add additional regexp to org-get-tag-face; e.g., adding an additional (and (string-match "MYREGEX" kwd) (cdr (assoc "MYREGEX" org-tag-faces))) – lawlist Dec 1 '16 at 23:52
+** Tag Alignment
+#+BEGIN_SRC emacs-lisp
+(setq org-tags-column 0)
+#+END_SRC
+** Fonts and Faces
+*** Font Weight :wissen:
+    - :weight ([[https://www.gnu.org/software/emacs/manual/html_node/elisp/Face-Attributes.html][Quelle]])
+      - Font weight—one of the symbols (from densest to faintest) ultra-bold, extra-bold, bold, semi-bold, normal, semi-light, light, extra-light, or ultra-light. On text terminals which support variable-brightness text, any weight greater than normal is displayed as extra bright, and any weight less than normal is displayed as half-bright. 
+** Force default Font
+#+BEGIN_SRC  emacs-lisp
+(add-to-list 'default-frame-alist '(font . "Noto Mono-15" ))
+(set-face-attribute 'default t :font "Noto Mono-15" )
+;; To see available fonts evaluate the following in the *scratch* buffer
+;; (message (mapconcat (quote identity) (sort (font-family-list) #'string-lessp) "\n"))
+
+#+END_SRC
+** Set variable pitch font
+#+BEGIN_SRC emacs-lisp
+
+;; Set variable-pitch font using customize-face variable-pitch
+;; Set the fonts to format correctly for specific modes. Default is set for fixed
+;; so we only need to have the exceptions
+(defun set-buffer-variable-pitch ()
+  (interactive)
+  (variable-pitch-mode t)
+  (setq line-spacing 3)
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-link nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
+  )
+
+(add-hook 'org-mode-hook 'set-buffer-variable-pitch)
+(add-hook 'Info-mode-hook 'set-buffer-variable-pitch)
+
+#+END_SRC
+** Org Meta Line (#+-Lines)
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'org-meta-line nil :height 0.5 :slant 'normal :foreground "LavenderBlush3")
+#+END_SRC
+
 * Default Modes ON
 #+BEGIN_SRC emacs-lisp
 ;; Default Modes ON
@@ -269,6 +413,15 @@ information."
 
 #+END_SRC
 * Sonstiges
+** Template Expansion - Abkürzugnen für häufige Ausdrücke
+- [ ] Dieser Code muss für *Org ab 9.2* angepasst werden zu org-temo-keyword-alist. Außerdem braucht man (require 'org-tempo)
+#+BEGIN_SRC emacs-lisp
+;; Code für emacs-lisp
+(add-to-list 'org-structure-template-alist '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
+;; Code für SCHEDULED:
+(add-to-list 'org-structure-template-alist '("S" "SCHEDULED: ?"%T))
+#+END_SRC
+SCHEDULED: 
 ** Saving Desktop Sessions
  #+BEGIN_SRC emacs-lisp
  ;; SAVING DESKTOP SESSIONS
@@ -291,6 +444,40 @@ information."
  ;; Bug 34341
  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
  #+END_SRC
+* Custom Functions
+** FEHLER COMMENT Count Tags
+   - [2020-04-19 Sun] ggf. gibt es einen Konflikt mit [[*Style Tags based on Regular Expressions][Style Tags based on Regular Expressions]]
+#+BEGIN_SRC emacs-lisp
+(defun count-tags ()
+  (let (tags count)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward org-complex-heading-regexp nil t)
+        (dolist (tag (org-get-tags))
+          (push tag tags)))
+      (cl-loop with result
+               for tag in tags
+               do (push (list (cl-count tag tags
+                                        :test #'string=)
+                              tag)
+                        count)
+               collect
+               (setq result (cl-remove-duplicates count
+                                                  :test #'equal))
+               finally return
+               (cl-sort result #'> :key #'car)))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+:colnames '(freq tags)
+(count-tags)
+#+END_SRC
+#+results:
+| 67 |       |
+|  1 | one   |
+|  1 | @two  |
+|  1 | three |
+
 * UI preferences
 ** Tweak window chrome
 
