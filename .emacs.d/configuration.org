@@ -258,6 +258,7 @@ information."
 	;; First argument to ryo-modal-keys may be a list of keywords.
 	;; These keywords will be applied to all keybindings.
 	(:norepeat t)
+	("c" "C-c")
         ("u" universal-argument)
 	("h" backward-char)
 	("j" next-line)
@@ -286,16 +287,6 @@ information."
 *** Additional Keys
 #+BEGIN_SRC emacs-lisp 
  (ryo-modal-keys 
-    ("y" "C-y")
-    ("w" "M-w")
-    ("W" "C-w")
-    ("L" "C-l")
-    ("v" "C-v")
-    ("V" "M-v")
-    ("i" "M-b")
-    ("o" "M-f")
-    ("SPC" org-cycle)
-    ("ö" set-mark-command)
     ;;(("SPC" set-mark-command)))
     ("z"
      (("z" org-time-stamp)
@@ -308,17 +299,18 @@ information."
       ("j" org-next-visible-heading)
       ("k" org-previous-visible-heading)
       ))
-    ("s"
+    ("x"
      (("s" save-some-buffers)
-      ("S" org-sparse-tree)
-      ("f" isearch-forward)
-      ("r" isearch-backward)))
+     
+     ))
     ("g"
      (("a" org-agenda)
       ("g" switch-to-buffer)
       ("o" other-window)
       ("f" kahiro-split-and-switch)
       ("k" kahiro-switch-and-close)
+      ("t" org-sparse-tree)
+      ("q" undo)g
       ("w" delete-other-windows)))
     ("n" 
      (("s" org-narrow-to-subtree)
@@ -326,26 +318,37 @@ information."
 ;;      ("x" org-agenda-set-restriction-lock)
 ;;      ("y" org-agenda-remove-restriction-lock)
       ))  
-      ("t"
-       (("i" org-clock-in)
-        ("o" org-clock-out)
-	("j" org-clock-goto)
-	("x" org-clock-in-last)
-	("q" org-clock-cancel)
-	("d" org-clock-display)
-	("t" org-set-tags-command))
-  )) 
+    ("t"
+     (("i" org-clock-in)
+      ("o" org-clock-out)
+      ("j" org-clock-goto)
+      ("x" org-clock-in-last)
+      ("q" org-clock-cancel)
+      ("d" org-clock-display)
+      ("t" org-set-tags-command))
+    )) 
 
 (define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
 
 *** Neu
 #+BEGIN_SRC emacs-lisp 
-(ryo-modal-keys 
-  ("ä" org-mark-subtree :then '(next-line count-words))
-  ("-" "C-_")
-
-)
+  (ryo-modal-keys
+    ("ä" org-mark-subtree :then '(next-line count-words))
+    ("-" "C-_")
+    ("y" "C-y")
+    ("w" "M-w")
+    ("W" "C-w")
+    ("L" "C-l")
+    ("v" "C-v")
+    ("V" "M-v")
+    ("i" "M-b")
+    ("o" "M-f")
+    ("SPC" org-cycle)
+    ("ö" set-mark-command)
+    ("s" isearch-forward)
+    ("r" isearch-backward)
+  )
 #+END_SRC
 
 * Package
