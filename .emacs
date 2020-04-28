@@ -1,7 +1,7 @@
 ;; Configure package.el to include MELPA.
-;(require 'package)
+(require 'package)
 ;;(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
-;(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 ;;(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 
@@ -44,7 +44,7 @@
      (68 :inherit org-priority :family "IBM Plex Mono Light" :weight light))))
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
- '(package-selected-packages (quote (spaceline))))
+ '(package-selected-packages (quote (org-bullets use-package ryo-modal org spaceline))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -56,11 +56,11 @@
  '(font-lock-warning-face ((t (:foreground "maroon"))))
  '(match ((t (:background "MistyRose1"))))
  '(org-agenda-structure ((t (:foreground "DeepSkyBlue4"))))
- '(org-block-begin-line ((t (:inherit org-meta-line :foreground "gray" :height 0.5))))
- '(org-clock-overlay ((t (:background "LightGray" :foreground "black" :height 120))))
+ '(org-block-begin-line ((t (:inherit org-meta-line :foreground "dark gray" :height 0.6))))
  '(org-date ((t (:inherit fixed-pitch :foreground "Purple"))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :height 1.3 :underline nil))))
  '(org-done ((t (:inherit org-todo :foreground "honeydew3"))))
+ '(org-drawer ((t (:inherit org-special-keyword))))
  '(org-ellipsis ((t (:foreground "turquoise1" :underline nil :height 0.65))))
  '(org-level-1 ((t (:family "IBM Plex Serif Medium" :weight normal :foreground "dark gray" :height 230 :antialias subpixel))))
  '(org-level-2 ((t (:inherit org-level-1 :foreground "dark cyan" :height 0.9))))
@@ -70,7 +70,7 @@
  '(org-level-6 ((t (:inherit org-level-4))))
  '(org-level-7 ((t (:inherit org-level-4))))
  '(org-level-8 ((t (:inherit org-level-4))))
- '(org-list-dt ((t (:foreground "#440000"))))
+ '(org-list-dt ((t (:foreground "gray25" :slant italic))))
  '(org-priority ((t (:inherit font-lock-keyword-face :foreground "gray34" :family "IBM Plex Mono" :weight normal))))
  '(org-property-value ((t (:inherit org-special-keyword))) t)
  '(org-scheduled ((t (:inherit org-scheduled-today))))
@@ -161,6 +161,11 @@
 ;;------------------
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
+;; use ELPA-Org-Version instead of builtin
+(assq-delete-all 'org package--builtins) ;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
+
+
+
 ;; CLOCKING: global Effort estimate values
 (setq org-global-properties
       '(("Effort_ALL" .
@@ -169,7 +174,7 @@
 ;; These are the hotkeys
 
 ;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
-(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TAGS %TODO")
+(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TODO %SCHEDULED %DEADLINE")
 
 ;; Keyboard Shortcuts
 (global-set-key "\C-cl" 'org-store-link)
@@ -178,6 +183,8 @@
 (global-set-key (kbd "C-ä") 'count-words) 
 (global-set-key (kbd "C-+") 'org-toggle-timestamp-type)
 (global-font-lock-mode 1)
+;; (global-set-key (kbd "<apps>") 'other-window)
+(global-set-key (kbd "<f7>") 'switch-to-buffer)
 
 ;; Org-mode TODO
 ;;(setq org-log-done 'time)
@@ -214,23 +221,24 @@
 (org-clock-persistence-insinuate)
 
 ;; Change Faces for specific Tags
+;; --- FUNKTIONIERT MIT NEUER ORG-VERSION NICHT
 ;; from https://stackoverflow.com/questions/40876294/color-tags-based-on-regex-emacs-org-mode
 
-(add-to-list 'org-tag-faces '("@.*" . (:foreground "sienna4" :weight normal :height 0.8 )))
+;; (add-to-list 'org-tag-faces '("@.*" . (:foreground "sienna4" :weight normal :height 0.8 )))
 
-;; Reset the global variable to nil, just in case org-mode has already beeen used.
-(when org-tags-special-faces-re
-  (setq org-tags-special-faces-re nil))
+;; ;; Reset the global variable to nil, just in case org-mode has already beeen used.
+;; (when org-tags-special-faces-re
+;;   (setq org-tags-special-faces-re nil))
 
-(defun org-get-tag-face (kwd)
-  "Get the right face for a TODO keyword KWD.
-If KWD is a number, get the corresponding match group."
-  (if (numberp kwd) (setq kwd (match-string kwd)))
-  (let ((special-tag-face (or (cdr (assoc kwd org-tag-faces))
-                              (and (string-match "^@.*" kwd)
-                                   (cdr (assoc "@.*" org-tag-faces))))))
-    (or (org-face-from-face-or-color 'tag 'org-tag special-tag-face)
-        'org-tag)))
+;; (defun org-get-tag-face (kwd)
+;;   "Get the right face for a TODO keyword KWD.
+;; If KWD is a number, get the corresponding match group."
+;;   (if (numberp kwd) (setq kwd (match-string kwd)))
+;;   (let ((special-tag-face (or (cdr (assoc kwd org-tag-faces))
+;;                               (and (string-match "^@.*" kwd)
+;;                                    (cdr (assoc "@.*" org-tag-faces))))))
+;;     (or (org-face-from-face-or-color 'tag 'org-tag special-tag-face)
+;;         'org-tag)))
 
 
 ;;    ###     ######   ######## ##    ## ########     ###    
@@ -453,3 +461,10 @@ If KWD is a number, get the corresponding match group."
 
 (set-window-scroll-bars (minibuffer-window) nil nil)
 
+
+;; Custimisation in Org-File
+;;--------------------------
+;; Starting
+
+(require 'org)
+(org-babel-load-file "~/configuration.org")
