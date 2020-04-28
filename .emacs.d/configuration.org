@@ -1,242 +1,93 @@
-* Weg zur perfekten Config
-** Look 
-*** DONE Schrift auf IBM umstellen und Größen anpassen
-    - Verschiedene Schriftgewichtungen möglich
-**** TODO Hier steht was neues, wenn es dann geschafft ist.
-alkjsdf
-***** Asdf
-****** Asdf
-******* Asdf
-******** Asdf
-**** 
-*** Theme - Farben aussuchen und anpassen
-*** DONE Bullets verschönern
-** Editing
-*** Cheatsheet für Editing-Befehle
-*** Tastenkürzel anpassen
-** TODO Versionierung (git)
-** TODO Termine Synchronisieren (tickler)
-** TODO File-Struktur überarbeiten (arbeit/home/someday)
-** Erweiterungen
-*** Super Agenda
-*** General.el
-*** Hydra.el / hercules.el
-*** Rechtschreibung
-*** Export-Templates
-*** Suche per Ivy/Helm/ripgrep
-*** RSS-Reader?
-*** Notmuch Emails
-*** Doom-Emacs Lazy load
-** Publemacs - Emacs für Publisher
-*** Hilfsprogramm, das einen Entscheidungsweg über einen Minibuffer liefert
-*** Tastenkürzel optimiert für Redakteure
-*** Wissensmanagement in Emacs
-*** Fragen
-**** Was müssen Coding-Journalisten (CJs) können? 
-     - Auch visuelle möglichkeiten wie 3D.js oder nur Infromationsbeschaffung über Sraping, Datenverarbeitung?
-** Jouraling
-*** Date-Trees
-*** CaptureTemplates
-*** Archivieren
-*** Verschlüsselung
-** Gestalten
-*** Grundlagen Emacs Lisp
-*** JS-Modes und Webdev-Modes
-* Packages
-** COMMENT Use-Package :packages:
+#+TITLE: Org-Config
+
+* Org Mode Settings
+** General
+***  COMMENT Keys and Shortcuts
 #+BEGIN_SRC emacs-lisp
-(eval-when-compile
-  ;; Following line is not needed if use-package.el is in ~/.emacs.d
-  ;;(add-to-list 'load-path "<path where use-package is installed>")
- (require 'use-package))
-#+END_SRC
-** Pakete aus MELPA aktivieren
-#+BEGIN_SRC emacs-lisp
-(require 'package)
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
-       (proto (if no-ssl "http" "https")))
-  (when no-ssl (warn "\
-Your version of Emacs does not support SSL connections,
-which is unsafe because it allows man-in-the-middle attacks.
-There are two things you can do about this warning:
-1. Install an Emacs version that does support SSL and be safe.
-2. Remove this warning from your init file so you won't see it again."))
-  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://melpa.org/packages/")) t)
-  ;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
-  ;; and `package-pinned-packages`. Most users will not need or want to do this.
-  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
-  )
-#+END_SRC
-* Basic Settings :appearance:
-** Saving Desktop Sessions
- #+BEGIN_SRC emacs-lisp
- ;; SAVING DESKTOP SESSIONS
- ;;------------------------
- (desktop-save-mode 1)
-#+END_SRC
-** Sentence end with just one space
-#+BEGIN_SRC emacs-lisp
- ;; Set Sentence end to just one space
- (setq sentence-end-double-space nil)
-#+END_SRC
-** Workarounds 
-#+BEGIN_SRC emacs-lisp
- ;; Workarounds
- ;; Bug 34341
- (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+ ;; Org-mode settings
+ (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+ (global-set-key "\C-cl" 'org-store-link)
+ (global-set-key "\C-ca" 'org-agenda)
+ (global-set-key "\C-cc" 'org-capture)
+ (global-font-lock-mode 1)
+ ;; Setting custom Keys
+ (global-set-key (kbd "C-c s") 'org-sparse-tree)
+ (global-set-key (kbd "C-c x") 'other-window)
+ (global-set-key (kbd "C-c y") 'delete-other-windows)
+
+ (global-set-key (kbd "C-c n") 'org-narrow-to-subtree)
+ (global-set-key (kbd "C-c m") 'widen)
+ (global-set-key (kbd "C-c i") 'org-clock-in)
+ (global-set-key (kbd "C-c o") 'org-clock-out)
+ (global-set-key (kbd "C-c j") 'org-clock-goto)
+
+  ;; Activate plain list cycle
+  (setq org-list-use-circular-motion t)
  #+END_SRC
-** Default Modes
+*** Eigene Funktionen
+**** Split und Switch
+     - Gibt eine Schnelle übersicht in einem halben Fenster. 
 #+BEGIN_SRC emacs-lisp
-;; Default Modes ON
-(global-visual-line-mode t)
+ (defun kahiro-split-and-switch ()
+  "Split the window and switch to the other window in sequence."
+  (interactive)
+  (split-window-right)
+  (org-tree-to-indirect-buffer)
+  (other-window -1))
+ (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
+
 #+END_SRC
-** Start Emacs in fullscreen
+**** Switch und Close
+     - Kehrt wieder zum Übersichtsbuffer zurück. 
 #+BEGIN_SRC emacs-lisp
-;; Start in Fullscreen
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+ (defun kahiro-switch-and-close ()
+  "Split the window and switch to the other window in sequence."
+  (interactive)
+  (kill-buffer)
+  (other-window -1)
+  (delete-other-windows))
+
+ (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
 #+END_SRC
-* Appearance
-** [#A] Schriftart :appearance:
- #+BEGIN_SRC  emacs-lisp
- ;; Set variable-pitch font using customize-face variable-pitch
- ;; Set the fonts to format correctly for specific modes. Default is set for fixed
- ;; so we only need to have the exceptions
- (defun set-buffer-variable-pitch ()
-   (interactive)
-   (variable-pitch-mode t)
-   (setq line-spacing 3)
-   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-   (set-face-attribute 'org-link nil :inherit 'fixed-pitch)
-   (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
-   (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-   (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
-   (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
-   )
-
- (add-hook 'org-mode-hook 'set-buffer-variable-pitch)
- (add-hook 'Info-mode-hook 'set-buffer-variable-pitch)
- #+END_SRC
-
-** [#A] Org :org:appearance:
-
-*** Hide emphasis marker and leading stars
- #+BEGIN_SRC emacs-lisp
- (setq org-hide-emphasis-markers t ;; hide Markers like *this* for bold
-       org-hide-leading-stars t)   ;; hide all but one star
- #+END_SRC
-*** Org-Bullets :appearance:packages:org:
-  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften 
-  #+BEGIN_SRC emacs-lisp
-  (require 'org-bullets)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-  ;; set custom bullets
- (setq org-bullets-bullet-list '("⚜" "⚙" "❖" "✿" "❄" "❋" "★" "⚛")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
- #+END_SRC
-*** Set custom ellipsis (...) :appearance:org:
- #+BEGIN_SRC emacs-lisp
- (setq org-ellipsis "⤵")
-  #+END_SRC
-
-*** COMMENT Electric Pair mode :appearance:org:
- #+BEGIN_SRC emacs-lisp
- ;; ELECTRIC PAIR MODE (BUILT IN)
- ;; ----------------------------
- (electric-pair-mode 1)
-
- (defvar org-electric-pairs '((?\* . ?\*) (?/ . ?/) (?= . ?=)
-                              (?\_ . ?\_) (?~ . ?~) (?+ . ?+)) "Electric pairs for org-mode.")
-
- (defun org-add-electric-pairs ()
-   (setq-local electric-pair-pairs (append electric-pair-pairs org-electric-pairs))
-   (setq-local electric-pair-text-pairs electric-pair-pairs))
-
- ;; (add-hook 'org-mode-hook 'org-add-electric-pairs)
- #+END_SRC
-** [#B] Tweak window chrome :appearance:
-
-    I don't usually use the menu or scroll bar, and they take up useful space.
-
- #+begin_src emacs-lisp
-   (tool-bar-mode 0)
-   (menu-bar-mode 0)
-   (scroll-bar-mode -1)
- #+end_src
-
- There's a tiny scroll bar that appears in the minibuffer window. This disables
- that:
-
- #+begin_src emacs-lisp
-   (set-window-scroll-bars (minibuffer-window) nil nil)
- #+end_src
-
-** [#B] Use =moody= for a beautiful modeline :appearance:packages:
-
-This gives me a truly lovely ribbon-based modeline.
-
-#+begin_src emacs-lisp
-  (use-package moody
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode)
-    (setq moody-mode-line-height 28)
-)
-
-
-#+end_src
-** [#C] Use fancy lambdas :appearance:
-Ersetzt lamba ( ) mit dem Lambda-Symbol
-
-#+begin_src emacs-lisp
-  (global-prettify-symbols-mode t)
-#+end_src
-** Align Tags :org:appearance:
-   Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten mit variablen Breiten ergibt sich allerdings nie ein einheitliches Bild. Daher setze ich den Wert auf 0, so dass die Tags direkt an den Überschriften anschließen. 
-*** COMMENT auf Fensterbreite anordnen
-- schwierig mit variable pitch
-- [[https://stackoverflow.com/questions/6210840/tag-position-in-org-mode][Quelle Stack Overflow]]
+** COMMENT Clocking / Aufwand
+ - [2020-04-27 Mo 08:33] In .emacs vorhanden 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'focus-in-hook 
-  (lambda () (progn 
-    (setq org-tags-column (- 5 (window-body-width)))) (org-align-all-tags)))
+;; CLOCKING: global Effort estimate values
+(setq org-global-properties
+      '(("Effort_ALL" .
+         "1:00 2:00 3:00 4:00 5:00 0:10 0:20 0:30 0:45 0:00 6:00 7:20 8:00 9:00 10:00")))
+;;        1    2    3    4    5    6    7    8    9    0
+;; These are the hotkeys
 
-(add-hook 'focus-out-hook 
-  (lambda () (progn 
-    (setq org-tags-column (- 5 (window-body-width)))) (org-align-all-tags)))
+;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
+(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TAGS %TODO")
 #+END_SRC
-*** simpel auf 0 gesetzt
-    #+BEGIN_SRC emacs-lisp
- (setq org-tags-column 0)
-    #+END_SRC
-* Agenda
-** Shortcuts :agenda:keys:
- #+BEGIN_SRC emacs-lisp
- ;; Locale Shortcuts für die Agenda
- (add-hook 'org-agenda-mode-hook
-   (lambda()
-     (local-set-key (kbd "S-<up>") 'org-agenda-date-earlier-hours)
-     (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
+** COMMENT Agenda-Mode
+   - [2020-04-27 Mo 08:33] in .emacs vorhanden
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-skip-deadline-prewarning-if-scheduled t
+      org-deadline-warning-days 2)
+
+(add-hook 'org-agenda-mode-hook
+	  (lambda()
+	    (local-set-key (kbd "S-<up>") 'org-agenda-date-earlier-hours)
+	    (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
      ))
+#+END_SRC
+*** Custom Agenda Commands
+#+BEGIN_SRC emacs-lisp
+;; default agenda commands
+(setq org-agenda-custom-commands
+   '(
+     ("g" tags-tree "g" ((org-show-context-detail 'ancestors)))
+     ("w" tags-tree "w" ((org-show-context-detail 'ancestors)))
+    )
+)
  #+END_SRC
-** Custom Agendas :agenda:
- #+BEGIN_SRC emacs-lisp
- (setq org-agenda-custom-commands '(
-         ("g" tags-tree "g" ((org-show-context-detail 'ancestors)))
-	 ("w" tags-tree "w" ((org-show-context-detail 'ancestors)))
-         ("c" . "My Custom Agendas")
-         ("cu" "Unscheduled TODO"
-          ((todo ""
-            ((org-agenda-overriding-header "\nUnscheduled TODO")
-             (org-agenda-skip-function 
-	      '(org-agenda-skip-entry-if 'scheduled)
-	    ))
-	  ))
-         nil nil)
- ))
- #+END_SRC
-**** COMMENT Patch for Ancestors-View :el_patch:packages:
+**** Patch for Ancestors-View
 #+BEGIN_SRC emacs-lisp
 (el-patch-defun org-show-set-visibility (detail)
   "Set visibility around point according to DETAIL.
@@ -273,77 +124,193 @@ information."
         (when (memq detail '(canonical t)) (org-show-entry))
         (when (memq detail '(tree canonical t)) (org-show-children))))))
 #+END_SRC
-
-** General Settings :agenda:
-#+BEGIN_SRC emacs-lisp
- (setq org-agenda-skip-scheduled-if-done t)
- (setq org-agenda-skip-deadline-if-done t)
- (setq org-deadline-warning-days 3)
-#+END_SRC
-
-**** Default Org-Agenda Span
+*** Default Org-Agenda Span
 #+BEGIN_SRC emacs-lisp
 ;; Default span
 (setq org-agenda-span 2)
 #+END_SRC
-
-* Org mode
-** Refile targets :org:
+*** Agenda Capture Templates
+#+BEGIN_SRC emacs-lisp
+;; Caprture Templates
+(setq org-capture-templates
+   '(
+      ("t" "Todo [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "* TODO %i%?")
+      ("r" "Todo w Schedule [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "** TODO %^{Titel} \n SCHEDULED: %^{Startzeitpunkt}t")
+      ("d" "Todo w Deadline [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "** TODO %^{Titel} \n DEADLINE: %^{Faellig bis}t")
+      ("n" "Todo now [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "* TODO %i%? \n SCHEDULED: %T")
+      ("z" "Ziele (inbox-Tree)" entry (file+headline "~/ncloud/org/ziele.org" "Inbox") "* TODO %i%?")
+      ("s" "prefix für someday-Tasks")
+      ("sa" "Todo [someday Arbeit]" entry (file+headline "~/ncloud/org/asomeday.org" "Inbox") "* TODO %i%?")
+      ("sh" "Todo [someday Home]" entry (file+headline "~/ncloud/org/hsomeday.org" "Inbox") "* TODO %i%?")
+      ("T" "Tickler" entry (file+headline "~/ncloud/org/tickler.org" "Tickler") "** %^{Title} \n %^t")
+      ("R" "Scheduled Tickler" entry (file+headline "~/ncloud/org/tickler.org" "Tickler") "** %^{Title} \n SCHEDULED: %^t")
+  )
+)
+#+END_SRC
+*** setting Refile Targets
 #+BEGIN_SRC emacs-lisp
 ;; setting Refile Target
- (setq org-refile-targets '(
-   (org-agenda-files :maxlevel . 1)
-   ("~/ncloud/org/asomeday.org" :maxlevel . 1))) ;; include all Agenda-Files and all Heading up to ** 
- (setq org-refile-allow-creating-parent-nodes 'confirm)        ;;allow creating nodes. Refile has to end with /newheadingname
+;;----------------------
+(setq org-refile-targets '((org-agenda-files :maxlevel . 2))) ;; include all Agenda-Files and all Heading up to **
+(setq org-refile-allow-creating-parent-nodes 'confirm)        ;;allow creating nodes. Refile has to end with /newheadingname
 #+END_SRC
-** Org-Keys belegen :org:
-Die grundlegnden Tastenkürzel für den Org-Mode.
+** COMMENT Make org beautiful
 #+BEGIN_SRC emacs-lisp
-;; Keys
- (global-set-key "\C-cl" 'org-store-link)
- (global-set-key "\C-ca" 'org-agenda)
- (global-set-key "\C-cc" 'org-capture)
-#+END_SRC
-** Plain lists :org:
-#+BEGIN_SRC emacs-lisp
-  ;; Activate plain list cycle
-  (setq org-list-use-circular-motion t)
-#+END_SRC
-** Capture Templates :org:
-#+BEGIN_SRC emacs-lisp
-;; Capture Templates
-(setq org-capture-templates '(
-  ("t" "Todo [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "* TODO %i%?")
-  ("r" "Todo w Schedule [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "** TODO %^{Titel} \n SCHEDULED: %^{Startzeitpunkt}t")
-  ("d" "Todo w Deadline [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "** TODO %^{Titel} \n DEADLINE: %^{Faellig bis}t")
-  ("n" "Todo now [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "* TODO %i%? \n SCHEDULED: %T")
-  ("z" "Ziele (inbox-Tree)" entry (file+headline "~/ncloud/org/ziele.org" "Inbox") "* TODO %i%?")
-  ("s" "prefix für someday-Tasks")
-  ("sa" "Todo [someday Arbeit]" entry (file+headline "~/ncloud/org/asomeday.org" "Inbox") "* TODO %i%?")
-  ("sh" "Todo [someday Home]" entry (file+headline "~/ncloud/org/hsomeday.org" "Inbox") "* TODO %i%?")
-  ("T" "Tickler" entry (file+headline "~/ncloud/org/tickler.org" "Tickler") "** %^{Title} \n %^t")
-  ("R" "Scheduled Tickler" entry (file+headline "~/ncloud/org/tickler.org" "Tickler") "** %^{Title} \n SCHEDULED: %^t")
- ))
-#+END_SRC
-** Lokale Shortcuts :org:
-#+BEGIN_SRC emacs-lisp
-;; lokale Shortcuts für den org-mode
-(add-hook 'org-mode-hook
-  (lambda ()
-    (define-key org-mode-map "\C-c_" 'org-toggle-timestamp-type)
-    ))
-#+END_SRC
-* Rechtschreibung
-#+BEGIN_SRC emacs-lisp
+;; Make Org beautiful
+;;-------------------
+(setq org-hide-emphasis-markers t) ;; hide Markers like *this* for bold
 
-;; Rechtschreibung
-;;----------------
-;; Ich musste noch das deutsche Wörterbuch installieren, bevor es klappt: sudo apt-get install aspell-de
- (setq ispell-dictionary "deutsch8")
- (setq ispell-local-dictionary "deutsch")
- (setq flyspell-default-dictionary "deutsch8")
- (add-hook 'text-mode-hook 'flyspell-mode)
- (autoload 'flyspell-mode "flyspell" "On-the-fly ispell." t)
- (setq flyspell-issue-welcome-flag nil)
+
+;; ELECTRIC PAIR MODE (BUILT IN)
+;; ----------------------------
+(electric-pair-mode 1)
+
+(defvar org-electric-pairs '((?\* . ?\*) (?/ . ?/) (?= . ?=)
+                             (?\_ . ?\_) (?~ . ?~) (?+ . ?+)) "Electric pairs for org-mode.")
+
+(defun org-add-electric-pairs ()
+  (setq-local electric-pair-pairs (append electric-pair-pairs org-electric-pairs))
+  (setq-local electric-pair-text-pairs electric-pair-pairs))
+
+;; (add-hook 'org-mode-hook 'org-add-electric-pairs)
+
+;; Hide leading stars
+(setq org-hide-leading-stars t)
+#+END_SRC
+** Use Org-Bulles
+  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
+  #+BEGIN_SRC emacs-lisp
+  (require 'org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+ #+END_SRC
+ #+BEGIN_SRC  emacs-lisp
+  ;; make available "org-bullet-face" such that I can control the font size individually
+ (setq org-bullets-bullet-list '("✥" "✤" "❖" "✿" "❄" "❋" "★" "✚")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
+ #+END_SRC
+** Set custom ellipsis (...)
+ #+BEGIN_SRC emacs-lisp
+ (setq org-ellipsis "⤵")
+  #+END_SRC
+
+* Moving around
+**  Jump in the document
+   "Move cursor to last mark position of current buffer.
+   Call this repeatedly will cycle all positions in `mark-ring'.
+   URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
+   Version 2016-04-04"
+ #+BEGIN_SRC emacs-lisp
+   (defun xah-pop-local-mark-ring ()
+     (interactive)
+     (set-mark-command t))
+   (global-set-key (kbd "<f8>") 'pop-global-mark)
+   (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
+ #+END_SRC 
+
+** RYO Key settings
+*** Colors
+#+BEGIN_SRC emacs-lisp
+(setq ryo-modal-cursor-color "maroon")
+(setq ryo-modal-default-cursor-color "grey15")
+#+END_SRC
+*** Basics
+ #+BEGIN_SRC emacs-lisp
+     (use-package ryo-modal
+       :commands ryo-modal-mode
+       :bind ("C-SPC" . ryo-modal-mode)
+       :config
+       (ryo-modal-keys
+	("," ryo-modal-repeat)
+	("q" ryo-modal-mode))
+	
+       (ryo-modal-keys
+	;; First argument to ryo-modal-keys may be a list of keywords.
+	;; These keywords will be applied to all keybindings.
+	(:norepeat t)
+        ("u" universal-argument)
+	("h" backward-char)
+	("j" next-line)
+	("k" previous-line)
+	("l" forward-char)
+	("e" "C-e")
+	("a" "C-a")
+	("E" "M-e")
+	("A" "M-a")
+	("0" "M-0")
+	("1" "M-1")
+	("2" "M-2")
+	("3" "M-3")
+	("4" "M-4")
+	("5" "M-5")
+	("6" "M-6")
+	("7" "M-7")
+	("8" "M-8")
+	("9" "M-9"))
+
+   )
+ #+End_SRC
+
+*** Additional Keys
+#+BEGIN_SRC emacs-lisp 
+ (ryo-modal-keys 
+    ("y" "C-y")
+    ("w" "M-w")
+    ("W" "C-w")
+    ("L" "C-l")
+    ("v" "C-v")
+    ("V" "M-v")
+    ("i" "M-b")
+    ("o" "M-f")
+    ("SPC" org-cycle)
+    ("ö" set-mark-command)
+    ;;(("SPC" set-mark-command)))
+    ("z"
+     (("z" org-time-stamp)
+      ("t" org-time-stamp-inactive)
+      ("c" org-toggle-timestamp-type)))
+    ("d"
+     (("u" outline-up-heading)
+      ("l" org-forward-heading-same-level)
+      ("h" org-backward-heading-same-level)
+      ("j" org-next-visible-heading)
+      ("k" org-previous-visible-heading)
+      ("e" "M->")
+      ("a" "M-<")))
+    ("s"
+     (("s" save-some-buffers)
+      ("S" org-sparse-tree)
+      ("f" isearch-forward)
+      ("r" isearch-backward)))
+    ("g"
+     (("a" org-agenda)
+      ("g" switch-to-buffer)
+      ("o" other-window)
+      ("f" kahiro-split-and-switch)
+      ("k" kahiro-switch-and-close)
+      ("w" delete-other-windows)))
+    ("n" 
+     (("s" org-narrow-to-subtree)
+      ("w" widen)
+;;      ("x" org-agenda-set-restriction-lock)
+;;      ("y" org-agenda-remove-restriction-lock)
+      ))  
+      ("t"
+       (("i" org-clock-in)
+        ("o" org-clock-out)
+	("j" org-clock-goto)
+	("x" org-clock-in-last)
+	("q" org-clock-cancel)
+	("d" org-clock-display)
+	("t" org-set-tags-command))
+  )) 
+
+(define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
 
+*** Neu
+#+BEGIN_SRC emacs-lisp 
+(ryo-modal-keys 
+  ("ä" org-mark-subtree :then '(next-line count-words))
+  ("-" "C-_")
+
+)
+#+END_SRC
