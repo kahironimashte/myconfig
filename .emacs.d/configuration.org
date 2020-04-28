@@ -189,8 +189,10 @@ information."
 ;; Make Org beautiful
 ;;-------------------
 (setq org-hide-emphasis-markers t) ;; hide Markers like *this* for bold
-
-
+#+END_SRC
+** COMMENT Electric Pair Mode
+- [2020-04-28 Tue 22:40] deaktiviert weil die doppelten Anführungszeichen beim Schreiben nerven.
+#+BEGIN_SRC emacs-lisp
 ;; ELECTRIC PAIR MODE (BUILT IN)
 ;; ----------------------------
 (electric-pair-mode 1)
@@ -237,12 +239,16 @@ information."
  #+END_SRC 
 
 ** RYO Key settings
-
+*** Colors
+#+BEGIN_SRC emacs-lisp
+(setq ryo-modal-cursor-color "maroon")
+(setq ryo-modal-default-cursor-color "grey15")
+#+END_SRC
 *** Basics
  #+BEGIN_SRC emacs-lisp
      (use-package ryo-modal
        :commands ryo-modal-mode
-       :bind ("#" . ryo-modal-mode)
+       :bind ("C-SPC" . ryo-modal-mode)
        :config
        (ryo-modal-keys
 	("," ryo-modal-repeat)
@@ -259,8 +265,10 @@ information."
 	("l" forward-char)
 	("e" "C-e")
 	("a" "C-a")
-	("E" "M->")
-	("A" "M-<")
+	("I" "M-a")
+	("O" "M-e")
+	("E" "M-<")
+	("A" "M->")
 	("0" "M-0")
 	("1" "M-1")
 	("2" "M-2")
@@ -276,14 +284,19 @@ information."
  #+End_SRC
 
 *** Additional Keys
-#+BEGIN_SRC emacs-lisp
-    (ryo-modal-keys 
+#+BEGIN_SRC emacs-lisp 
+ (ryo-modal-keys 
     ("y" "C-y")
     ("w" "M-w")
     ("W" "C-w")
-    ("ö" org-cycle)
-    ("SPC"
-    (("SPC" set-mark-command)))
+    ("L" "C-l")
+    ("v" "C-v")
+    ("V" "M-v")
+    ("i" "M-b")
+    ("o" "M-f")
+    ("SPC" org-cycle)
+    ("ö" set-mark-command)
+    ;;(("SPC" set-mark-command)))
     ("z"
      (("z" org-time-stamp)
       ("t" org-time-stamp-inactive)
@@ -293,10 +306,13 @@ information."
       ("l" org-forward-heading-same-level)
       ("h" org-backward-heading-same-level)
       ("j" org-next-visible-heading)
-      ("k" org-previous-visible-heading)))
+      ("k" org-previous-visible-heading)
+      ))
     ("s"
      (("s" save-some-buffers)
-      ("S" org-sparse-tree)))
+      ("S" org-sparse-tree)
+      ("f" isearch-forward)
+      ("r" isearch-backward)))
     ("g"
      (("a" org-agenda)
       ("g" switch-to-buffer)
@@ -304,10 +320,34 @@ information."
       ("f" kahiro-split-and-switch)
       ("k" kahiro-switch-and-close)
       ("w" delete-other-windows)))
-    )
+    ("n" 
+     (("s" org-narrow-to-subtree)
+      ("w" widen)
+;;      ("x" org-agenda-set-restriction-lock)
+;;      ("y" org-agenda-remove-restriction-lock)
+      ))  
+      ("t"
+       (("i" org-clock-in)
+        ("o" org-clock-out)
+	("j" org-clock-goto)
+	("x" org-clock-in-last)
+	("q" org-clock-cancel)
+	("d" org-clock-display)
+	("t" org-set-tags-command))
+  )) 
 
 (define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
+
+*** Neu
+#+BEGIN_SRC emacs-lisp 
+(ryo-modal-keys 
+  ("ä" org-mark-subtree :then '(next-line count-words))
+  ("-" "C-_")
+
+)
+#+END_SRC
+
 * Package
 ** COMMENT Enable Pakages from the MELPA Repositories
 #+BEGIN_SRC emacs-lisp
