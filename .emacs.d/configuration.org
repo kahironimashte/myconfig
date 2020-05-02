@@ -235,7 +235,7 @@ information."
 (setq ryo-modal-cursor-color "maroon")
 (setq ryo-modal-default-cursor-color "grey15")
 #+END_SRC
-kk*** Basics
+*** Basics
  #+BEGIN_SRC emacs-lisp
      (use-package ryo-modal
        :commands ryo-modal-mode
