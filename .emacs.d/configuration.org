@@ -1,17 +1,19 @@
-#+TODO: FEHLER | OK
+#+TODO: TODO FEHLER  | OK DONE
 * Weg zur perfekten Config
-** Look 
-*** Schrift auf IBM umstellen und Größen anpassen
-*** Theme - Farben aussuchen und anpassen
-*** Bullets verschönern
+** Look [2/3]
+*** TODO Theme - Farben aussuchen und anpassen
+*** DONE Schrift auf IBM umstellen und Größen anpassen :ARCHIVE:
+*** DONE Bullets verschönern :ARCHIVE:
 ** Editing
-*** Cheatsheet für Etiting-Befehle
+*** Cheatsheet für Editing-Befehle
 *** Tastenkürzel anpassen
 ** Versionierung (git)
 ** Termine Synchronisieren (tickler)
 ** File-Struktur überarbeiten (arbeit/home/someday)
 ** Erweiterungen
 *** Super Agenda
+*** General.el
+*** Hydra.el /hercules.el
 *** Rechtschreibung
 *** Export-Templates
 *** Suche per Ivy/Helm/ripgrep
@@ -352,6 +354,18 @@ kk*** Basics
    (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
  #+END_SRC 
 
+* Rechtschreibung
+#+BEGIN_SRC  emacs-lisp
+;; Rechtschreibung
+;;----------------
+;; Ich musste noch das deutsche Wörterbuch installieren, bevor es klappt: sudo apt-get install aspell-de
+ (setq ispell-dictionary "deutsch8")
+ (setq ispell-local-dictionary "deutsch")
+ (setq flyspell-default-dictionary "deutsch8")
+ (add-hook 'text-mode-hook 'flyspell-mode)
+ (autoload 'flyspell-mode "flyspell" "On-the-fly ispell." t)
+ (setq flyspell-issue-welcome-flag nil)
+#+END_SRC
 * Package
 ** COMMENT Enable Pakages from the MELPA Repositories
 #+BEGIN_SRC emacs-lisp
@@ -374,7 +388,7 @@ This initializes all packages.
    ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
   )))
 #+END_SRC
-* Appearance
+* Appearance :appearance:
 ** Style Tags based on Regular Expressions :one:
 *** Code
 #+BEGIN_SRC emacs-lisp
@@ -407,7 +421,9 @@ The car of each cons cell of org-tag-faces is by its very nature a regexp, which
 For example, (add-to-list 'org-tag-faces '("MYREGEX" . (:foreground "red"))) and just above (cdr (assoc "@.*" org-tag-faces)) in org-get-tag-face, insert (cdr (assoc "MYREGEX" org-tag-faces)) The function assoc is using equal to find an exact key match. – lawlist Dec 1 '16 at 20:55
 
 I changed (cdr (assoc "@.*" org-tag-faces)) to (and (string-match "^@.*" kwd) (cdr (assoc "@.*" org-tag-faces))) to ensure that kwd is indeed a context tag before testing to see if a context tag regexp is a car of one of the cons cells that make up org-tag-faces. This will be important if you decide to add additional regexp to org-get-tag-face; e.g., adding an additional (and (string-match "MYREGEX" kwd) (cdr (assoc "MYREGEX" org-tag-faces))) – lawlist Dec 1 '16 at 23:52
-** Tag Alignment
+** Tag Alignment :org:
+Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten mit variablen Breiten ergibt sich allerdings nie ein einheitliches Bild. Daher setze ich den Wert auf 0, so dass die Tags direkt an den Überschriften anschließen. 
+
 #+BEGIN_SRC emacs-lisp
 (setq org-tags-column 0)
 #+END_SRC
@@ -561,3 +577,36 @@ This gives me a truly lovely ribbon-based modeline.
 #+end_src
 
 
+* Notizen
+
+** Source Blocks
+They changed the template system in orgmode 9.2.
+
+The new mechanism is called structured template. The command org-insert-structure-template bound to *C-c C-,* gives you a list of #+begin_-#+end_ pairs that narrows down while you type and you can use completion.
+
+But, you can also get the old easy template system back, either
+
+    by adding (require 'org-tempo) to your init file or
+    by adding org-tempo to the list org-modules. You can do that by customizing org-modules.
+** Difference in Files
+18.9 Comparing Files
+
+The command M-x diff prompts for two file names, using the minibuffer, and displays the differences between the two files in a buffer named *diff*. This works by running the diff program, using options taken from the variable diff-switches. The value of diff-switches should be a string; the default is "-u" to specify a unified context diff. See Diff, for more information about the diff program.
+
+The output of the diff command is shown using a major mode called Diff mode. See Diff Mode.
+
+A (much more sophisticated) alternative is M-x ediff (see Ediff).
+
+The command M-x diff-backup compares a specified file with its most recent backup. If you specify the name of a backup file, diff-backup compares it with the source file that it is a backup of. In all other respects, this behaves like M-x diff.
+
+The command M-x diff-buffer-with-file compares a specified buffer with its corresponding file. This shows you what changes you would make to the file if you save the buffer.
+
+The command M-x compare-windows compares the text in the current window with that in the window that was the selected window before you selected the current one. (For more information about windows in Emacs, Windows.) Comparison starts at point in each window, after pushing each initial point value on the mark ring (see Mark Ring) in its respective buffer. Then it moves point forward in each window, one character at a time, until it reaches characters that don't match. Then the command exits.
+
+If point in the two windows is followed by non-matching text when the command starts, M-x compare-windows tries heuristically to advance up to matching text in the two windows, and then exits. So if you use M-x compare-windows repeatedly, each time it either skips one matching range or finds the start of another.
+
+With a numeric argument, compare-windows ignores changes in whitespace. If the variable compare-ignore-case is non-nil, the comparison ignores differences in case as well. If the variable compare-ignore-whitespace is non-nil, compare-windows by default ignores changes in whitespace, but a prefix argument turns that off for that single invocation of the command.
+
+You can use M-x smerge-mode to turn on Smerge mode, a minor mode for editing output from the diff3 program. This is typically the result of a failed merge from a version control system update outside VC, due to conflicting changes to a file. Smerge mode provides commands to resolve conflicts by selecting specific changes.
+
+See Emerge, for the Emerge facility, which provides a powerful interface for merging files. 
