@@ -32,7 +32,7 @@ There are two things you can do about this warning:
  '(moody-mode-line-height 28)
  '(org-agenda-files
    (quote
-    ("~/ncloud/org/atasks.org" "~/ncloud/org/checklisten.org" "~/ncloud/org/tickler.org" "~/ncloud/org/htasks.org" "~/ncloud/org/ziele.org" "~/ncloud/org/inbox.org" "~/ncloud/org/prsn/abschluss.org")))
+    ("~/ncloud/org/prsn/abschluss.org" "~/ncloud/org/atasks.org" "~/ncloud/org/checklisten.org" "~/ncloud/org/tickler.org" "~/ncloud/org/htasks.org" "~/ncloud/org/ziele.org" "~/ncloud/org/inbox.org")))
  '(org-default-priority 67)
  '(org-highest-priority 65)
  '(org-lowest-priority 68)
@@ -47,7 +47,7 @@ There are two things you can do about this warning:
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight))))
  '(package-selected-packages
    (quote
-    (moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
+    (ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
 ;; FONTS
 ;; -----
 (custom-set-faces
@@ -58,7 +58,8 @@ There are two things you can do about this warning:
  '(default ((t (:family "IBM Plex Mono" :foundry "outline" :slant normal :weight light :height 148 :width normal))))
  '(fixed-pitch ((t (:family "IBM Plex Mono" :foundry "outline" :slant normal :weight light :height 148 :width normal))))
  '(match ((t (:background "MistyRose1"))))
- '(org-archived ((t (:inherit shadow :height 0.8))))
+ '(org-archived ((t (:inherit shadow :foreground "honeydew3" :height 0.8))))
+ '(org-block ((t (:inherit shadow :foreground "dim gray"))))
  '(org-block-begin-line ((t (:inherit org-meta-line :foreground "gray" :height 0.5))))
  '(org-date ((t (:inherit fixed-pitch :foreground "Purple"))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :underline t))))

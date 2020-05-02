@@ -34,8 +34,7 @@
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
 * Org Mode Settings
-** General
-***  Keys and Shortcuts
+**  Keys and Shortcuts
 #+BEGIN_SRC emacs-lisp
 
  ;; Org-mode settings
@@ -66,7 +65,7 @@
   (interactive)
   (split-window-right)
   (org-tree-to-indirect-buffer)
-  (other-window -1))
+  (other-window 1))
  (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
 
 #+END_SRC
@@ -76,9 +75,11 @@
  (defun kahiro-switch-and-close ()
   "Split the window and switch to the other window in sequence."
   (interactive)
-  (kill-buffer)
-  (other-window -1)
-  (delete-other-windows))
+;;  (kill-buffer)
+  (delete-window)
+;;  (other-window -1)
+;;  (delete-other-windows)
+ )
 
  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
 #+END_SRC
@@ -225,18 +226,6 @@ information."
   #+END_SRC
 
 * Moving around
-**  Jump in the document
-   "Move cursor to last mark position of current buffer.
-   Call this repeatedly will cycle all positions in `mark-ring'.
-   URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
-   Version 2016-04-04"
- #+BEGIN_SRC emacs-lisp
-   (defun xah-pop-local-mark-ring ()
-     (interactive)
-     (set-mark-command t))
-   (global-set-key (kbd "<f8>") 'pop-global-mark)
-   (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
- #+END_SRC 
 
 ** RYO Key settings
 *** Colors
@@ -244,11 +233,11 @@ information."
 (setq ryo-modal-cursor-color "maroon")
 (setq ryo-modal-default-cursor-color "grey15")
 #+END_SRC
-*** Basics
+kk*** Basics
  #+BEGIN_SRC emacs-lisp
      (use-package ryo-modal
        :commands ryo-modal-mode
-       :bind ("C-SPC" . ryo-modal-mode)
+       :bind ("S-SPC" . ryo-modal-mode)
        :config
        (ryo-modal-keys
 	("," ryo-modal-repeat)
@@ -268,8 +257,8 @@ information."
 	("a" "C-a")
 	("I" "M-a")
 	("O" "M-e")
-	("E" "M-<")
-	("A" "M->")
+	("A" "M-<")
+	("E" "M->")
 	("0" "M-0")
 	("1" "M-1")
 	("2" "M-2")
@@ -300,9 +289,7 @@ information."
       ("k" org-previous-visible-heading)
       ))
     ("x"
-     (("s" save-some-buffers)
-     
-     ))
+     (("s" save-some-buffers)))
     ("g"
      (("a" org-agenda)
       ("g" switch-to-buffer)
@@ -310,7 +297,7 @@ information."
       ("f" kahiro-split-and-switch)
       ("k" kahiro-switch-and-close)
       ("t" org-sparse-tree)
-      ("q" undo)g
+      ("q" undo)
       ("w" delete-other-windows)))
     ("n" 
      (("s" org-narrow-to-subtree)
@@ -335,6 +322,8 @@ information."
 #+BEGIN_SRC emacs-lisp 
   (ryo-modal-keys
     ("ä" org-mark-subtree :then '(next-line count-words))
+    ("K" "C-k")
+    ("C" org-ctrl-c-ctrl-c)
     ("-" "C-_")
     ("y" "C-y")
     ("w" "M-w")
@@ -349,7 +338,19 @@ information."
     ("s" isearch-forward)
     ("r" isearch-backward)
   )
-#+END_SRC
+    #+END_SRC
+**  Jump in the document
+   "Move cursor to last mark position of current buffer.
+   Call this repeatedly will cycle all positions in `mark-ring'.
+   URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
+   Version 2016-04-04"
+ #+BEGIN_SRC emacs-lisp
+   (defun xah-pop-local-mark-ring ()
+     (interactive)
+     (set-mark-command t))
+   (global-set-key (kbd "<f8>") 'pop-global-mark)
+   (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
+ #+END_SRC 
 
 * Package
 ** COMMENT Enable Pakages from the MELPA Repositories
