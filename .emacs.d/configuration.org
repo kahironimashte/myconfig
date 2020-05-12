@@ -242,6 +242,7 @@ information."
 (setq ryo-modal-default-cursor-color "grey15")
 #+END_SRC
 *** Basics
+    + [2020-05-12 Di 13:36] Zahlen ausgeklammert, da ich sie kaum als Prefix brauche.
  #+BEGIN_SRC emacs-lisp
      (use-package ryo-modal
        :commands ryo-modal-mode
@@ -255,7 +256,6 @@ information."
 	;; First argument to ryo-modal-keys may be a list of keywords.
 	;; These keywords will be applied to all keybindings.
 	(:norepeat t)
-	("c" "C-c")
         ("u" universal-argument)
 	("h" backward-char)
 	("j" next-line)
@@ -267,24 +267,80 @@ information."
 	("O" "M-e")
 	("A" "M-<")
 	("E" "M->")
-	("0" "M-0")
-	("1" "M-1")
-	("2" "M-2")
-	("3" "M-3")
-	("4" "M-4")
-	("5" "M-5")
-	("6" "M-6")
-	("7" "M-7")
-	("8" "M-8")
-	("9" "M-9"))
+;;	("0" "M-0")
+;;	("1" "M-1")
+;;	("2" "M-2")
+;;	("3" "M-3")
+;;	("4" "M-4")
+;;	("5" "M-5")
+;;	("6" "M-6")
+;;	("7" "M-7")
+;;	("8" "M-8")
+;;	("9" "M-9")
+)
 
    )
  #+End_SRC
 
-*** Additional Keys
+*** Multiple Keys
+    Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
 #+BEGIN_SRC emacs-lisp 
  (ryo-modal-keys 
     ;;(("SPC" set-mark-command)))
+    ("c"
+     (("c" org-ctrl-c-ctrl-c)
+     ("a" org-attach)
+     ("b" org-backward-heading-same-level)
+     ("c" org-ctrl-c-ctrl-c)
+     ("d" org-deadline)
+     ("e" org-export-dispatch)
+     ("f" org-forward-heading-same-level)
+     ("j" org-goto)
+     ("k" org-kill-note-or-show-branches)
+     ("l" org-insert-link)
+     ("o" org-open-at-point)
+     ("q" org-set-tags-command)
+     ("r" org-reveal)
+     ("s" org-schedule)
+     ("t" org-todo)
+     ("w" org-refile)
+     ("*" org-list-make-subtree)
+     ("x"
+      (("RET" org-ctrl-c-ret)
+      ("y" org-evaluate-time-range)
+      ("z" org-add-note)
+      ("^" org-up-element)
+      ("_" org-down-element)
+      ("SPC" org-table-blank-field)
+      ("!" org-time-stamp-inactive)
+      ("#" org-update-statistics-cookies)
+      ("%" org-mark-ring-push)
+      ("&" org-mark-ring-goto)
+      ("'" org-edit-special)
+      ("*" org-ctrl-c-star)
+      ("+" org-table-sum)
+      ("," org-priority)
+      ("-" org-ctrl-c-minus)
+      ("." org-time-stamp)
+      ("/" org-sparse-tree)
+      (":" org-toggle-fixed-width)
+      (";" org-toggle-comment)
+      ("<" org-date-from-calendar)
+      ("=" org-table-eval-formula)
+      (">" org-goto-calendar)
+      ("?" org-table-field-info)
+      ("@" org-mark-subtree)
+      ("\[" org-agenda-file-to-front)
+      ("\\" org-match-sparse-tree)
+      ("\]" org-remove-file)
+      ("^" org-sort)
+      ("`" org-table-edit-field)
+      ("{" org-table-toggle-formula-debugger)
+      ("|" org-table-create-or-convert-from-region)
+      ("}" org-table-toggle-coordinate-overlays)
+      ("~" org-table-create-with-table.el)
+      ))
+     ))
     ("z"
      (("z" org-time-stamp)
       ("t" org-time-stamp-inactive)
@@ -326,7 +382,8 @@ information."
 (define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
 
-*** Neu
+*** Single Binds
+    Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
 #+BEGIN_SRC emacs-lisp 
   (ryo-modal-keys
     ("ä" org-mark-subtree :then '(next-line count-words))
