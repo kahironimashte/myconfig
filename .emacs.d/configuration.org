@@ -85,6 +85,12 @@
 
  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
 #+END_SRC
+** org-habit
+Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbringen, oder Sport treiben. Man kann es so einstellen, dass die Aufgabe nur alle x Tage auftaucht. 
+#+BEGIN_SRC emacs-lisp
+;; Den Habit-Graph auf Position (von links) bringen.
+(setq org-habit-graph-column 80)
+#+END_SRC
 ** Clocking / Aufwand
 #+BEGIN_SRC emacs-lisp
 ;; CLOCKING: global Effort estimate values
@@ -353,6 +359,17 @@ information."
    (global-set-key (kbd "<f8>") 'pop-global-mark)
    (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
  #+END_SRC 
+
+* Allgemeine Einstellungen
+
+** Sicherung
+
+*** Ordner für Autosave-Dateien
+Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei.org# oder datei.org~). Diese machen den Ordner unübersichtlich, können aber in einem eigenen Verzeichnis angesiedelt werden. 
+#+BEGIN_SRC emacs-lisp 
+(setq backup-directory-alist '(("." . "~/ncloud/_config/backups/")))
+#+END_SRC
+
 
 * Rechtschreibung
 #+BEGIN_SRC  emacs-lisp
