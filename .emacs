@@ -77,6 +77,7 @@ There are two things you can do about this warning:
  '(org-priority ((t (:height 1.1 :foreground "IndianRed4" :inherit font-lock-keyword-face :weight semi-bold))))
  '(org-tag ((t (:foreground "dark gray" :weight light :height 0.5))))
  '(org-todo ((t (:foreground "gray34" :weight semi-bold :family "IBM Plex Sans Condensed"))))
+ '(org-verbatim ((t (:inherit shadow :foreground "honeydew4"))))
  '(secondary-selection ((t (:background "misty rose"))))
  '(shadow ((t (:foreground "honeydew2"))))
  '(variable-pitch ((t (:family "IBM Plex Sans Text" :height 152 :weight normal)))))
