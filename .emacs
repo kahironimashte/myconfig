@@ -14,6 +14,7 @@ There are two things you can do about this warning:
   ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   )
 (package-initialize)
+(require 'org)
 
 
 
@@ -47,7 +48,7 @@ There are two things you can do about this warning:
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight))))
  '(package-selected-packages
    (quote
-    (ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
+    (yafolding steam ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
 ;; FONTS
 ;; -----
 (custom-set-faces
@@ -61,7 +62,7 @@ There are two things you can do about this warning:
  '(org-archived ((t (:inherit shadow :foreground "honeydew3" :height 0.8))))
  '(org-block ((t (:inherit shadow :foreground "dim gray"))))
  '(org-block-begin-line ((t (:inherit org-meta-line :foreground "gray" :height 0.5))))
- '(org-date ((t (:inherit fixed-pitch :foreground "Purple"))))
+ '(org-date ((t (:inherit fixed-pitch :foreground "Purple" :height 0.8))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :underline t))))
  '(org-done ((t (:inherit org-todo :foreground "honeydew2"))))
  '(org-ellipsis ((t (:foreground "turquoise1" :underline nil :height 0.65))))
@@ -75,6 +76,8 @@ There are two things you can do about this warning:
  '(org-level-8 ((t (:inherit org-level-4))))
  '(org-list-dt ((t (:foreground "gray30" :slant italic))))
  '(org-priority ((t (:height 1.1 :foreground "IndianRed4" :inherit font-lock-keyword-face :weight semi-bold))))
+ '(org-property-value ((t (:height 0.8))) t)
+ '(org-special-keyword ((t (:inherit fixed-pitch :foreground "dim gray" :height 0.8))))
  '(org-tag ((t (:foreground "dark gray" :weight light :height 0.5))))
  '(org-todo ((t (:foreground "gray34" :weight semi-bold :family "IBM Plex Sans Condensed"))))
  '(org-verbatim ((t (:inherit shadow :foreground "honeydew4"))))
@@ -86,5 +89,4 @@ There are two things you can do about this warning:
 
 
 ;; Customisation from FILE
-(require 'org)
 (org-babel-load-file "~/.emacs.d/configuration.org")
