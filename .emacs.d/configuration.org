@@ -97,11 +97,11 @@
 
  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
 #+END_SRC
-** org-habit
+** org-habit :local:
 Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbringen, oder Sport treiben. Man kann es so einstellen, dass die Aufgabe nur alle x Tage auftaucht. 
 #+BEGIN_SRC emacs-lisp
 ;; Den Habit-Graph auf Position (von links) bringen.
-(setq org-habit-graph-column 80)
+(setq org-habit-graph-column 50)
 #+END_SRC
 ** Clocking / Aufwand
 #+BEGIN_SRC emacs-lisp
