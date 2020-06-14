@@ -219,7 +219,7 @@ information."
 (setq org-hide-leading-stars t)
 #+END_SRC
 ** Use Org-Bulles
-  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
+   Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
   #+BEGIN_SRC emacs-lisp
   (require 'org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -256,8 +256,6 @@ information."
 #+END_SRC
 
 * Bewegen
-
-
 **  Jump in the document
    "Move cursor to last mark position of current buffer.
    Call this repeatedly will cycle all positions in `mark-ring'.
@@ -401,8 +399,8 @@ information."
       ("q" undo)
       ("l" xah-pop-local-mark-ring)
       ("L" pop-global-mark)
-      ("h" ess/org-show-just-me)
-      ("j" delete-other-windows)))
+      ("j" ess/org-show-just-me)
+      ("h" delete-other-windows)))
     ("n" 
      (("s" org-narrow-to-subtree)
       ("w" widen)
