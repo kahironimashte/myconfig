@@ -36,18 +36,6 @@
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
 * Org Mode Settings
-** Fokus
-*** COMMENT Alles einklappen außer aktuellen Subtree
-#+BEGIN_SRC emacs-lisp
-(defun ess/org-show-just-me (&rest _)
-  "Fold all other trees, then show direct children of current org-heading."
-  (interactive)
-  (org-overview)
-  (org-reveal)
-  (org-show-children)
-)
-(add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
-#+END_SRC
 **  Keys and Shortcuts
 #+BEGIN_SRC emacs-lisp
 
@@ -244,8 +232,44 @@ information."
  #+BEGIN_SRC emacs-lisp
  (setq org-ellipsis "⤵")
   #+END_SRC
+* Fokus 
+** COMMENT Apply :Archive: Tag to DONE Tasks
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-state-tags-triggers
+  (quote 
+  (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
+   ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
+  )))
+#+END_SRC
+** Alles einklappen außer aktuellen Subtree
+  - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
+#+BEGIN_SRC emacs-lisp
+(defun ess/org-show-just-me (&rest _)
+  "Fold all other trees, then show direct children of current org-heading."
+  (interactive)
+  (org-overview)
+  (org-reveal)
+  (org-show-children)
+)
+(add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
 
-* Moving around
+#+END_SRC
+
+* Bewegen
+
+
+**  Jump in the document
+   "Move cursor to last mark position of current buffer.
+   Call this repeatedly will cycle all positions in `mark-ring'.
+   URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
+   Version 2016-04-04"
+ #+BEGIN_SRC emacs-lisp
+   (defun xah-pop-local-mark-ring ()
+     (interactive)
+     (set-mark-command t))
+   (global-set-key (kbd "<f8>") 'pop-global-mark)
+   (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
+ #+END_SRC 
 
 ** RYO Key settings
 *** Colors
@@ -375,7 +399,10 @@ information."
       ("k" kahiro-switch-and-close)
       ("t" org-sparse-tree)
       ("q" undo)
-      ("w" delete-other-windows)))
+      ("l" xah-pop-local-mark-ring)
+      ("L" pop-global-mark)
+      ("h" ess/org-show-just-me)
+      ("j" delete-other-windows)))
     ("n" 
      (("s" org-narrow-to-subtree)
       ("w" widen)
@@ -537,20 +564,6 @@ information."
     )
 #+END_SRC
 
-
-**  Jump in the document
-   "Move cursor to last mark position of current buffer.
-   Call this repeatedly will cycle all positions in `mark-ring'.
-   URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
-   Version 2016-04-04"
- #+BEGIN_SRC emacs-lisp
-   (defun xah-pop-local-mark-ring ()
-     (interactive)
-     (set-mark-command t))
-   (global-set-key (kbd "<f8>") 'pop-global-mark)
-   (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
- #+END_SRC 
-
 * Allgemeine Einstellungen
 
 ** Sicherung
@@ -602,15 +615,6 @@ Usage
 In org-mode, you can click links in order to run your games. This will bring up a pop-up, asking if it is safe to run the lisp-code. If this annoys you, put this line at the top of your .org-file: #-*- org-confirm-elisp-link-function: nil; -*-
 
 If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
-* Fokus
-** COMMENT Apply :Archive: Tag to DONE Tasks
-#+BEGIN_SRC emacs-lisp
-(setq org-todo-state-tags-triggers
-  (quote 
-  (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
-   ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
-  )))
-#+END_SRC
 * Appearance :appearance:
 ** Style Tags based on Regular Expressions :one:
 *** Code
