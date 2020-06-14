@@ -36,6 +36,18 @@
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
 * Org Mode Settings
+** Fokus
+*** COMMENT Alles einklappen außer aktuellen Subtree
+#+BEGIN_SRC emacs-lisp
+(defun ess/org-show-just-me (&rest _)
+  "Fold all other trees, then show direct children of current org-heading."
+  (interactive)
+  (org-overview)
+  (org-reveal)
+  (org-show-children)
+)
+(add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
+#+END_SRC
 **  Keys and Shortcuts
 #+BEGIN_SRC emacs-lisp
 
@@ -352,7 +364,9 @@ information."
       ("k" org-previous-visible-heading)
       ))
     ("x"
-     (("s" save-some-buffers)))
+     (("s" save-some-buffers)
+      ("f" find-file)
+     ))
     ("g"
      (("a" org-agenda)
       ("g" switch-to-buffer)
@@ -375,7 +389,7 @@ information."
       ("x" org-clock-in-last)
       ("q" org-clock-cancel)
       ("d" org-clock-display)
-      ("t" org-set-tags-command))
+      ("t" org-todo))
     )) 
 
 (define-key universal-argument-map (kbd "u") 'universal-argument-more)
@@ -388,7 +402,7 @@ information."
     ("ä" org-mark-subtree :then '(next-line count-words))
     ("K" "C-k")
     ("C" org-ctrl-c-ctrl-c)
-    ("-" "C-_")
+    ("_" "C-_")
     ("y" "C-y")
     ("w" "M-w")
     ("W" "C-w")
@@ -403,6 +417,127 @@ information."
     ("r" isearch-backward)
   )
     #+END_SRC
+
+*** Org-Agenda-Mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-agenda-mode-hook 'ryo-modal-mode)
+    (ryo-modal-major-mode-keys
+     'org-agenda-mode
+	    ("x"
+	     (("s" org-save-all-org-buffers)
+	      ("w" org-agenda-write)
+	      ("u" org-agenda-undo)))
+	    ("t" org-agenda-todo)
+	    ("h" backward-char)
+	    ("j" next-line)
+	    ("k" previous-line)
+	    ("l" forward-char)
+	    ("n" org-agenda-next-item)
+	    ("p" org-agenda-previous-item)
+	    ("N" org-agenda-next-date-line)
+	    ("P" org-agenda-previous-date-line)
+	    ("c"
+	     (("d" org-agenda-deadline)
+	      ("n" org-agenda-next-date-line)
+	      ("o" org-agenda-open-link)
+	      ("p" org-agenda-previous-date-line)
+	      ("q" org-agenda-set-tags)
+	      ("s" org-agenda-schedule)
+	      ("t" org-agenda-todo)
+	      ("w" org-agenda-refile)
+	      ("z" org-agenda-add-note)
+	      ("$" org-agenda-archive)
+	      ("," org-agenda-priority)
+	      ("c" org-agenda-goto-calendar)
+     	      ("x"
+     	       (("a" org-agenda-archive-default)
+     	        ("c" org-agenda-columns)
+       	   ;;   ("e" org-clock-modify-effort-estimate)
+     	        ("TAB" org-agenda-clock-in)
+     	        ("j" org-clock-goto)
+     	        ("o" org-agenda-clock-out)
+     	        ("s" org-agenda-archive)
+     	        ("x" org-agenda-clock-cancel)
+     	        ("!" org-reload)
+     	        ("<" org-agenda-set-restriction-lock-from-agenda)
+     	        (">" org-agenda-remove-restriction-lock)
+     	        ("A" org-agenda-archive-to-archive-sibling)
+     	        ("a" org-agenda-toggle-archive-tag)
+     	        ("b" org-agenda-tree-to-indirect-buffer)
+     	        ("e" org-agenda-set-effort)
+     	        ("p" org-agenda-set-property)
+     	        ("<down>" org-agenda-priority-down)
+     	        ("<left>" org-agenda-do-date-earlier)
+     	        ("<right>" org-agenda-do-date-later)
+     	        ("<up>" org-agenda-priority-up))
+     	       )))
+	    ("SPC" org-agenda-show-and-scroll-up)
+	    ("!" org-agenda-toggle-deadlines)
+	    ("#" org-agenda-dim-blocked-tasks)
+	    ("$" org-agenda-archive)
+	    ("%" org-agenda-bulk-mark-regexp)
+	    ("*" org-agenda-bulk-mark-all)
+	    ("+" org-agenda-priority-up)
+	    ("," org-agenda-priority)
+	    ("-" org-agenda-priority-down)
+	    ("." org-agenda-goto-today)
+	    ("/" org-agenda-filter-by-tag)
+	    (":" org-agenda-set-tags)
+	    (";" org-timer-set-timer)
+	    ("<" org-agenda-filter-by-category)
+	    ("=" org-agenda-filter-by-regexp)
+	    (">" org-agenda-date-prompt)
+	    ("?" org-agenda-show-the-flagging-note)
+	    ("A" org-agenda-append-agenda)
+	    ("B" org-agenda-bulk-action)
+	    ("C" org-agenda-convert-date)
+	    ("D" org-agenda-toggle-diary)
+	    ("E" org-agenda-entry-text-mode)
+	    ("F" org-agenda-follow-mode)
+	    ("G" org-agenda-toggle-time-grid)
+	    ("I" org-agenda-clock-in)
+	    ("M" org-agenda-phases-of-moon)
+	    ("O" org-agenda-clock-out)
+	    ("Q" org-agenda-Quit)
+	    ("R" org-agenda-clockreport-mode)
+	    ("S" org-agenda-sunrise-sunset)
+	    ("T" org-agenda-show-tags)
+	    ("U" org-agenda-bulk-unmark-all)
+	    ("X" org-agenda-clock-cancel)
+	    ("[" org-agenda-manipulate-query-add)
+	    ("]" org-agenda-manipulate-query-subtract)
+	    ("^" org-agenda-filter-by-top-headline)
+	    ("_" org-agenda-filter-by-effort)
+	    ("a" org-agenda-archive-default-with-confirmation)
+	    ("b" org-agenda-earlier)
+	    ("d" org-agenda-day-view)
+	    ("e" org-agenda-set-effort)
+	    ("f" org-agenda-later)
+	    ("g" org-agenda-redo-all)
+	    ("H" org-agenda-holidays)
+	    ("J" org-agenda-goto-date)
+	    ("K" org-agenda-capture)
+	    ("L" org-agenda-log-mode)
+	    ("m" org-agenda-bulk-mark)
+	    ("o" delete-other-windows)
+	    ("q" org-agenda-quit)
+	    ("r" org-agenda-redo)
+	    ("s" org-save-all-org-buffers)
+	    ("t" org-agenda-todo)
+	    ("u" org-agenda-bulk-unmark)
+	    ("v" org-agenda-view-mode-dispatch)
+	    ("w" org-agenda-week-view)
+	    ("x" org-agenda-exit)
+	    ("y" org-agenda-year-view)
+	    ("z" org-agenda-add-note)
+	    ("{" org-agenda-manipulate-query-add-re)
+	    ("|" org-agenda-filter-remove-all)
+	    ("}" org-agenda-manipulate-query-subtract-re)
+	    ("~" org-agenda-limit-interactively)
+    )
+#+END_SRC
+
+
 **  Jump in the document
    "Move cursor to last mark position of current buffer.
    Call this repeatedly will cycle all positions in `mark-ring'.
@@ -452,8 +587,23 @@ This initializes all packages.
 ;; You may delete these explanatory comments.
 #+BEGIN_SRC emacs-lisp(package-initialize)
 #+END_SRC
+** Steam Games list
+#+BEGIN_SRC emacs-lisp
+(setq steam-username "mec4nic") ;; Replace Username with your steam username
+#+END_SRC
+steam.el can not get a list of your games unless your Steam profile is public. Visit https://steakmcommunity.com/id/username/edit/settings (where username is replaced with your Steam username). Set your profile to Public and make sure that Game details is set to Public.
+Usage
+
+    To launch a game: M-x steam-launch
+    To insert your game list in org-mode format: M-x steam-insert-org-text
+    Download logotypes for your games, and insert them into org-mode: M-x steam-insert-org-images
+    To update your game list (if you’ve installed new games without restarting Emacs): M-x steam-get-games
+
+In org-mode, you can click links in order to run your games. This will bring up a pop-up, asking if it is safe to run the lisp-code. If this annoys you, put this line at the top of your .org-file: #-*- org-confirm-elisp-link-function: nil; -*-
+
+If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
 * Fokus
-** Apply :Archive: Tag to DONE Tasks
+** COMMENT Apply :Archive: Tag to DONE Tasks
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-state-tags-triggers
   (quote 
