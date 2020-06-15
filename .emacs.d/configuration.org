@@ -538,7 +538,7 @@ information."
 	    ("d" org-agenda-day-view)
 	    ("e" org-agenda-set-effort)
 	    ("f" org-agenda-later)
-	    ("g" org-agenda-redo-all)
+;;	    ("g" org-agenda-redo-all) ;; führt zu Konflikten mit switch-buffer
 	    ("H" org-agenda-holidays)
 	    ("J" org-agenda-goto-date)
 	    ("K" org-agenda-capture)
