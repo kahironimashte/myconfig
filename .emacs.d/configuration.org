@@ -254,7 +254,14 @@ information."
 (add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
 
 #+END_SRC
-
+** Nur Todos direkt unter der Überschrift anzeigen
+#+BEGIN_SRC emacs-lisp
+(defun my-sparse-subtree-todo-search ()
+  (interactive)
+  (org-narrow-to-subtree)
+  (let ((level (org-current-level)))
+    (org-match-sparse-tree  t (format "+LEVEL=%d" (1+ level)))))
+#+END_SRC
 * Bewegen
 **  Jump in the document
    "Move cursor to last mark position of current buffer.
@@ -321,6 +328,10 @@ information."
 #+BEGIN_SRC emacs-lisp 
  (ryo-modal-keys 
     ;;(("SPC" set-mark-command)))
+    ("f"
+     (
+     ("e" org-emphasize)
+     ))
     ("c"
      (
      ("c" org-capture)
