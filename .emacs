@@ -1,11 +1,11 @@
-;; Configure package.el to include MELPA.
+﻿;; Configure package.el to include MELPA.
 (require 'package)
 ;;(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 ;;(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 
-;; Ensure that use-package is installed.
+;; ALT -- use-package automatisch installieren, wenn noch nicht vorhanden
 ;;
 ;; If use-package isn't already installed, it's extremely likely that this is a
 ;; fresh installation! So we'll want to update the package repository and
@@ -14,13 +14,16 @@
 ;;  (package-refresh-contents)
 ;;  (package-install 'use-package))
 
-
+;; ALT --- use-package von der lokalen Installation ziehen
+;;
 ;; USE-PACKAGE-PLUGIN
 ;; This is only needed once, near the top of the file
-(eval-when-compile
-  ;; Following line is not needed if use-package.el is in ~/.emacs.d
-  (add-to-list 'load-path "c:/Software/Emacs/Plugins/use-package-master")
-  (require 'use-package))
+;;(eval-when-compile
+;; Following line is not needed if use-package.el is in ~/.emacs.d
+;;  (add-to-list 'load-path "c:/Software/Emacs/Plugins/use-package-master")
+;;  (require 'use-package))
+
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -31,7 +34,7 @@
  '(font-use-system-font t)
  '(org-agenda-files
    (quote
-    ("q:/org/atasks.org" "q:/org/tickler.org" "q:/org/htasks.org" "q:/org/ziele.org" "q:/org/inbox.org" "q:/org/prsn/abschluss.org")))
+    ("c:/org/atasks.org" "c:/org/tickler.org" "c:/org/ziele.org" "c:/org/inbox.org" "c:/org/prsn/abschluss.org")))
  '(org-default-priority 67)
  '(org-hide-leading-stars t)
  '(org-highest-priority 65)
@@ -44,7 +47,9 @@
      (68 :inherit org-priority :family "IBM Plex Mono Light" :weight light))))
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
- '(package-selected-packages (quote (org-bullets use-package ryo-modal org spaceline))))
+ '(package-selected-packages
+   (quote
+    (org-bookmark-heading org-recur which-key org-bullets use-package ryo-modal org spaceline))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -70,16 +75,18 @@
  '(org-level-6 ((t (:inherit org-level-4))))
  '(org-level-7 ((t (:inherit org-level-4))))
  '(org-level-8 ((t (:inherit org-level-4))))
+ '(org-link ((t (:inherit fixed-pitch :foreground "SlateBlue3" :height 1.2))))
  '(org-list-dt ((t (:foreground "gray25" :slant italic))))
  '(org-priority ((t (:inherit font-lock-keyword-face :foreground "gray34" :family "IBM Plex Mono" :weight normal))))
  '(org-property-value ((t (:inherit org-special-keyword))) t)
+ '(org-recur ((t (:inherit org-tag :height 1.6))))
  '(org-scheduled ((t (:inherit org-scheduled-today))))
  '(org-scheduled-previously ((t (:foreground "IndianRed3"))))
  '(org-scheduled-today ((t (:foreground "SeaGreen4"))))
  '(org-tag ((t (:family "Calibri" :foreground "dark gray" :weight normal :height 0.5 :antialias standard))))
  '(org-time-grid ((t (:foreground "PeachPuff4"))))
  '(org-todo ((t (:foreground "IndianRed4" :weight semibold :family "IBM Plex Sans Condensed SemiBold" :antialias subpixel))))
- '(secondary-selection ((t (:background "PaleVioletRed1"))))
+ '(secondary-selection ((t (:background "LightPink"))))
  '(shadow ((t (:foreground "honeydew3"))))
  '(variable-pitch ((t (:family "IBM Plex Sans Text" :height 152 :weight normal :antialias subpixel)))))
 
@@ -147,7 +154,8 @@
   (interactive)
   (set-mark-command t))
 (global-set-key (kbd "<f5>") 'pop-global-mark)
-(global-set-key (kbd "<f6>") 'xah-pop-local-mark-ring) 
+(global-set-key (kbd "<f6>") 'xah-pop-local-mark-ring)
+
 
 
 ;;  #######  ########   ######   
@@ -181,7 +189,7 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key (kbd "C-ä") 'count-words) 
-(global-set-key (kbd "C-+") 'org-toggle-timestamp-type)
+(global-set-key (kbd "C-ß") 'org-toggle-timestamp-type)
 (global-font-lock-mode 1)
 ;; (global-set-key (kbd "<apps>") 'other-window)
 (global-set-key (kbd "<f7>") 'switch-to-buffer)
@@ -194,21 +202,22 @@
 ;;-------------------
 (setq org-capture-templates
   '(
-    ("t" "Todo [inbox]" entry (file+headline "q:/org/inbox.org" "Tasks") "* TODO %i%?")
-    ("r" "Todo w Schedule [inbox]" entry (file+headline "q:/org/inbox.org" "Tasks") "** TODO %^{Titel} \n SCHEDULED: %^{Startzeitpunkt}t")
-    ("d" "Todo w Deadline [inbox]" entry (file+headline "q:/org/inbox.org" "Tasks") "** TODO %^{Titel} \n DEADLINE: %^{Faellig bis}t")
+    ("t" "Todo [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks") "* TODO %i%?")
+    ("r" "Todo w Schedule [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks") "** TODO %^{Titel} \n SCHEDULED: %^{Startzeitpunkt}t")
+    ("d" "Todo w Deadline [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks") "** TODO %^{Titel} \n DEADLINE: %^{Faellig bis}t")
     ("n" "Todo now [inbox]" entry (file+headline "q:org/inbox.org" "Tasks") "* TODO %i%? \n SCHEDULED: %T")
-    ("z" "Ziele (inbox-Tree)" entry (file+headline "q:/org/ziele.org" "Inbox") "* TODO %i%?")
+    ("z" "Ziele (inbox-Tree)" entry (file+headline "c:/org/ziele.org" "Inbox") "* TODO %i%?")
     ("s" "prefix für someday-Tasks")
-    ("sa" "Todo [someday Arbeit]" entry (file+headline "q:/org/asomeday.org" "Inbox") "* TODO %i%?")
-    ("sh" "Todo [someday Home]" entry (file+headline "q:/org/hsomeday.org" "Inbox") "* TODO %i%?")
-    ("T" "Tickler" entry (file+headline "q:/org/tickler.org" "Tickler") "** %^{Title} \n %^t")
-    ("R" "Scheduled Tickler" entry (file+headline "q:/org/tickler.org" "Tickler") "** %^{Title} \n SCHEDULED: %^t")
+    ("sa" "Todo [someday Arbeit]" entry (file+headline "c:/org/asomeday.org" "Inbox") "* TODO %i%?")
+    ("sh" "Todo [someday Home]" entry (file+headline "c:/org/hsomeday.org" "Inbox") "* TODO %i%?")
+    ("T" "Tickler" entry (file+headline "c:/org/tickler.org" "Tickler") "** %^{Title} \n %^t")
+    ("R" "Scheduled Tickler" entry (file+headline "c:/org/tickler.org" "Tickler") "** %^{Title} \n SCHEDULED: %^t")
  ))
 
 ;; setting Refile Target
 (setq org-refile-targets '((org-agenda-files :maxlevel . 1)
-			   ("q:/org/asomeday.org" :maxlevel . 1))) ;; include all Agenda-Files and all Heading up to ** 
+			   ("c:/org/asomeday.org" :maxlevel . 1)
+			   ("c:/org/atasks.org" :maxlevel . 2))) ;; include all Agenda-Files and all Heading up to ** 
    (setq org-refile-allow-creating-parent-nodes 'confirm)        ;;allow creating nodes. Refile has to end with /newheadingname
 
 ;; Make Org beautiful
@@ -250,6 +259,12 @@
 ;; ##     ##  ######   ######## ##    ## ########  ##     ## 
 ;; Agenda-Mode
 ;;------------
+
+;; Kein visual-line-mode in Agendas - Lange Zeilen werden nicht umbebrochen
+(add-hook 'org-agenda-mode-hook
+          (lambda ()
+            (visual-line-mode -1)
+            (toggle-truncate-lines 1)))
 
 ;; Clock-Report-View auf Level 3
 (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 3))
@@ -420,14 +435,14 @@
 
 ;; ELECTRIC PAIR MODE (BUILT IN)
 ;; ----------------------------
-(electric-pair-mode 1)
+;; (electric-pair-mode 1)
 
-(defvar org-electric-pairs '((?\* . ?\*) (?/ . ?/) (?= . ?=)
-                             (?\_ . ?\_) (?~ . ?~) (?+ . ?+)) "Electric pairs for org-mode.")
+;; (defvar org-electric-pairs '((?\* . ?\*) (?/ . ?/) (?= . ?=)
+;;                              (?\_ . ?\_) (?~ . ?~) (?+ . ?+)) "Electric pairs for org-mode.")
 
-(defun org-add-electric-pairs ()
-  (setq-local electric-pair-pairs (append electric-pair-pairs org-electric-pairs))
-  (setq-local electric-pair-text-pairs electric-pair-pairs))
+;; (defun org-add-electric-pairs ()
+;;   (setq-local electric-pair-pairs (append electric-pair-pairs org-electric-pairs))
+;;   (setq-local electric-pair-text-pairs electric-pair-pairs))
 
 ;; (add-hook 'org-mode-hook 'org-add-electric-pairs)
 
