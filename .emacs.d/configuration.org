@@ -1,7 +1,681 @@
 #+TITLE: Org-Config
+* Fokus 
+** Alles einklappen außer aktuellen Subtree
+  - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
+#+BEGIN_SRC emacs-lisp
+(defun ess/org-show-just-me (&rest _)
+  "Fold all other trees, then show direct children of current org-heading."
+  (interactive)
+  (org-overview)
+  (org-reveal)
+  (org-show-children)
+)
+(add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
 
+#+END_SRC
+** Split and switch
+*** Split und Switch
+     - Gibt eine Schnelle übersicht in einem halben Fenster. 
+#+BEGIN_SRC emacs-lisp
+ (defun kahiro-split-and-switch ()
+  "Split the window and switch to the other window in sequence."
+  (interactive)
+  (split-window-below)
+  (org-tree-to-indirect-buffer)
+  (other-window -1))
+ (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
+
+#+END_SRC
+*** Switch und Close
+     - Kehrt wieder zum Übersichtsbuffer zurück. 
+#+BEGIN_SRC emacs-lisp
+ (defun kahiro-switch-and-close ()
+  "Split the window and switch to the other window in sequence."
+  (interactive)
+  (kill-buffer)
+  (other-window -1)
+  (delete-other-windows))
+
+ (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
+#+END_SRC
+
+** Todos eines Subtrees
+#+BEGIN_SRC emacs-lisp
+
+(defun kahiro-show-todos-in-subtree ()
+   "Narrow to a subtree and show only headings with TODO keywords"
+   (interactive)
+   (org-narrow-to-subtree)
+   (org-show-todo-tree nil)
+   (org-ctrl-c-ctrl-c))
+
+(defun kahiro-show-NEXT-in-subtree ()
+   "Narrow to a subtree and show only headings with TODO keywords"
+   (interactive)
+   (org-narrow-to-subtree)
+   (org-show-todo-tree 3)
+   (org-ctrl-c-ctrl-c))
+
+(defun kahiro-show-PLAN-in-subtree ()
+   "Narrow to a subtree and show only headings with TODO keywords"
+   (interactive)
+   (org-narrow-to-subtree)
+   (org-show-todo-tree 1)
+   (org-ctrl-c-ctrl-c))
+
+#+END_SRC
+** COMMENT Apply :Archive: Tag to DONE Tasks
+deaktiviert weil nervig.
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-state-tags-triggers
+  (quote 
+  (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
+   ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
+  )))
+#+END_SRC
+* Moving around
+**  Jump in the document
+   "Move cursor to last mark position of current buffer.
+   Call this repeatedly will cycle all positions in `mark-ring'.
+   URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
+   Version 2016-04-04"
+ #+BEGIN_SRC emacs-lisp
+   (defun xah-pop-local-mark-ring ()
+     (interactive)
+     (set-mark-command t))
+   (global-set-key (kbd "<f8>") 'pop-global-mark)
+   (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
+ #+END_SRC 
+** RYO Key settings
+*** Colors
+#+BEGIN_SRC emacs-lisp
+(setq ryo-modal-cursor-color "maroon")
+(setq ryo-modal-default-cursor-color "grey15")
+#+END_SRC
+*** Basics
+    + [2020-05-12 Di 13:36] Zahlen ausgeklammert, da ich sie kaum als Prefix brauche.
+ #+BEGIN_SRC emacs-lisp
+     (use-package ryo-modal
+       :commands ryo-modal-mode
+       :bind ("S-SPC" . ryo-modal-mode)
+       :config
+       (ryo-modal-keys
+	("," ryo-modal-repeat)
+	("q" ryo-modal-mode))
+	
+       (ryo-modal-keys
+	;; First argument to ryo-modal-keys may be a list of keywords.
+	;; These keywords will be applied to all keybindings.
+	(:norepeat t)
+        ("u" universal-argument)
+	("h" backward-char)
+	("j" next-line)
+	("k" previous-line)
+	("l" forward-char)
+	("e" "C-e")
+	("a" "C-a")
+	("I" "M-a")
+	("O" "M-e")
+	("A" "M-<")
+	("E" "M->")
+;;	("0" "M-0")
+;;	("1" "M-1")
+;;	("2" "M-2")
+;;	("3" "M-3")
+;;	("4" "M-4")
+;;	("5" "M-5")
+;;	("6" "M-6")
+;;	("7" "M-7")
+;;	("8" "M-8")
+;;	("9" "M-9")
+)
+
+   )
+ #+End_SRC
+
+*** Multiple Keys
+    Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
+#+BEGIN_SRC emacs-lisp 
+ (ryo-modal-keys 
+    ;;(("SPC" set-mark-command)))
+    ("b"
+     (
+     ("b" bookmark-jump)
+     ("m" bookmark-set)
+     ("l" bookmark-bmenu-list)
+     ("s" bookmark-save)
+     ("o" bookmark-jump-other-window)
+     ))
+    ("c"
+     (
+     ("c" org-capture)
+     ("a" org-attach)
+     ("b" org-backward-heading-same-level)
+     ("C" org-ctrl-c-ctrl-c)
+     ("d" org-deadline)
+     ("e" org-export-dispatch)
+     ("f" org-forward-heading-same-level)
+     ("j" org-goto)
+     ("k" org-kill-note-or-show-branches)
+     ("l" org-insert-link)
+     ("o" org-open-at-point)
+     ("q" org-set-tags-command)
+     ("r" org-reveal)
+     ("s" org-schedule)
+     ("t" org-todo)
+     ("w" org-refile)
+     ("*" org-list-make-subtree)
+     ("RET" org-ctrl-c-ret)
+     ("y" org-evaluate-time-range)
+     ("z" org-add-note)
+     ("^" org-up-element)
+     ("_" org-down-element)
+     ("SPC" org-table-blank-field)
+     ("!" org-time-stamp-inactive)
+     ("#" org-update-statistics-cookies)
+     ("%" org-mark-ring-push)
+     ("&" org-mark-ring-goto)
+     ("'" org-edit-special)
+     ("*" org-ctrl-c-star)
+     ("+" org-table-sum)
+     ("," org-priority)
+     ("-" org-ctrl-c-minus)
+     ("." org-time-stamp)
+     ("/" org-sparse-tree)
+     (":" org-toggle-fixed-width)
+     (";" org-toggle-comment)
+     ("<" org-date-from-calendar)
+     ("=" org-table-eval-formula)
+     (">" org-goto-calendar)
+     ("?" org-table-field-info)
+     ("@" org-mark-subtree)
+     ("\[" org-agenda-file-to-front)
+     ("\\" org-match-sparse-tree)
+     ("\]" org-remove-file)
+     ("^" org-sort)
+     ("`" org-table-edit-field)
+     ("{" org-table-toggle-formula-debugger)
+     ("|" org-table-create-or-convert-from-region)
+     ("}" org-table-toggle-coordinate-overlays)
+     ("~" org-table-create-with-table.el)
+     ))
+    ("z"
+     (("z" org-time-stamp)
+      ("t" org-time-stamp-inactive)
+      ("c" org-toggle-timestamp-type)))
+    ("d"
+     (("u" outline-up-heading)
+      ("l" org-forward-heading-same-level)
+      ("h" org-backward-heading-same-level)
+      ("j" org-next-visible-heading)
+      ("k" org-previous-visible-heading)
+      ))
+    ("x"
+     (("s" save-some-buffers)
+      ("f" find-file)
+     ))
+    ("g"
+     (("a" org-agenda)
+      ("g" switch-to-buffer)
+      ("o" other-window)
+      ("f" kahiro-split-and-switch)
+      ("k" kahiro-switch-and-close)
+      ("t" org-sparse-tree)
+      ("q" undo)
+      ("l" xah-pop-local-mark-ring)
+      ("L" pop-global-mark)
+      ("j" ess/org-show-just-me)
+      ("h" delete-other-windows)))
+    ("n" 
+     (("s" org-narrow-to-subtree)
+      ("w" widen)
+      ("t" kahiro-show-todos-in-subtree) 
+      ("n" kahiro-show-NEXT-in-subtree) 
+      ("j" ess/org-show-just-me)
+      ("p" kahiro-show-PLAN-in-subtree)
+;;      ("x" org-agenda-set-restriction-lock)
+;;      ("y" org-agenda-remove-restriction-lock)
+      ))  
+    ("t"
+     (("i" org-clock-in)
+      ("o" org-clock-out)
+      ("j" org-clock-goto)
+      ("x" org-clock-in-last)
+      ("q" org-clock-cancel)
+      ("d" org-clock-display)
+      ("t" org-todo))
+    )) 
+
+(define-key universal-argument-map (kbd "u") 'universal-argument-more)
+#+END_SRC
+
+*** Single Binds
+    Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
+#+BEGIN_SRC emacs-lisp 
+  (ryo-modal-keys
+    ("ä" org-mark-subtree :then '(next-line count-words))
+    ("K" "C-k")
+    ("C" org-ctrl-c-ctrl-c)
+    ("_" "C-_")
+    ("y" "C-y")
+    ("w" "M-w")
+    ("W" "C-w")
+    ("L" "C-l")
+    ("v" "C-v")
+    ("V" "M-v")
+    ("i" "M-b")
+    ("o" "M-f")
+    ("SPC" org-cycle)
+    ("ö" set-mark-command)
+    ("s" isearch-forward)
+    ("r" isearch-backward)
+  )
+    #+END_SRC
+
+*** Org-Agenda-Mode
+#+BEGIN_SRC emacs-lisp
+(require 'org-agenda)
+(add-hook 'org-agenda-mode-hook 'ryo-modal-mode)
+    (ryo-modal-major-mode-keys
+     'org-agenda-mode
+	    ("x"
+	     (("s" org-save-all-org-buffers)
+	      ("w" org-agenda-write)
+	      ("u" org-agenda-undo)))
+	    ("t" org-agenda-todo)
+	    ("h" backward-char)
+	    ("j" next-line)
+	    ("k" previous-line)
+	    ("l" forward-char)
+	    ("n" org-agenda-next-item)
+	    ("p" org-agenda-previous-item)
+	    ("N" org-agenda-next-date-line)
+	    ("P" org-agenda-previous-date-line)
+	    ("c"
+	     (("d" org-agenda-deadline)
+	      ("n" org-agenda-next-date-line)
+	      ("o" org-agenda-open-link)
+	      ("p" org-agenda-previous-date-line)
+	      ("q" org-agenda-set-tags)
+	      ("s" org-agenda-schedule)
+	      ("t" org-agenda-todo)
+	      ("w" org-agenda-refile)
+	      ("z" org-agenda-add-note)
+	      ("$" org-agenda-archive)
+	      ("," org-agenda-priority)
+	      ("c" org-agenda-goto-calendar)
+     	      ("x"
+     	       (("a" org-agenda-archive-default)
+     	        ("c" org-agenda-columns)
+       	   ;;   ("e" org-clock-modify-effort-estimate)
+     	        ("TAB" org-agenda-clock-in)
+     	        ("j" org-clock-goto)
+     	        ("o" org-agenda-clock-out)
+     	        ("s" org-agenda-archive)
+     	        ("x" org-agenda-clock-cancel)
+     	        ("!" org-reload)
+     	        ("<" org-agenda-set-restriction-lock-from-agenda)
+     	        (">" org-agenda-remove-restriction-lock)
+     	        ("A" org-agenda-archive-to-archive-sibling)
+     	        ("a" org-agenda-toggle-archive-tag)
+     	        ("b" org-agenda-tree-to-indirect-buffer)
+     	        ("e" org-agenda-set-effort)
+     	        ("p" org-agenda-set-property)
+     	        ("<down>" org-agenda-priority-down)
+     	        ("<left>" org-agenda-do-date-earlier)
+     	        ("<right>" org-agenda-do-date-later)
+     	        ("<up>" org-agenda-priority-up))
+     	       )))
+	    ("SPC" org-agenda-show-and-scroll-up)
+	    ("!" org-agenda-toggle-deadlines)
+	    ("#" org-agenda-dim-blocked-tasks)
+	    ("$" org-agenda-archive)
+	    ("%" org-agenda-bulk-mark-regexp)
+	    ("*" org-agenda-bulk-mark-all)
+	    ("+" org-agenda-priority-up)
+	    ("," org-agenda-priority)
+	    ("-" org-agenda-priority-down)
+	    ("." org-agenda-goto-today)
+	    ("/" org-agenda-filter-by-tag)
+	    (":" org-agenda-set-tags)
+	    (";" org-timer-set-timer)
+	    ("<" org-agenda-filter-by-category)
+	    ("=" org-agenda-filter-by-regexp)
+	    (">" org-agenda-date-prompt)
+	    ("?" org-agenda-show-the-flagging-note)
+	    ("A" org-agenda-append-agenda)
+	    ("B" org-agenda-bulk-action)
+	    ("C" org-agenda-convert-date)
+	    ("D" org-agenda-toggle-diary)
+	    ("E" org-agenda-entry-text-mode)
+	    ("F" org-agenda-follow-mode)
+	    ("G" org-agenda-toggle-time-grid)
+	    ("I" org-agenda-clock-in)
+	    ("M" org-agenda-phases-of-moon)
+	    ("O" org-agenda-clock-out)
+	    ("Q" org-agenda-Quit)
+	    ("R" org-agenda-clockreport-mode)
+	    ("S" org-agenda-sunrise-sunset)
+	    ("T" org-agenda-show-tags)
+	    ("U" org-agenda-bulk-unmark-all)
+	    ("X" org-agenda-clock-cancel)
+	    ("[" org-agenda-manipulate-query-add)
+	    ("]" org-agenda-manipulate-query-subtract)
+	    ("^" org-agenda-filter-by-top-headline)
+	    ("_" org-agenda-filter-by-effort)
+	    ("a" org-agenda-archive-default-with-confirmation)
+	    ("b" org-agenda-earlier)
+	    ("d" org-recur-finish)
+	    ("e" org-agenda-set-effort)
+	    ("f" org-agenda-later)
+;;	    ("g" org-agenda-redo-all)
+	    ("H" org-agenda-holidays)
+	    ("J" org-agenda-goto-date)
+	    ("K" org-agenda-capture)
+	    ("L" org-agenda-log-mode)
+	    ("m" org-agenda-bulk-mark)
+	    ("o" delete-other-windows)
+	    ("q" org-agenda-quit)
+	    ("r" org-agenda-redo)
+	    ("s" org-save-all-org-buffers)
+	    ("t" org-agenda-todo)
+	    ("u" org-agenda-bulk-unmark)
+	    ("v" org-agenda-view-mode-dispatch)
+	    ("w" org-agenda-week-view)
+	    ("x" org-agenda-exit)
+	    ("y" org-agenda-year-view)
+	    ("z" org-agenda-add-note)
+	    ("{" org-agenda-manipulate-query-add-re)
+	    ("|" org-agenda-filter-remove-all)
+	    ("}" org-agenda-manipulate-query-subtract-re)
+	    ("~" org-agenda-limit-interactively)
+    )
+#+END_SRC
+
+** COMMENT RYO Key settings old
+*** Eigene Funktionen
+**** Split und Switch
+      - Gibt eine Schnelle übersicht in einem halben Fenster. 
+ #+BEGIN_SRC emacs-lisp
+  (defun kahiro-split-and-switch ()
+   "Split the window and switch to the other window in sequence."
+   (interactive)
+   (split-window-below)
+   (org-tree-to-indirect-buffer)
+   (other-window -1))
+  (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
+
+ #+END_SRC
+**** Switch und Close
+      - Kehrt wieder zum Übersichtsbuffer zurück. 
+ #+BEGIN_SRC emacs-lisp
+  (defun kahiro-switch-and-close ()
+   "Split the window and switch to the other window in sequence."
+   (interactive)
+   (kill-buffer)
+   (other-window -1)
+   (delete-other-windows))
+
+  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
+ #+END_SRC
+*** Colors
+#+BEGIN_SRC emacs-lisp
+(setq ryo-modal-cursor-color "maroon")
+(setq ryo-modal-default-cursor-color "grey15")
+#+END_SRC
+*** Basics
+    + [2020-05-12 Di 13:36] Zahlen ausgeklammert, da ich sie kaum als Prefix brauche.
+ #+BEGIN_SRC emacs-lisp
+     (use-package ryo-modal
+       :commands ryo-modal-mode
+       :bind ("S-SPC" . ryo-modal-mode)
+       :config
+       (ryo-modal-keys
+	("," ryo-modal-repeat)
+	("q" ryo-modal-mode))
+	
+       (ryo-modal-keys
+	;; First argument to ryo-modal-keys may be a list of keywords.
+	;; These keywords will be applied to all keybindings.
+	(:norepeat t)
+        ("u" universal-argument)
+	("h" backward-char)
+	("j" next-line)
+	("k" previous-line)
+	("l" forward-char)
+	("e" "C-e")
+	("a" "C-a")
+	("I" "M-a")
+	("O" "M-e")
+	("A" "M-<")
+	("E" "M->")
+;;	("0" "M-0")
+;;	("1" "M-1")
+;;	("2" "M-2")
+;;	("3" "M-3")
+;;	("4" "M-4")
+;;	("5" "M-5")
+;;	("6" "M-6")
+;;	("7" "M-7")
+;;	("8" "M-8")
+;;	("9" "M-9")
+)
+
+   )
+ #+End_SRC
+
+*** Multiple Keys
+    Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
+#+BEGIN_SRC emacs-lisp 
+ (ryo-modal-keys 
+    ;;(("SPC" set-mark-command)))
+    ("c"
+     (
+     ("c" org-capture)
+     ("a" org-attach)
+     ("b" org-backward-heading-same-level)
+     ("C" org-ctrl-c-ctrl-c)
+     ("d" org-deadline)
+     ("e" org-export-dispatch)
+     ("f" org-forward-heading-same-level)
+     ("j" org-goto)
+     ("k" org-kill-note-or-show-branches)
+     ("l" org-insert-link)
+     ("o" org-open-at-point)
+     ("q" org-set-tags-command)
+     ("r" org-reveal)
+     ("s" org-schedule)
+     ("t" org-todo)
+     ("w" org-refile)
+     ("*" org-list-make-subtree)
+     ("RET" org-ctrl-c-ret)
+     ("y" org-evaluate-time-range)
+     ("z" org-add-note)
+     ("^" org-up-element)
+     ("_" org-down-element)
+     ("SPC" org-table-blank-field)
+     ("!" org-time-stamp-inactive)
+     ("#" org-update-statistics-cookies)
+     ("%" org-mark-ring-push)
+     ("&" org-mark-ring-goto)
+     ("'" org-edit-special)
+     ("*" org-ctrl-c-star)
+     ("+" org-table-sum)
+     ("," org-priority)
+     ("-" org-ctrl-c-minus)
+     ("." org-time-stamp)
+     ("/" org-sparse-tree)
+     (":" org-toggle-fixed-width)
+     (";" org-toggle-comment)
+     ("<" org-date-from-calendar)
+     ("=" org-table-eval-formula)
+     (">" org-goto-calendar)
+     ("?" org-table-field-info)
+     ("@" org-mark-subtree)
+     ("\[" org-agenda-file-to-front)
+     ("\\" org-match-sparse-tree)
+     ("\]" org-remove-file)
+     ("^" org-sort)
+     ("`" org-table-edit-field)
+     ("{" org-table-toggle-formula-debugger)
+     ("|" org-table-create-or-convert-from-region)
+     ("}" org-table-toggle-coordinate-overlays)
+     ("~" org-table-create-with-table.el)
+     ))
+    ("z"
+     (("z" org-time-stamp)
+      ("t" org-time-stamp-inactive)
+      ("o" org-toggle-timestamp-type)))
+    ("d"
+     (("u" outline-up-heading)
+      ("l" org-forward-heading-same-level)
+      ("h" org-backward-heading-same-level)
+      ("j" org-next-visible-heading)
+      ("k" org-previous-visible-heading)
+      ))
+    ("x"
+     (("s" save-some-buffers)))
+    ("g"
+     (("a" org-agenda)
+      ("g" switch-to-buffer)
+      ("o" other-window)
+      ("f" kahiro-split-and-switch)
+      ("k" kahiro-switch-and-close)
+      ("t" org-sparse-tree)
+      ("q" undo)
+      ("w" delete-other-windows)
+      ("h" delete-other-windows)))
+    ("n" 
+     (("s" org-narrow-to-subtree)
+      ("w" widen)
+;;      ("x" org-agenda-set-restriction-lock)
+;;      ("y" org-agenda-remove-restriction-lock)
+      ))  
+    ("t"
+     (("i" org-clock-in)
+      ("o" org-clock-out)
+      ("j" org-clock-goto)
+      ("x" org-clock-in-last)
+      ("q" org-clock-cancel)
+      ("d" org-clock-display)
+      ("," org-timer-pause-or-continue)
+      ("-" org-timer-item :exit t)
+      ("n" org-timer-start)
+      ("." org-timer :exit t)
+      ("t" org-todo))
+    )) 
+
+(define-key universal-argument-map (kbd "u") 'universal-argument-more)
+#+END_SRC
+
+*** Single Binds
+    Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
+#+BEGIN_SRC emacs-lisp 
+  (ryo-modal-keys
+    ("ä" org-mark-subtree :then '(next-line count-words))
+    ("K" "C-k")
+    ("C" org-ctrl-c-ctrl-c)
+    ("_" "C-_")
+    ("y" "C-y")
+    ("w" "M-w")
+    ("W" "C-w")
+    ("L" "C-l")
+    ("v" "C-v")
+    ("V" "M-v")
+    ("i" "M-b")
+    ("o" "M-f")
+    ("SPC" org-cycle)
+    ("ö" set-mark-command)
+    ("s" isearch-forward)
+    ("r" isearch-backward)
+  )
+    #+END_SRC
+
+*** Keys in Org-Agenda
+ #+BEGIN_SRC  emacs-lisp
+(add-hook 'org-agenda-mode-hook 'ryo-modal-mode)
+(require 'org-agenda)
+(ryo-modal-major-mode-keys
+ 'org-agenda-mode 
+	("h" backward-char)
+	("j" next-line)
+	("k" previous-line)
+	("l" forward-char)
+	("n" org-agenda-next-item)
+	("p" org-agenda-previous-item)
+	("N" org-agenda-next-date-line)
+	("P" org-agenda-previous-date-line)
+	("t" org-agenda-todo)
+	("r" org-agenda-redo)
+	("L" org-agenda-log-mode)
+	("v" org-agenda-view-mode-dispatch)
+	("I" org-agenda-clock-in)
+	("O" org-agenda-clock-out)
+)
+ #+END_SRC
+
+** Custom Keys General
+- C-c C-, um Sturcture-Template einzufügen
+#+begin_src elisp
+(global-set-key (kbd "<f10>") 'org-timer-item)
+(global-set-key (kbd "<f9>") 'org-timer)
+#+end_src
 * Org Mode Settings
-** General
+** Org-Recur
+   - Paket für die wiederholte Planung von Überchriften
+#+begin_src emacs-lisp
+(use-package org-recur
+  :hook ((org-mode . org-recur-mode)
+         (org-agenda-mode . org-recur-agenda-mode))
+  :demand t
+  :config
+  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
+
+  ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
+  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
+  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish))
+#+end_src
+** Sticky Agenda
+#+begin_src emacs-lisp
+(setq org-agenda-sticky t)
+#+end_src
+** Calendar-week
+#+begin_src elisp
+k(copy-face font-lock-constant-face 'calendar-iso-week-face)
+(set-face-attribute 'calendar-iso-week-face nil
+                    :height 0.7)
+(setq calendar-intermonth-text
+      '(propertize
+        (format "%2d"
+                (car
+                 (calendar-iso-from-absolute
+                  (calendar-absolute-from-gregorian (list month day year)))))
+        'font-lock-face 'calendar-iso-week-face))
+
+(copy-face 'default 'calendar-iso-week-header-face)
+(set-face-attribute 'calendar-iso-week-header-face nil
+                    :height 0.7)
+(setq calendar-intermonth-header
+      (propertize "KW"                  ; or e.g. "KW" in Germany
+                  'font-lock-face 'calendar-iso-week-header-face))
+
+(setq calendar-week-start-day 1)
+#+end_src
+** Use Org-Bulles
+  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
+  #+BEGIN_SRC emacs-lisp
+  (require 'org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+ #+END_SRC
+ #+BEGIN_SRC  emacs-lisp
+  ;; make available "org-bullet-face" such that I can control the font size individually
+ (setq org-bullets-bullet-list '("✥" "✤" "❖" "✿" "❄" "❋" "★" "✚")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
+ #+END_SRC
+** Set custom ellipsis (...)
+ #+BEGIN_SRC emacs-lisp
+ (setq org-ellipsis "⤵")
+  #+END_SRC
+** COMMENT General
 ***  COMMENT Keys and Shortcuts
 #+BEGIN_SRC emacs-lisp
 
@@ -25,31 +699,6 @@
   ;; Activate plain list cycle
   (setq org-list-use-circular-motion t)
  #+END_SRC
-*** Eigene Funktionen
-**** Split und Switch
-     - Gibt eine Schnelle übersicht in einem halben Fenster. 
-#+BEGIN_SRC emacs-lisp
- (defun kahiro-split-and-switch ()
-  "Split the window and switch to the other window in sequence."
-  (interactive)
-  (split-window-right)
-  (org-tree-to-indirect-buffer)
-  (other-window -1))
- (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
-
-#+END_SRC
-**** Switch und Close
-     - Kehrt wieder zum Übersichtsbuffer zurück. 
-#+BEGIN_SRC emacs-lisp
- (defun kahiro-switch-and-close ()
-  "Split the window and switch to the other window in sequence."
-  (interactive)
-  (kill-buffer)
-  (other-window -1)
-  (delete-other-windows))
-
- (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
-#+END_SRC
 ** COMMENT Clocking / Aufwand
  - [2020-04-27 Mo 08:33] In .emacs vorhanden 
 #+BEGIN_SRC emacs-lisp
@@ -177,140 +826,5 @@ information."
 ;; Hide leading stars
 (setq org-hide-leading-stars t)
 #+END_SRC
-** Use Org-Bulles
-  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
-  #+BEGIN_SRC emacs-lisp
-  (require 'org-bullets)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
- #+END_SRC
- #+BEGIN_SRC  emacs-lisp
-  ;; make available "org-bullet-face" such that I can control the font size individually
- (setq org-bullets-bullet-list '("✥" "✤" "❖" "✿" "❄" "❋" "★" "✚")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
- #+END_SRC
-** Set custom ellipsis (...)
- #+BEGIN_SRC emacs-lisp
- (setq org-ellipsis "⤵")
-  #+END_SRC
-
-* Moving around
-**  Jump in the document
-   "Move cursor to last mark position of current buffer.
-   Call this repeatedly will cycle all positions in `mark-ring'.
-   URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
-   Version 2016-04-04"
- #+BEGIN_SRC emacs-lisp
-   (defun xah-pop-local-mark-ring ()
-     (interactive)
-     (set-mark-command t))
-   (global-set-key (kbd "<f8>") 'pop-global-mark)
-   (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
- #+END_SRC 
-
-** RYO Key settings
-*** Colors
-#+BEGIN_SRC emacs-lisp
-(setq ryo-modal-cursor-color "maroon")
-(setq ryo-modal-default-cursor-color "grey15")
-#+END_SRC
-*** Basics
- #+BEGIN_SRC emacs-lisp
-     (use-package ryo-modal
-       :commands ryo-modal-mode
-       :bind ("C-SPC" . ryo-modal-mode)
-       :config
-       (ryo-modal-keys
-	("," ryo-modal-repeat)
-	("q" ryo-modal-mode))
-	
-       (ryo-modal-keys
-	;; First argument to ryo-modal-keys may be a list of keywords.
-	;; These keywords will be applied to all keybindings.
-	(:norepeat t)
-        ("u" universal-argument)
-	("h" backward-char)
-	("j" next-line)
-	("k" previous-line)
-	("l" forward-char)
-	("e" "C-e")
-	("a" "C-a")
-	("E" "M-e")
-	("A" "M-a")
-	("0" "M-0")
-	("1" "M-1")
-	("2" "M-2")
-	("3" "M-3")
-	("4" "M-4")
-	("5" "M-5")
-	("6" "M-6")
-	("7" "M-7")
-	("8" "M-8")
-	("9" "M-9"))
-
-   )
- #+End_SRC
-
-*** Additional Keys
-#+BEGIN_SRC emacs-lisp 
- (ryo-modal-keys 
-    ("y" "C-y")
-    ("w" "M-w")
-    ("W" "C-w")
-    ("L" "C-l")
-    ("v" "C-v")
-    ("V" "M-v")
-    ("i" "M-b")
-    ("o" "M-f")
-    ("SPC" org-cycle)
-    ("ö" set-mark-command)
-    ;;(("SPC" set-mark-command)))
-    ("z"
-     (("z" org-time-stamp)
-      ("t" org-time-stamp-inactive)
-      ("c" org-toggle-timestamp-type)))
-    ("d"
-     (("u" outline-up-heading)
-      ("l" org-forward-heading-same-level)
-      ("h" org-backward-heading-same-level)
-      ("j" org-next-visible-heading)
-      ("k" org-previous-visible-heading)
-      ("e" "M->")
-      ("a" "M-<")))
-    ("s"
-     (("s" save-some-buffers)
-      ("S" org-sparse-tree)
-      ("f" isearch-forward)
-      ("r" isearch-backward)))
-    ("g"
-     (("a" org-agenda)
-      ("g" switch-to-buffer)
-      ("o" other-window)
-      ("f" kahiro-split-and-switch)
-      ("k" kahiro-switch-and-close)
-      ("w" delete-other-windows)))
-    ("n" 
-     (("s" org-narrow-to-subtree)
-      ("w" widen)
-;;      ("x" org-agenda-set-restriction-lock)
-;;      ("y" org-agenda-remove-restriction-lock)
-      ))  
-      ("t"
-       (("i" org-clock-in)
-        ("o" org-clock-out)
-	("j" org-clock-goto)
-	("x" org-clock-in-last)
-	("q" org-clock-cancel)
-	("d" org-clock-display)
-	("t" org-set-tags-command))
-  )) 
-
-(define-key universal-argument-map (kbd "u") 'universal-argument-more)
-#+END_SRC
-
-*** Neu
-#+BEGIN_SRC emacs-lisp 
-(ryo-modal-keys 
-  ("ä" org-mark-subtree :then '(next-line count-words))
-  ("-" "C-_")
-
-)
-#+END_SRC
+* Test
+0:00:00 0:00:02 asdflök jasdölkfj asöldkfj asöldkfj asdlökfj a0:00:06  asldkfjalösdkjf aölskdjf
