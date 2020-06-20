@@ -167,7 +167,8 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
     )
 )
  #+END_SRC
-**** Patch for Ancestors-View
+**** COMMENT Patch for Ancestors-View
+     - Erweitert die Headlines beim Sparse-Tree oder in custom Agendas. Nützlich für Reviews, aber nervig für die Übersicht. 
 #+BEGIN_SRC emacs-lisp
 (el-patch-defun org-show-set-visibility (detail)
   "Set visibility around point according to DETAIL.
