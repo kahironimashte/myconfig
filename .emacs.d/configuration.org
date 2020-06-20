@@ -36,7 +36,48 @@
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
 * Org Mode Settings
-**  Keys and Shortcuts
+** Org-Recur
+   - Paket für die wiederholte Planung von Überchriften
+#+begin_src emacs-lisp
+(use-package org-recur
+  :hook ((org-mode . org-recur-mode)
+         (org-agenda-mode . org-recur-agenda-mode))
+  :demand t
+  :config
+  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
+
+  ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
+  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
+  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish))
+#+end_src
+** Sticky Agenda
+   - Agenda wird nicht gekillt, sondern bleibt als Buffer im Hintergrund. 
+#+begin_src emacs-lisp
+(setq org-agenda-sticky t)
+#+end_src
+** Calendar-week
+   - Zeigt die Kalenderwiche im Kalender an.
+#+begin_src elisp
+(copy-face font-lock-constant-face 'calendar-iso-week-face)
+(set-face-attribute 'calendar-iso-week-face nil
+                    :height 0.7)
+(setq calendar-intermonth-text
+      '(propertize
+        (format "%2d"
+                (car
+                 (calendar-iso-from-absolute
+                  (calendar-absolute-from-gregorian (list month day year)))))
+        'font-lock-face 'calendar-iso-week-face))
+
+(copy-face 'default 'calendar-iso-week-header-face)
+(set-face-attribute 'calendar-iso-week-header-face nil
+                    :height 0.7)
+(setq calendar-intermonth-header
+      (propertize "KW"                  ; or e.g. "KW" in Germany
+                  'font-lock-face 'calendar-iso-week-header-face))
+
+(setq calendar-week-start-day 1)
+#+end_src**  Keys and Shortcuts
 #+BEGIN_SRC emacs-lisp
 
  ;; Org-mode settings
@@ -262,6 +303,31 @@ information."
   (let ((level (org-current-level)))
     (org-match-sparse-tree  t (format "+LEVEL=%d" (1+ level)))))
 #+END_SRC
+** Todos eines Subtrees
+#+BEGIN_SRC emacs-lisp
+
+(defun kahiro-show-todos-in-subtree ()
+   "Narrow to a subtree and show only headings with TODO keywords"
+   (interactive)
+   (org-narrow-to-subtree)
+   (org-show-todo-tree nil)
+   (org-ctrl-c-ctrl-c))
+
+(defun kahiro-show-NEXT-in-subtree ()
+   "Narrow to a subtree and show only headings with TODO keywords"
+   (interactive)
+   (org-narrow-to-subtree)
+   (org-show-todo-tree 3)
+   (org-ctrl-c-ctrl-c))
+
+(defun kahiro-show-PLAN-in-subtree ()
+   "Narrow to a subtree and show only headings with TODO keywords"
+   (interactive)
+   (org-narrow-to-subtree)
+   (org-show-todo-tree 1)
+   (org-ctrl-c-ctrl-c))
+
+#+END_SRC
 * Bewegen
 **  Jump in the document
    "Move cursor to last mark position of current buffer.
@@ -331,6 +397,14 @@ information."
     ("f"
      (
      ("e" org-emphasize)
+     ))
+    ("b"
+     (
+     ("b" bookmark-jump)
+     ("m" bookmark-set)
+     ("l" bookmark-bmenu-list)
+     ("s" bookmark-save)
+     ("o" bookmark-jump-other-window)
      ))
     ("c"
      (
@@ -415,6 +489,10 @@ information."
     ("n" 
      (("s" org-narrow-to-subtree)
       ("w" widen)
+      ("t" kahiro-show-todos-in-subtree) 
+      ("n" kahiro-show-NEXT-in-subtree) 
+      ("g" ess/org-show-just-me)
+      ("p" kahiro-show-PLAN-in-subtree)
 ;;      ("x" org-agenda-set-restriction-lock)
 ;;      ("y" org-agenda-remove-restriction-lock)
       ))  
@@ -546,7 +624,7 @@ information."
 	    ("_" org-agenda-filter-by-effort)
 	    ("a" org-agenda-archive-default-with-confirmation)
 	    ("b" org-agenda-earlier)
-	    ("d" org-agenda-day-view)
+	    ("d" org-recur-finish)
 	    ("e" org-agenda-set-effort)
 	    ("f" org-agenda-later)
 ;;	    ("g" org-agenda-redo-all) ;; führt zu Konflikten mit switch-buffer
