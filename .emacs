@@ -48,7 +48,7 @@ There are two things you can do about this warning:
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight))))
  '(package-selected-packages
    (quote
-    (org-bookmark-heading org-recur yafolding steam ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
+    (nov smartparens org-bookmark-heading org-recur yafolding steam ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
 ;; FONTS
 ;; -----
 (custom-set-faces

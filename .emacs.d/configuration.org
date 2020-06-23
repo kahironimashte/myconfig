@@ -344,6 +344,14 @@ information."
  #+END_SRC 
 
 ** RYO Key settings
+*** Tastenfunktionen
+
+#+BEGIN_SRC emacs-lisp
+(defun org-timer-start-with-offset ()
+  "Start the timer and prompt user to enter a time offset"
+    (interactive)
+    (org-timer-start '(4)))
+#+END_SRC
 *** Colors
 #+BEGIN_SRC emacs-lisp
 (setq ryo-modal-cursor-color "maroon")
@@ -355,6 +363,7 @@ information."
      (use-package ryo-modal
        :commands ryo-modal-mode
        :bind ("S-SPC" . ryo-modal-mode)
+       :bind ("µ" . ryo-modal-mode)
        :config
        (ryo-modal-keys
 	("," ryo-modal-repeat)
@@ -406,6 +415,8 @@ information."
      ("l" bookmark-bmenu-list)
      ("s" bookmark-save)
      ("o" bookmark-jump-other-window)
+     ("v" org-mark-ring-push)
+     ("n" org-mark-ring-goto)
      ))
     ("c"
      (
@@ -418,11 +429,13 @@ information."
      ("f" org-forward-heading-same-level)
      ("j" org-goto)
      ("k" org-kill-note-or-show-branches)
-     ("l" org-insert-link)
+     ("L" org-insert-link)
+     ("l" org-store-link)
      ("o" org-open-at-point)
      ("q" org-set-tags-command)
      ("r" org-reveal)
      ("s" org-schedule)
+     ("S" org-sort)
      ("t" org-todo)
      ("w" org-refile)
      ("*" org-list-make-subtree)
@@ -474,6 +487,7 @@ information."
     ("x"
      (("s" save-some-buffers)
       ("f" find-file)
+      ("c" save-buffers-kill-terminal)
      ))
     ("g"
      (("a" org-agenda)
@@ -504,6 +518,11 @@ information."
       ("x" org-clock-in-last)
       ("q" org-clock-cancel)
       ("d" org-clock-display)
+      ("n" org-timer-start)
+      ("N" org-timer-start-with-offset)
+      ("," org-timer-pause-or-continue)
+      ("." org-timer)
+      ("-" org-timer-item)
       ("t" org-todo))
     )) 
 
@@ -530,6 +549,7 @@ information."
     ("ö" set-mark-command)
     ("s" isearch-forward)
     ("r" isearch-backward)
+    (";" org-toggle-comment)
   )
     #+END_SRC
 
@@ -688,6 +708,15 @@ This initializes all packages.
 ;; You may delete these explanatory comments.
 #+BEGIN_SRC emacs-lisp(package-initialize)
 #+END_SRC
+** Smartparens
+ - Paket um Klammern etc. zu vervollständigen.
+#+BEGIN_SRC emacs-lisp
+(require 'smartparens)
+(require 'smartparens-config)   
+(define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-unwrap-sexp)
+(define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
+#+END_SRC
+This is bold and that is bolder. 
 ** Steam Games list
 #+BEGIN_SRC emacs-lisp
 (setq steam-username "mec4nic") ;; Replace Username with your steam username
