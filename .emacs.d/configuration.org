@@ -402,6 +402,7 @@ information."
 *** Multiple Keys
     Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
 #+BEGIN_SRC emacs-lisp 
+ (require 'org-timer)
  (ryo-modal-keys 
     ;;(("SPC" set-mark-command)))
     ("f"
@@ -520,7 +521,7 @@ information."
       ("d" org-clock-display)
       ("n" org-timer-start)
       ("N" org-timer-start-with-offset)
-      ("," org-timer-pause-or-continue)
+      ("\," org-timer-pause-or-continue)
       ("." org-timer)
       ("-" org-timer-item)
       ("t" org-todo))
