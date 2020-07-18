@@ -33,7 +33,7 @@ There are two things you can do about this warning:
  '(moody-mode-line-height 28)
  '(org-agenda-files
    (quote
-    ("~/ncloud/org/atasks.org" "~/ncloud/org/prsn/abschluss.org" "~/ncloud/org/checklisten.org" "~/ncloud/org/tickler.org" "~/ncloud/org/htasks.org" "~/ncloud/org/ziele.org" "~/ncloud/org/inbox.org")))
+    ("~/ncloud/org/atasks.org" "~/ncloud/org/prsn/abschluss.org" "~/ncloud/org/checklisten.org" "~/ncloud/org/calendar.org" "~/ncloud/org/htasks.org" "~/ncloud/org/ziele.org" "~/ncloud/org/inbox.org")))
  '(org-default-priority 67)
  '(org-highest-priority 65)
  '(org-lowest-priority 68)

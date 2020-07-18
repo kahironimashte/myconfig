@@ -223,8 +223,8 @@ information."
       ("s" "prefix für someday-Tasks")
       ("sa" "Todo [someday Arbeit]" entry (file+headline "~/ncloud/org/asomeday.org" "Inbox") "* TODO %i%?")
       ("sh" "Todo [someday Home]" entry (file+headline "~/ncloud/org/hsomeday.org" "Inbox") "* TODO %i%?")
-      ("T" "Tickler" entry (file+headline "~/ncloud/org/tickler.org" "Tickler") "** %^{Title} \n %^t")
-      ("R" "Scheduled Tickler" entry (file+headline "~/ncloud/org/tickler.org" "Tickler") "** %^{Title} \n SCHEDULED: %^t")
+      ("k" "Kalender Event" entry (file+headline "~/ncloud/org/calendar.org" "Events") "** %^{Title} \n %^t")
+      ("R" "Scheduled Calendar Event" entry (file+headline "~/ncloud/org/calendar.org" "Events") "** %^{Title} \n SCHEDULED: %^t")
   )
 )
 #+END_SRC
