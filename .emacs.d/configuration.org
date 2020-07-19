@@ -38,17 +38,23 @@
 * Org Mode Settings
 ** Org-Recur
    - Paket für die wiederholte Planung von Überchriften
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :results silent
 (use-package org-recur
   :hook ((org-mode . org-recur-mode)
          (org-agenda-mode . org-recur-agenda-mode))
   :demand t
-  :config
-  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
+  :bind (:map org-recur-agenda-mode-map
+          ("d" . org-recur-finish)
+	  ("C-c d" . org-recur-finish)
+	  :map org-recur-mode-map
+	   ("C-c d" . org-recur-finish))
+;;  :config
+;;  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
 
   ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
-  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
-  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish))
+  ;;  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
+  ;;  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish)
+)
 #+end_src
 ** Sticky Agenda
    - Agenda wird nicht gekillt, sondern bleibt als Buffer im Hintergrund. 
