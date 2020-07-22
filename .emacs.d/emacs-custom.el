@@ -29,7 +29,7 @@
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight))))
  '(package-selected-packages
    (quote
-    (nov smartparens org-bookmark-heading org-recur yafolding steam ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
+    (org nov smartparens org-bookmark-heading org-recur yafolding steam ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
 ;; FONTS
 ;; -----
 (custom-set-faces
@@ -58,7 +58,7 @@
  '(org-level-6 ((t (:inherit org-level-4))))
  '(org-level-7 ((t (:inherit org-level-4))))
  '(org-level-8 ((t (:inherit org-level-4))))
- '(org-link ((t (:inherit fixed-pitch :foreground "SlateBlue3" :height 1.2))))
+ '(org-link ((t (:inherit fixed-pitch :foreground "SlateBlue3"))))
  '(org-list-dt ((t (:foreground "gray30" :slant italic))))
  '(org-priority ((t (:height 1.1 :foreground "IndianRed4" :inherit font-lock-keyword-face :weight semi-bold))))
  '(org-property-value ((t (:height 0.8))) t)
