@@ -95,6 +95,398 @@ deaktiviert weil nervig.
       '(("CANCELLED" ("ARCHIVE" . t)))
       )
 #+END_SRC
+* Org Mode Settings
+** [#A] Org Capture Templates
+*** Beschreibung und Todos
+**** TODO sinnvolles Capture für Ziele
+**** TODO ryo für Anmerkungen deaktivieren:
+;;(add-hook 'org-capture-mode-hook 'ryo-modal-mode) funktioniert nicht.
+**** DONE Schnelle Reaktion auf neue Aufgaben
+     - etwas Ungeplante kommt dazu, das ich sofort erledigen soll
+     - etwas Ungeplantes kommt dazu das ich im Lauf des Tages erledigen soll
+*** Code
+    - Hilfe unter :: [[help:org-capture-templates][org-capture-templates]]
+#+BEGIN_SRC emacs-lisp  :results output silent
+
+(setq org-capture-templates
+  '(
+    ("l"                                                       ;; Auswahltaste
+    "linkdrop"                                                 ;; Beschreibungstext
+    entry                                                      ;; Typ, kann z.B. auch ein "checkitem" einer liste sein.
+    (file+headline                                             ;; Zieltyp, hier eine Überschrift in einer Datei
+        "c:/org/linkdrop.org"                                  ;;   entsprechend Zieldatei
+	"Links")                                               ;;   entsprechend Zielüberschrift (so, wenn sie unique ist)
+     "** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgaben-Beschreibung} 
+     %(org-set-tags-command)\n%c \n\n%^{Notizen}%?"            ;; Template für Capture
+     :prepend t :empty-lines 1 :unnarrowed t )                              ;; weitere Eigenschaften -> siehe Hilfe.
+    ("u" "ungeplante Arbeit, sofort")
+    ("ua" "Arbeit" entry (file+headline "c:/org/atasks.org" "Inbox")
+      "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
+      :prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
+    ("uh" "Home" entry (file+headline "c:/org/atasks.org" "Inbox")
+      "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
+      :prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
+    ("U" "ungeplante Arbeit, unkritisch")
+    ("Ua" "Arbeit" entry (file+headline "c:/org/atasks.org" "Inbox")
+      "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
+      :empty-lines-after 1)
+    ("Uh" "Home" entry (file+headline "c:/org/atasks.org" "Inbox")
+      "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
+      :empty-lines-after 1)
+    ("a" "Todo für die Arbeit" entry (file+headline "c:/org/atasks.org" "Inbox")
+      "** %^{Status|PLAN|TODO} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
+      :empty-lines-after 1)
+    ("r" "Todo w Schedule [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks")
+      "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :review: \n ERSTELLT: %u\nSCHEDULED:%^t \n  - Anmerkungen ::%^{Anmerkungen}\n%?" 
+      :empty-lines-after 1)
+    ("d" "Todo w Deadline [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks")
+      "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} \nDEADLINE: %^{Faellig bis}t \n  - Anmerkungen ::%^{Anmerkungen}\n%?"
+      :empty-lines-after 1)
+    ("k" "Kalendereintrag" entry (file+olp+datetree "c:/org/calendar.org" "Events") 
+      "** %^{Title} \n %^t" :time-prompt t)
+    ("t" "Todo [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
+    ("n" "Neuer Text")
+    ("na" "Template für neuen Autoren-Text" entry (file+headline "c:/org/atasks.org" "Texte Autoren") 
+      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :%^{voraussichtliche Ausgabe}#20: \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Nachhaken am}t \n:PROPERTIES:\n:AUTOR: %^{Autorname}\n:HONORAR: %^{Vereinbartes Honorar in EUR}\n:ZEICHENZAHL: %^{vereinbarte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Bilder\n**** PLAN Layout\n**** PLAN Redigieren\n**** PLAN Lesen lassen\n**** PLAN Korrekturen" :empty-lines-after 1)
+    ("ne" "Template für neuen Eigenen-Text" entry (file+headline "c:/org/atasks.org" "Eigene Texte") 
+      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :%^{voraussichtliche Ausgabe}#20:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n:PROPERTIES:\n:MITARBEIT: %^{Co-Autoren}\n:ZEICHENZAHL: %^{angepeilte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Recherche\n**** PLAN Bilder besorgen\n**** PLAN Layouten lassen\n**** PLAN Texten\n**** PLAN Lesen lassen\n**** PLAN Korrekturen" :empty-lines-after 1)
+ ))
+#+END_SRC
+
+*** COMMENT Test für Ablage in wöchentlichen oder monatlichen Trees.
+#+begin_src emacs-lisp :results output silent
+(defun org-find-month-in-datetree()
+  (org-datetree-find-date-create (calendar-current-date))
+  (kill-line))
+#+end_src
+
+Then use an org-capture template like this:
+
+
+#+begin_src emacs-lisp :results output silent
+(setq org-capture-templates
+  '(
+   ("w" "Weekly review" plain
+    (file+function "c:/org/calendar.org" org-find-month-in-datetree)
+    "**** TODO Weekly review%?"))))
+#+end_src
+
+To get the same for a weekly date-tree change the function to
+
+#+begin_src emacs-lisp :results output silent
+(defun org-find-week-in-datetree()
+  (org-datetree-find-iso-week-create (calendar-current-date))
+  (kill-line))
+#+end_src
+
+*** Nützliche Links für org-capture
+    - [[https://stackoverflow.com/questions/31663932/how-to-add-tags-completion-to-org-mode-capture][SO-Antwort zu Tags, erklärt auch wie man funktionen im Aufruf nutzt.]]
+** [#A] Ziele für Refile Aktion festlegen
+#+BEGIN_SRC emacs-lisp :results output silent
+;; setting Refile Target
+(setq org-refile-targets '(
+  (org-agenda-files :maxlevel . 1)       ;; Für Agenda-Dateien normalerweise nur in * Überschriften
+  ("c:/org/atasks.org" :maxlevel . 2)))  ;; Für atask.org auch in ** Überschriften
+
+;; TODO Hier fehlt noch eine Erklärung
+(setq org-refile-allow-creating-parent-nodes 'confirm)     ;;allow creating nodes. Refile has to end with /newheadingname
+
+;; refile nur in der aktuellen Datei (geklaut von Sacha Chua). Aufruf über c-W.
+(defun my/org-refile-in-file (&optional prefix)
+  "Refile to a target within the current file."
+  (interactive)
+  (let ((org-refile-targets `(((,(buffer-file-name)) :maxlevel . 3))))   ;; Für aktuelle Datei bis in *** Überschriften.
+    (call-interactively 'org-refile)))
+#+END_SRC
+*** COMMENT Option: Refile in alle geöffneten Buffer
+    - geklaut von hier :: https://emacs.stackexchange.com/questions/22128/how-to-org-refile-to-a-target-within-the-current-file
+#+begin_src emacs-lisp :results output silent
+(defun my-org-files-list ()
+  (delq nil
+    (mapcar (lambda (buffer)
+      (buffer-file-name buffer))
+      (org-buffer-list 'files t))))
+
+(setq org-refile-targets '((my-org-files-list :maxlevel . 1)))
+#+end_src
+** [#B] Structure template
+#+begin_src emacs-lisp :results output silent
+(setq org-structure-template-alist
+  '(("s" . "src")
+    ("se" . "src emacs-lisp")
+    ("ss" . "src emacs-lisp :results output silent")
+;;    ("h" . "export html")
+;;    ("l" . "export latex")
+;;    ("q" . "quote")
+;;    ("c" . "comment")
+    ))
+#+end_src
+** TODO Agenda
+#+BEGIN_SRC emacs-lisp
+;;    ###     ######   ######## ##    ## ########     ###    
+;;   ## ##   ##    ##  ##       ###   ## ##     ##   ## ##   
+;;  ##   ##  ##        ##       ####  ## ##     ##  ##   ##  
+;; ##     ## ##   #### ######   ## ## ## ##     ## ##     ## 
+;; ######### ##    ##  ##       ##  #### ##     ## ######### 
+;; ##     ## ##    ##  ##       ##   ### ##     ## ##     ## 
+;; ##     ##  ######   ######## ##    ## ########  ##     ## 
+;; Agenda-Mode
+;;------------
+
+;; Kein visual-line-mode in Agendas - Lange Zeilen werden nicht umbebrochen
+(add-hook 'org-agenda-mode-hook
+          (lambda ()
+            (visual-line-mode -1)
+            (toggle-truncate-lines 1)))
+
+;; Clock-Report-View auf Level 3
+(setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 3))
+#+END_SRC
+** TODO Verteilen
+#+BEGIN_SRC emacs-lisp
+;; öffne Dateien mit der Endung .org mit emacs.
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+#+END_SRC
+** Agenda Ansichten
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-skip-deadline-prewarning-if-scheduled t
+      org-use-tag-inheritance t
+      org-tags-match-list-sublevels nil
+      org-deadline-warning-days 2)
+
+;; Default Kalender-Zeit
+(setq org-agenda-span 2)
+
+;; Tage, die eine Deadline vorher angekündigt wird
+(setq org-deadline-warning-days 3)
+;; Deaktiviert die Deadline-Warung, wenn die Aufgabe Terminiert wurde.
+(setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+#+END_SRC
+** Agenda Terminfindung
+#+BEGIN_SRC emacs-lisp
+  ;; Erklaerung: Agenda-Mode-Hook laeuft vor dem Agenda-Mode. Mit local-set-key wird nur fuer den Mode eine Tastenzuweisung angelegt:
+(add-hook 'org-agenda-mode-hook
+  (lambda ()
+  (local-set-key (kbd "S-<up>") 'org-agenda-date-earlier-hours)
+  (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
+))
+
+#+END_SRC
+** Agenda Verhalten
+#+BEGIN_SRC emacs-lisp
+  ;; Activate plain list cycle
+  (setq org-list-use-circular-motion t)
+#+END_SRC
+** Agenda custom commands
+#+BEGIN_SRC emacs-lisp
+;; AGENDA MODES - Hier gibt es einen Fehler...
+;;--------------
+(setq org-agenda-custom-commands
+      '(("u" . "My Custom Agendas")
+	("um" "Ausgaben im März" tags "{20#[1][0-3]}") ;; Suche für Ausgaben im März (10-13)
+	("ua" "Ausgaben im April" tags "{20#[1][4-8]}") ;; Suche für Ausgaben im April (14-18)
+        ("uu" "TODO ohne Zeitpunkt"
+         ((todo ""
+                ((org-agenda-overriding-header "\nUnscheduled TODO")
+                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+	)))
+	 nil
+         nil)
+        ("d" "Nur Deadlines" agenda "Diesen Monat" (
+             (org-agenda-span 'month)
+             (org-agenda-time-grid nil)
+             (org-agenda-show-all-dates nil)
+             (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+             (org-deadline-warning-days 0) ))
+	("n" "Nächste Schritte" occur-tree "NEXT")
+	("h" "Arbeitsaufgaben für heute" todo 
+	)))
+
+;; Funktionen für Sortierung nach NEXT-Keywords
+     (defun my-skip-unless-next ()
+       "Skip trees that are not next"
+       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+         (if (re-search-forward "" subtree-end t)
+             nil          ; tag found, do not skip
+           subtree-end))) ; tag not found, continue after end of subtree
+
+#+END_SRC
+** Clocking/Aufwand
+#+BEGIN_SRC emacs-lisp
+;; CLOCKING: global Effort estimate values
+(setq org-global-properties
+      '(("Effort_ALL" .
+         "1:00 2:00 3:00 4:00 5:00 0:10 0:20 0:30 0:45 0:00 6:00 7:20 8:00 9:00 10:00")))
+;;        1    2    3    4    5    6    7    8    9    0
+;; These are the hotkeys
+
+;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
+(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TODO %SCHEDULED %DEADLINE")
+#+END_SRC
+** Org-Logging von Aufgaben (TODOs)
+#+BEGIN_SRC emacs-lisp
+;; Org-mode TODO
+;;(setq org-log-done 'time)
+
+#+END_SRC
+** Shortcuts für den org-mode
+#+BEGIN_SRC emacs-lisp
+;; Keyboard Shortcuts
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key (kbd "C-ä") 'count-words) 
+(global-set-key (kbd "C-ß") 'org-toggle-timestamp-type)
+#+END_SRC
+** Kosmetik für den org-mode
+#+BEGIN_SRC emacs-lisp
+;; Make Org beautiful
+
+;; hide Markers like *this* for bold
+(setq org-hide-emphasis-markers t) 
+
+;; blendet alle bis auf einen Stern für Org-Überschriften aus.
+(setq org-hide-leading-stars t)    
+
+;; Clocking
+;;---------
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate) ;; Erklärung
+#+END_SRC
+*** COMMENT Tags mit eigener Farbe
+ - deaktiviert weil die funktion im neuen Org-Mode nicht funktioniert.
+ #+BEGIN_SRC emacs-lisp
+ ;; Change Faces for specific Tags
+ ;; from https://stackoverflow.com/questions/40876294/color-tags-based-on-regex-emacs-org-mode
+
+ ;; (add-to-list 'org-tag-faces '("@.*" . (:foreground "sienna4" :weight normal :height 0.8 )))
+
+ ;; ;; Reset the global variable to nil, just in case org-mode has already beeen used.
+ ;; (when org-tags-special-faces-re
+ ;;   (setq org-tags-special-faces-re nil))
+
+ ;; (defun org-get-tag-face (kwd)
+ ;;   "Get the right face for a TODO keyword KWD.
+ ;; If KWD is a number, get the corresponding match group."
+ ;;   (if (numberp kwd) (setq kwd (match-string kwd)))
+ ;;   (let ((special-tag-face (or (cdr (assoc kwd org-tag-faces))
+ ;;                               (and (string-match "^@.*" kwd)
+ ;;                                    (cdr (assoc "@.*" org-tag-faces))))))
+ ;;     (or (org-face-from-face-or-color 'tag 'org-tag special-tag-face)
+ ;;         'org-tag)))
+
+ #+END_SRC
+** Org-Recur :package:
+   - Paket für die wiederholte Planung von Überchriften
+#+begin_src emacs-lisp
+(use-package org-recur
+  :hook ((org-mode . org-recur-mode)
+         (org-agenda-mode . org-recur-agenda-mode))
+  :demand t
+  :config
+  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
+
+  ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
+  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
+  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish))
+#+end_src
+** [#A] org-caldav :package:
+#+begin_src emacs-lisp :results silent
+  (use-package org-caldav
+    :init
+    ;; This is the sync on close function; it also prompts for save after syncing so 
+    ;; no late changes get lost 
+    (defun org-caldav-sync-at-close ()
+  ;;    (org-caldav-sync)  ;; deaktiviert, weil es bei Fehlern Probleme mit dem Beenden gibt.
+      (save-some-buffers))
+  
+    ;; This is the delayed sync function; it waits until emacs has been idle for 
+    ;; "secs" seconds before syncing.  The delay is important because the caldav-sync
+    ;; can take five or ten seconds, which would be painful if it did that right at save.  
+    ;; This way it just waits until you've been idle for a while to avoid disturbing 
+    ;; the user.
+    (defvar org-caldav-sync-timer nil
+       "Timer that `org-caldav-push-timer' used to reschedule itself, or nil.")
+    (defun org-caldav-sync-with-delay (secs)
+      (when org-caldav-sync-timer
+	(cancel-timer org-caldav-sync-timer))
+      (setq org-caldav-sync-timer
+	    (run-with-idle-timer
+	     (* 1 secs) nil 'org-caldav-sync)))
+  
+    ;; Actual calendar configuration edit this to meet your specific needs
+    (setq org-caldav-url "https://cloud.ist.gold/remote.php/dav/calendars/fabian")
+    (setq org-caldav-calendars
+    '((:calendar-id "org"
+       :inbox "c:/org/calinbox.org"
+       :files ("c:/org/calendar.org")
+;;       :skip-conditions ('todo 'done)
+;;     :exclude-tags ("work")
+;;     :select-tags ("work") 
+    )))
+    (setq org-caldav-skip-conditions '('todo 'done))
+    (setq org-icalendar-timezone "Europe/Berlin")
+    (setq org-caldav-backup-file "c:/org/caldav/org-caldav-backup.org")
+    (setq org-caldav-save-directory "c:/org/caldav/")
+
+    :config
+    (setq org-icalendar-alarm-time 1)
+    ;; This makes sure to-do items as a category can show up on the calendar
+    (setq org-icalendar-include-todo t)
+    ;; This ensures all org "deadlines" show up, and show up as due dates
+    (setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due))
+    ;; This ensures "scheduled" org items show up, and show up as start times
+    (setq org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
+    ;; Add the delayed save hook with a five minute idle timer
+    (add-hook 'after-save-hook
+	      (lambda ()
+		(when (eq major-mode 'org-mode)
+		  (org-caldav-sync-with-delay 300))))
+    ;; Add the close emacs hook ;; deaktiviert wegen Problemen wenn kein Internet verfügbar
+    (add-hook 'kill-emacs-hook 'org-caldav-sync-at-close))
+#+end_src
+** Sticky Agenda
+#+begin_src emacs-lisp
+(setq org-agenda-sticky t)
+#+end_src
+** Calendar-week
+#+begin_src elisp
+k(copy-face font-lock-constant-face 'calendar-iso-week-face)
+(set-face-attribute 'calendar-iso-week-face nil
+                    :height 0.7)
+(setq calendar-intermonth-text
+      '(propertize
+        (format "%2d"
+                (car
+                 (calendar-iso-from-absolute
+                  (calendar-absolute-from-gregorian (list month day year)))))
+        'font-lock-face 'calendar-iso-week-face))
+
+(copy-face 'default 'calendar-iso-week-header-face)
+(set-face-attribute 'calendar-iso-week-header-face nil
+                    :height 0.7)
+(setq calendar-intermonth-header
+      (propertize "KW"                  ; or e.g. "KW" in Germany
+                  'font-lock-face 'calendar-iso-week-header-face))
+
+(setq calendar-week-start-day 1)
+#+end_src
+** Use Org-Bulles
+  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
+  #+BEGIN_SRC emacs-lisp
+  (require 'org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+ #+END_SRC
+ #+BEGIN_SRC  emacs-lisp
+  ;; make available "org-bullet-face" such that I can control the font size individually
+ (setq org-bullets-bullet-list '("✥" "✤" "❖" "✿" "❄" "❋" "★" "✚")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
+ #+END_SRC
+** Set custom ellipsis (...)
+ #+BEGIN_SRC emacs-lisp
+ (setq org-ellipsis "⤵")
+  #+END_SRC
 * Moving around
 **  Springen im Buffer
 *** Springen mit dem Mark-Ring
@@ -172,26 +564,16 @@ deaktiviert weil nervig.
 
 *** Multiple Keys
     Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
-
 **** Generell
-#+BEGIN_SRC emacs-lisp :results silent
+#+BEGIN_SRC emacs-lisp :results output silent
  (ryo-modal-keys 
-    ("s" (
-     ("s" isearch-forward)
-     ("r" isearch-backward)
-     ))
     ("b"
-     (
-     ("b" bookmark-jump)
-     ("m" bookmark-set)
-     ("l" bookmark-bmenu-list)
-     ("s" bookmark-save)
-     ("o" bookmark-jump-other-window)
+     (("b" bookmark-jump)
+      ("m" bookmark-set)
+      ("l" bookmark-bmenu-list)
+      ("s" bookmark-save)
+      ("o" bookmark-jump-other-window)
      ))
-    ("z"
-     (("z" org-time-stamp :exit t)
-      ("t" org-time-stamp-inactive :exit t)
-      ("c" org-toggle-timestamp-type)))
     ("d"
      (("u" outline-up-heading)
       ("l" org-forward-heading-same-level)
@@ -199,10 +581,8 @@ deaktiviert weil nervig.
       ("j" org-next-visible-heading)
       ("k" org-previous-visible-heading)
       ))
-    ("x"
-     (("s" save-some-buffers)
-      ("f" find-file)
-      ("c" save-buffers-kill-terminal)
+    ("f"
+     (("e" org-emphasize)
      ))
     ("g"
      (("a" org-agenda)
@@ -216,7 +596,8 @@ deaktiviert weil nervig.
       ("l" xah-pop-local-mark-ring)
       ("L" pop-global-mark)
       ("j" ess/org-show-just-me)
-      ("h" delete-other-windows)))
+      ("h" delete-other-windows)
+     ))
     ("n" 
      (("s" org-narrow-to-subtree)
       ("w" widen)
@@ -227,6 +608,10 @@ deaktiviert weil nervig.
 ;;      ("x" org-agenda-set-restriction-lock)
 ;;      ("y" org-agenda-remove-restriction-lock)
       ))  
+    ("s" (
+     ("s" isearch-forward)
+     ("r" isearch-backward)
+     ))
     ("t"
      (("i" org-clock-in)
       ("o" org-clock-out)
@@ -239,14 +624,28 @@ deaktiviert weil nervig.
       ("n" org-timer-start)
       ("N" org-timer-start-with-offset)
       ("." org-timer :exit t)
-      ("t" org-todo))
-    )) 
+      ("t" org-todo)
+      ))
+    ("x"
+     (("s" save-some-buffers)
+      ("f" find-file)
+      ("c" save-buffers-kill-terminal)
+      ("k" kill-buffer)
+      ("b" switch-to-buffer)
+      ("d" dired)
+     ))
+    ("z"
+     (("z" org-time-stamp :exit t)
+      ("t" org-time-stamp-inactive :exit t)
+      ("c" org-toggle-timestamp-type)
+     ))
+   ) 
 
 (define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
 
 **** Befehle mit c prefix
-#+begin_src emacs-lisp :results slient
+#+begin_src emacs-lisp :results output slient
  (ryo-modal-keys 
     ("c"
      (
@@ -266,6 +665,7 @@ deaktiviert weil nervig.
      ("s" org-schedule)
      ("t" org-todo)
      ("w" org-refile)
+     ("W" my/org-refile-in-file)
      ("*" org-list-make-subtree)
      ("RET" org-ctrl-c-ret)
      ("y" org-evaluate-time-range)
@@ -302,6 +702,8 @@ deaktiviert weil nervig.
      ("~" org-table-create-with-table.el)
      )))
 #+end_src
+
+#+RESULTS:
 
 **** Befehle mit r prefix
 #+BEGIN_SRC emacs-lisp :results slient
@@ -682,7 +1084,7 @@ deaktiviert weil nervig.
       ("n" org-timer-start)
       ("." org-timer :exit t)
       ("t" org-todo))
-    )) 
+    ) 
 
 (define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
@@ -742,249 +1144,5 @@ deaktiviert weil nervig.
 (define-key isearch-mode-map (kbd "*") 'isearch-repeat-backward)
 (define-key isearch-mode-map (kbd "#") 'isearch-cancel)
 #+end_src
-* Org Mode Settings
-** TODO Agenda
-#+BEGIN_SRC emacs-lisp
-;;    ###     ######   ######## ##    ## ########     ###    
-;;   ## ##   ##    ##  ##       ###   ## ##     ##   ## ##   
-;;  ##   ##  ##        ##       ####  ## ##     ##  ##   ##  
-;; ##     ## ##   #### ######   ## ## ## ##     ## ##     ## 
-;; ######### ##    ##  ##       ##  #### ##     ## ######### 
-;; ##     ## ##    ##  ##       ##   ### ##     ## ##     ## 
-;; ##     ##  ######   ######## ##    ## ########  ##     ## 
-;; Agenda-Mode
-;;------------
 
-;; Kein visual-line-mode in Agendas - Lange Zeilen werden nicht umbebrochen
-(add-hook 'org-agenda-mode-hook
-          (lambda ()
-            (visual-line-mode -1)
-            (toggle-truncate-lines 1)))
-
-;; Clock-Report-View auf Level 3
-(setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 3))
-#+END_SRC
-** TODO Verteilen
-#+BEGIN_SRC emacs-lisp
-;; öffne Dateien mit der Endung .org mit emacs.
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-#+END_SRC
-** Agenda Ansichten
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-skip-scheduled-if-done t
-      org-agenda-skip-deadline-if-done t
-      org-agenda-skip-deadline-prewarning-if-scheduled t
-      org-use-tag-inheritance t
-      org-tags-match-list-sublevels nil
-      org-deadline-warning-days 2)
-
-;; Default Kalender-Zeit
-(setq org-agenda-span 2)
-
-;; Tage, die eine Deadline vorher angekündigt wird
-(setq org-deadline-warning-days 3)
-;; Deaktiviert die Deadline-Warung, wenn die Aufgabe Terminiert wurde.
-(setq org-agenda-skip-deadline-prewarning-if-scheduled t)
-#+END_SRC
-** Agenda Terminfindung
-#+BEGIN_SRC emacs-lisp
-  ;; Erklaerung: Agenda-Mode-Hook laeuft vor dem Agenda-Mode. Mit local-set-key wird nur fuer den Mode eine Tastenzuweisung angelegt:
-(add-hook 'org-agenda-mode-hook
-  (lambda ()
-  (local-set-key (kbd "S-<up>") 'org-agenda-date-earlier-hours)
-  (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
-))
-
-#+END_SRC
-** Agenda Verhalten
-#+BEGIN_SRC emacs-lisp
-  ;; Activate plain list cycle
-  (setq org-list-use-circular-motion t)
-#+END_SRC
-** Agenda custom commands
-#+BEGIN_SRC emacs-lisp
-;; AGENDA MODES - Hier gibt es einen Fehler...
-;;--------------
-(setq org-agenda-custom-commands
-      '(("u" . "My Custom Agendas")
-	("um" "Ausgaben im März" tags "{20#[1][0-3]}") ;; Suche für Ausgaben im März (10-13)
-	("ua" "Ausgaben im April" tags "{20#[1][4-8]}") ;; Suche für Ausgaben im April (14-18)
-        ("uu" "TODO ohne Zeitpunkt"
-         ((todo ""
-                ((org-agenda-overriding-header "\nUnscheduled TODO")
-                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
-	)))
-	 nil
-         nil)
-        ("d" "Nur Deadlines" agenda "Diesen Monat" (
-             (org-agenda-span 'month)
-             (org-agenda-time-grid nil)
-             (org-agenda-show-all-dates nil)
-             (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
-             (org-deadline-warning-days 0) ))
-	("n" "Nächste Schritte" occur-tree "NEXT")
-	))
-
-;; Funktionen für Sortierung nach NEXT-Keywords
-     (defun my-skip-unless-next ()
-       "Skip trees that are not next"
-       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-         (if (re-search-forward "" subtree-end t)
-             nil          ; tag found, do not skip
-           subtree-end))) ; tag not found, continue after end of subtree
-
-#+END_SRC
-** Clocking/Aufwand
-#+BEGIN_SRC emacs-lisp
-;; CLOCKING: global Effort estimate values
-(setq org-global-properties
-      '(("Effort_ALL" .
-         "1:00 2:00 3:00 4:00 5:00 0:10 0:20 0:30 0:45 0:00 6:00 7:20 8:00 9:00 10:00")))
-;;        1    2    3    4    5    6    7    8    9    0
-;; These are the hotkeys
-
-;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
-(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TODO %SCHEDULED %DEADLINE")
-#+END_SRC
-** Org-Logging von Aufgaben (TODOs)
-#+BEGIN_SRC emacs-lisp
-;; Org-mode TODO
-;;(setq org-log-done 'time)
-
-#+END_SRC
-** Shortcuts für den org-mode
-#+BEGIN_SRC emacs-lisp
-;; Keyboard Shortcuts
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cc" 'org-capture)
-(global-set-key (kbd "C-ä") 'count-words) 
-(global-set-key (kbd "C-ß") 'org-toggle-timestamp-type)
-#+END_SRC
-** Capture Templates
-#+BEGIN_SRC emacs-lisp
-;; Capture Templates
-;;-------------------
-(setq org-capture-templates
-  '(
-    ("t" "Todo [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks") "* TODO %i%?")
-    ("r" "Todo w Schedule [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks") "** TODO %^{Titel} \n SCHEDULED: %^{Startzeitpunkt}t")
-    ("d" "Todo w Deadline [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks") "** TODO %^{Titel} \n DEADLINE: %^{Faellig bis}t")
-    ("n" "Todo now [inbox]" entry (file+headline "c:org/inbox.org" "Tasks") "* TODO %i%? \n SCHEDULED: %T")
-    ("z" "Ziele (inbox-Tree)" entry (file+headline "c:/org/ziele.org" "Inbox") "* TODO %i%?")
-    ("s" "prefix für someday-Tasks")
-    ("sa" "Todo [someday Arbeit]" entry (file+headline "c:/org/asomeday.org" "Inbox") "* TODO %i%?")
-    ("sh" "Todo [someday Home]" entry (file+headline "c:/org/hsomeday.org" "Inbox") "* TODO %i%?")
-    ("T" "Tickler" entry (file+headline "c:/org/tickler.org" "Tickler") "** %^{Title} \n %^t")
-    ("R" "Scheduled Tickler" entry (file+headline "c:/org/tickler.org" "Tickler") "** %^{Title} \n SCHEDULED: %^t")
- ))
-#+END_SRC
-** Ziele für Refile Aktion festlegen
-#+BEGIN_SRC emacs-lisp
-;; setting Refile Target
-(setq org-refile-targets '(
-  (org-agenda-files :maxlevel . 1)
-  ("c:/org/asomeday.org" :maxlevel . 1)
-  ("c:/org/atasks.org" :maxlevel . 2)
-)) ;; include all Agenda-Files and all Heading up to ** 
-
-;; TODO Hier fehlt noch eine Erklärung
-(setq org-refile-allow-creating-parent-nodes 'confirm)        ;;allow creating nodes. Refile has to end with /newheadingname
-#+END_SRC
-** Kosmetik für den org-mode
-#+BEGIN_SRC emacs-lisp
-;; Make Org beautiful
-
-;; hide Markers like *this* for bold
-(setq org-hide-emphasis-markers t) 
-
-;; blendet alle bis auf einen Stern für Org-Überschriften aus.
-(setq org-hide-leading-stars t)    
-
-;; Clocking
-;;---------
-(setq org-clock-persist 'history)
-(org-clock-persistence-insinuate) ;; Erklärung
-#+END_SRC
-*** COMMENT Tags mit eigener Farbe
- - deaktiviert weil die funktion im neuen Org-Mode nicht funktioniert.
- #+BEGIN_SRC emacs-lisp
- ;; Change Faces for specific Tags
- ;; from https://stackoverflow.com/questions/40876294/color-tags-based-on-regex-emacs-org-mode
-
- ;; (add-to-list 'org-tag-faces '("@.*" . (:foreground "sienna4" :weight normal :height 0.8 )))
-
- ;; ;; Reset the global variable to nil, just in case org-mode has already beeen used.
- ;; (when org-tags-special-faces-re
- ;;   (setq org-tags-special-faces-re nil))
-
- ;; (defun org-get-tag-face (kwd)
- ;;   "Get the right face for a TODO keyword KWD.
- ;; If KWD is a number, get the corresponding match group."
- ;;   (if (numberp kwd) (setq kwd (match-string kwd)))
- ;;   (let ((special-tag-face (or (cdr (assoc kwd org-tag-faces))
- ;;                               (and (string-match "^@.*" kwd)
- ;;                                    (cdr (assoc "@.*" org-tag-faces))))))
- ;;     (or (org-face-from-face-or-color 'tag 'org-tag special-tag-face)
- ;;         'org-tag)))
-
- #+END_SRC
-** Org-Recur
-   - Paket für die wiederholte Planung von Überchriften
-#+begin_src emacs-lisp
-(use-package org-recur
-  :hook ((org-mode . org-recur-mode)
-         (org-agenda-mode . org-recur-agenda-mode))
-  :demand t
-  :config
-  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
-
-  ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
-  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
-  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish))
-#+end_src
-** Sticky Agenda
-#+begin_src emacs-lisp
-(setq org-agenda-sticky t)
-#+end_src
-** Calendar-week
-#+begin_src elisp
-k(copy-face font-lock-constant-face 'calendar-iso-week-face)
-(set-face-attribute 'calendar-iso-week-face nil
-                    :height 0.7)
-(setq calendar-intermonth-text
-      '(propertize
-        (format "%2d"
-                (car
-                 (calendar-iso-from-absolute
-                  (calendar-absolute-from-gregorian (list month day year)))))
-        'font-lock-face 'calendar-iso-week-face))
-
-(copy-face 'default 'calendar-iso-week-header-face)
-(set-face-attribute 'calendar-iso-week-header-face nil
-                    :height 0.7)
-(setq calendar-intermonth-header
-      (propertize "KW"                  ; or e.g. "KW" in Germany
-                  'font-lock-face 'calendar-iso-week-header-face))
-
-(setq calendar-week-start-day 1)
-#+end_src
-** Use Org-Bulles
-  Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
-  #+BEGIN_SRC emacs-lisp
-  (require 'org-bullets)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
- #+END_SRC
- #+BEGIN_SRC  emacs-lisp
-  ;; make available "org-bullet-face" such that I can control the font size individually
- (setq org-bullets-bullet-list '("✥" "✤" "❖" "✿" "❄" "❋" "★" "✚")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
- #+END_SRC
-** Set custom ellipsis (...)
- #+BEGIN_SRC emacs-lisp
- (setq org-ellipsis "⤵")
-  #+END_SRC
-* Test
-0:00:00 0:00:02 asdflök jasdölkfj asöldkfj asöldkfj asdlökfj a0:00:06  asldkfjalösdkjf aölskdjf
-fhHAl - [2020-06-30 Di 21:01] hi wie geht es so?hallo
- - <2020-06-30 Di 21:01> yo das sieht schon mal ziemlich gut aus!
-
+* Heading for tests
