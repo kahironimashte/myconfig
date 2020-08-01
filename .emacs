@@ -35,7 +35,7 @@
  '(font-use-system-font t)
  '(org-agenda-files
    (quote
-    ("c:/org/atasks.org" "c:/org/tickler.org" "c:/org/ziele.org" "c:/org/inbox.org" "c:/org/prsn/abschluss.org")))
+    ("c:/org/calendar.org" "c:/org/atasks.org" "c:/org/ziele.org" "c:/org/inbox.org")))
  '(org-default-priority 67)
  '(org-hide-leading-stars t)
  '(org-highest-priority 65)
@@ -48,10 +48,9 @@
      (68 :inherit org-priority :family "IBM Plex Mono Light" :weight light))))
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
-;; Pakete die geladen werden
  '(package-selected-packages
    (quote
-    (smartparens nov org-bookmark-heading org-recur which-key org-bullets use-package ryo-modal org spaceline))))
+    (org-caldav smartparens nov org-bookmark-heading org-recur which-key org-bullets use-package ryo-modal org spaceline))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -135,8 +134,9 @@
 ;; DESKTOP-SAVE-MODE
 (desktop-save-mode 1)
 
-;; Open Archive-File-Extensions
+;; Open File-Extensions in emacs
 (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
 ;; Tweak window chrome
 ;;--------------------
@@ -160,7 +160,9 @@
 ;; Org-mode settings
 ;;------------------
 
-
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
 
 ;; ######## ##    ##  ######   #######  ########  #### ##    ##  ######   
 ;; ##       ###   ## ##    ## ##     ## ##     ##  ##  ###   ## ##    ##  
