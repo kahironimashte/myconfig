@@ -12,9 +12,18 @@
 (package-initialize) ;; Mit (package-initialize t) werden die Pakete NICHT geladen. Das kann nützlich sein, wenn man Pakete über use-package laden will. 
 
 
-(setq custom-file "~/.emacs.d/emacs-custom.el")
+
+;; Lade Einstellungen, die über das Custom-Interface gemacht wurden. Meistens für die Darstellung und Gestaltung
+(setq custom-file (concat "~/.emacs.d/emacs-custom.el"))
 (load custom-file)
 
-;; Lade emacs Konfiguration aus einer .org-Datei.
+
+
+;; Pfade auf lokale Umgebungen anpassen. Die Pfade müssen dann mit (concat variable "/realtiv/pfad") angegeben werden
 (require 'org)
+(if (eq system-type 'windows-nt)
+    (setq org-directory "c:/org")
+  (setq org-directory "~/ncloud/org"))
+
+;; Lade emacs Konfiguration aus einer .org-Datei.
 (org-babel-load-file "~/.emacs.d/configuration.org")
