@@ -227,6 +227,7 @@ information."
 ;; Caprture Templates
 (setq org-capture-templates
    '(
+      ("h" "sofort anstehende Aufgaben" )
       ("t" "Todo [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "* TODO %i%?")
       ("r" "Todo w Schedule [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "** TODO %^{Titel} \n SCHEDULED: %^{Startzeitpunkt}t")
       ("d" "Todo w Deadline [inbox]" entry (file+headline "~/ncloud/org/inbox.org" "Tasks") "** TODO %^{Titel} \n DEADLINE: %^{Faellig bis}t")
@@ -357,7 +358,6 @@ information."
 
 ** RYO Key settings
 *** Tastenfunktionen
-
 #+BEGIN_SRC emacs-lisp
 (defun org-timer-start-with-offset ()
   "Start the timer and prompt user to enter a time offset"
@@ -416,29 +416,15 @@ information."
 #+BEGIN_SRC emacs-lisp :results silent
  (require 'org-timer)
  (ryo-modal-keys 
-    ;;(("SPC" set-mark-command)))
-    ("s" (
-     ("s" isearch-forward)
-     ("r" isearch-backward)
-     ))
-    ("f"
-     (
-     ("e" org-emphasize)
-     ))
     ("b"
-     (
-     ("b" bookmark-jump)
-     ("m" bookmark-set)
-     ("l" bookmark-bmenu-list)
-     ("s" bookmark-save)
-     ("o" bookmark-jump-other-window)
-     ("v" org-mark-ring-push)
-     ("n" org-mark-ring-goto)
+     (("b" bookmark-jump)
+      ("m" bookmark-set)
+      ("l" bookmark-bmenu-list)
+      ("s" bookmark-save)
+      ("o" bookmark-jump-other-window)
+      ("v" org-mark-ring-push)
+      ("n" org-mark-ring-goto)
      ))
-    ("z"
-     (("z" org-time-stamp)
-      ("t" org-time-stamp-inactive)
-      ("o" org-toggle-timestamp-type)))
     ("d"
      (("u" outline-up-heading)
       ("l" org-forward-heading-same-level)
@@ -446,47 +432,64 @@ information."
       ("j" org-next-visible-heading)
       ("k" org-previous-visible-heading)
       ))
-    ("x"
-     (("s" save-some-buffers)
-      ("f" find-file)
-      ("c" save-buffers-kill-terminal)
+    ("f"
+     (("e" org-emphasize)
      ))
     ("g"
      (("a" org-agenda)
+      ("f" org-agenda)
       ("g" switch-to-buffer)
       ("o" other-window)
-      ("f" kahiro-split-and-switch)
+      ("s" kahiro-split-and-switch)
       ("k" kahiro-switch-and-close)
       ("t" org-sparse-tree)
-      ("q" undo)
       ("l" xah-pop-local-mark-ring)
       ("L" pop-global-mark)
       ("j" ess/org-show-just-me)
-      ("h" delete-other-windows)))
+      ("h" delete-other-windows)
+     ))
     ("n" 
      (("s" org-narrow-to-subtree)
       ("w" widen)
       ("t" kahiro-show-todos-in-subtree) 
       ("n" kahiro-show-NEXT-in-subtree) 
-      ("g" ess/org-show-just-me)
+      ("j" ess/org-show-just-me)
       ("p" kahiro-show-PLAN-in-subtree)
 ;;      ("x" org-agenda-set-restriction-lock)
 ;;      ("y" org-agenda-remove-restriction-lock)
       ))  
-    ("t"
-      (("i" org-clock-in)
+    ("s" (
+     ("s" isearch-forward)
+     ("r" isearch-backward)
+     ))
+    ("t" org-todo)
+    ("x"
+     (("s" save-some-buffers)
+      ("f" find-file)
+      ("c" save-buffers-kill-terminal)
+      ("k" kill-buffer)
+      ("b" switch-to-buffer)
+      ("d" dired)
+     ))
+    ("z"
+     (("i" org-clock-in)
       ("o" org-clock-out)
       ("j" org-clock-goto)
       ("x" org-clock-in-last)
       ("q" org-clock-cancel)
       ("d" org-clock-display)
-      ("\," org-timer-pause-or-continue)
+      ("," org-timer-pause-or-continue)
       ("-" org-timer-item :exit t)
       ("n" org-timer-start)
       ("N" org-timer-start-with-offset)
       ("." org-timer :exit t)
-      ("t" org-todo))
-    )) 
+
+      ("z" org-time-stamp :exit t)
+      ("t" org-time-stamp-inactive :exit t)
+      ("c" org-toggle-timestamp-type)
+     ))
+   )
+   
 
 (define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
@@ -747,12 +750,19 @@ information."
 	    ("r" org-agenda-redo)
 	    ("s" org-save-all-org-buffers)
 	    ("t" org-agenda-todo)
+	      ("i" org-agenda-clock-in)
+	      ("o" org-agenda-clock-out)
+	    ))
 	    ("u" org-agenda-bulk-unmark)
 	    ("v" org-agenda-view-mode-dispatch)
 	    ("w" org-agenda-week-view)
 	    ("x" org-agenda-exit)
 	    ("y" org-agenda-year-view)
-	    ("z" org-agenda-add-note)
+	    ("z" 
+	    (("n" org-agenda-add-note)
+	      ("i" org-agenda-clock-in)
+	      ("o" org-agenda-clock-out)
+	    ))
 	    ("{" org-agenda-manipulate-query-add-re)
 	    ("|" org-agenda-filter-remove-all)
 	    ("}" org-agenda-manipulate-query-subtract-re)
