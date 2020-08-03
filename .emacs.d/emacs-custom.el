@@ -12,9 +12,7 @@
    ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
  '(custom-enabled-themes (quote (whiteboard)))
  '(moody-mode-line-height 28)
- '(org-agenda-files
-   (quote
-    ("~/ncloud/org/atasks.org" "~/ncloud/org/prsn/abschluss.org" "~/ncloud/org/checklisten.org" "~/ncloud/org/calendar.org" "~/ncloud/org/htasks.org" "~/ncloud/org/ziele.org" "~/ncloud/org/inbox.org")))
+ '(org-agenda-files (quote ("~/ncloud/org/inbox.org" "~/ncloud/org/htasks.org" "~/ncloud/org/atasks.org" "~/ncloud/org/calendar.org")))
  '(org-default-priority 67)
  '(org-highest-priority 65)
  '(org-lowest-priority 68)

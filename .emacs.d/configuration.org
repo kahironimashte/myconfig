@@ -62,39 +62,39 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
     "linkdrop"                                                 ;; Beschreibungstext
     entry                                                      ;; Typ, kann z.B. auch ein "checkitem" einer liste sein.
     (file+headline                                             ;; Zieltyp, hier eine Überschrift in einer Datei
-        (lambda () concat (org-directory "/linkdrop.org"))          ;;   entsprechend Zieldatei
+        (lambda () (concat org-directory "/linkdrop.org"))          ;;   entsprechend Zieldatei
 	"Links")                                               ;;   entsprechend Zielüberschrift (so, wenn sie unique ist)
      "** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgaben-Beschreibung} 
      %(org-set-tags-command)\n%c \n\n%^{Notizen}%?"            ;; Template für Capture
      :prepend t :empty-lines 1 :unnarrowed t )                              ;; weitere Eigenschaften -> siehe Hilfe.
-    ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () concat (org-directory "/atasks.org")) "Inbox")
+    ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
       :prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
-    ("u" "ungeplante Arbeit, unkritisch" entry (file+headline (lambda () concat (org-directory "/atasks.org")) "Inbox")
+    ("u" "ungeplante Arbeit, unkritisch" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
       :empty-lines-after 1)
-    ("H" "ungeplantes Todo sofort" entry (file+headline (lambda () concat (org-directory "/atasks.org")) "Inbox")
+    ("H" "ungeplantes Todo sofort" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
       :prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
-    ("h" "Task Home" entry (file+headline (lambda () concat (org-directory "/atasks.org")) "Inbox")
+    ("h" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
       :empty-lines-after 1)
-    ("a" "Todo für die Arbeit" entry (file+headline (lambda () concat (org-directory "/atasks.org")) "Inbox")
+    ("a" "Todo für die Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
       "** %^{Status|PLAN|TODO} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
       :empty-lines-after 1)
-    ("r" "Todo w Schedule [inbox]" entry (file+headline (lambda () concat (org-directory "/inbox.org")) "Tasks")
+    ("r" "Todo w Schedule [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :review: \n ERSTELLT: %u\nSCHEDULED:%^t \n  - Anmerkungen ::%^{Anmerkungen}\n%?" 
       :empty-lines-after 1)
-    ("d" "Todo w Deadline [inbox]" entry (file+headline (lambda () concat (org-directory "/inbox.org")) "Tasks")
+    ("d" "Todo w Deadline [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} \nDEADLINE: %^{Faellig bis}t \n  - Anmerkungen ::%^{Anmerkungen}\n%?"
       :empty-lines-after 1)
-    ("k" "Kalendereintrag" entry (file+olp+datetree (concat (org-directory "/calendar.org")) "Events") 
+    ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
       "** %^{Title} \n %^t" :time-prompt t)
-    ("t" "Todo [inbox]" entry (file+headline (lambda () concat (org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
+    ("t" "Todo [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
     ("n" "Neuer Text")
-    ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () concat (org-directory "/atasks.org")) "Texte Autoren") 
+    ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Texte Autoren") 
       "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :%^{voraussichtliche Ausgabe}#20: \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Nachhaken am}t \n:PROPERTIES:\n:AUTOR: %^{Autorname}\n:HONORAR: %^{Vereinbartes Honorar in EUR}\n:ZEICHENZAHL: %^{vereinbarte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Bilder\n**** PLAN Layout\n**** PLAN Redigieren\n**** PLAN Lesen lassen\n**** PLAN Korrekturen" :empty-lines-after 1)
-    ("ne" "Template für neuen Eigenen-Text" entry (file+headline (lambda () concat (org-directory "/atasks.org")) "Eigene Texte") 
+    ("ne" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
       "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :%^{voraussichtliche Ausgabe}#20:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n:PROPERTIES:\n:MITARBEIT: %^{Co-Autoren}\n:ZEICHENZAHL: %^{angepeilte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Recherche\n**** PLAN Bilder besorgen\n**** PLAN Layouten lassen\n**** PLAN Texten\n**** PLAN Lesen lassen\n**** PLAN Korrekturen" :empty-lines-after 1)
  ))
 #+END_SRC
@@ -113,7 +113,7 @@ Then use an org-capture template like this:
 (setq org-capture-templates
   '(
    ("w" "Weekly review" plain
-    (file+function (concat org-directory "/calendar.org" org-find-month-in-datetree)
+    (file+function (lambda () (concat org-directory "/calendar.org")) org-find-month-in-datetree)
     "**** TODO Weekly review%?"))))
 #+end_src
 
@@ -130,9 +130,9 @@ To get the same for a weekly date-tree change the function to
 ** [#A] Ziele für Refile Aktion festlegen
 #+BEGIN_SRC emacs-lisp :results output silent
 ;; setting Refile Target
-(setq org-refile-targets '(
+(setq org-refile-targets `(
   (org-agenda-files :maxlevel . 1)       ;; Für Agenda-Dateien normalerweise nur in * Überschriften
-  ((concat org-directory "/atasks.org") :maxlevel . 2)))  ;; Für atask.org auch in ** Überschriften
+  (,(concat org-directory "/atasks.org") :maxlevel . 2)))  ;; Für atask.org auch in ** Überschriften
 
 ;; TODO Hier fehlt noch eine Erklärung
 (setq org-refile-allow-creating-parent-nodes 'confirm)     ;;allow creating nodes. Refile has to end with /newheadingname
@@ -155,218 +155,9 @@ To get the same for a weekly date-tree change the function to
 
 (setq org-refile-targets '((my-org-files-list :maxlevel . 1)))
 #+end_src
-** [#C] Neuestes Org-Paket aus MELPA verwenden
-#+BEGIN_SRC emacs-lisp
-;; use Melpa-Org-Version instead of builtin. Vorher habe ich die neueste org-Version aus Melpa installiert.
-(assq-delete-all 'org package--builtins)
-;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
-#+END_SRC
-** [#C] Archiv-Location
- - Link zur Hilfe: [[help:org-archive-location]]
-*** Beispiele
-    - in der config: (setq org-archive-location "datei::** unterDieserHeadingSortieren")
-    - in der datei: #+ARCHIVE: datei::** unterDieserHeadingSortieren
-      oder: #+ARCHIVE: %s_archive::datetree/
-    - in der subheading
-      :PROPERTIES:
-      :ARCHIVE: datei::** unterdieserheadingsortieren
-      :END:
-
-Here are a few examples:
-"%s_archive::"
-	If the current file is Projects.org, archive in file
-	Projects.org_archive, as top-level trees.  This is the default.
-
-"::* Archived Tasks"
-	Archive in the current file, under the top-level headline
-	"* Archived Tasks".
-
-"~/org/archive.org::"
-	Archive in file ~/org/archive.org (absolute path), as top-level trees.
-
-"~/org/archive.org::* From %s"
-	Archive in file ~/org/archive.org (absolute path), under headlines
-        "From FILENAME" where file name is the current file name.
-
-"~/org/datetree.org::datetree/* Finished Tasks"
-        The "datetree/" string is special, signifying to archive
-        items to the datetree.  Items are placed in either the CLOSED
-        date of the item, or the current date if there is no CLOSED date.
-        The heading will be a subentry to the current date.  There doesn’t
-        need to be a heading, but there always needs to be a slash after
-        datetree.  For example, to store archived items directly in the
-        datetree, use "~/org/datetree.org::datetree/".
-
-"basement::** Finished Tasks"
-	Archive in file ./basement (relative path), as level 3 trees
-	below the level 2 heading "** Finished Tasks".
-
-You may set this option on a per-file basis by adding to the buffer a
-line like
-
-#+ARCHIVE: basement::** Finished Tasks
-
-You may also define it locally for a subtree by setting an ARCHIVE property
-in the entry.  If such a property is found in an entry, or anywhere up
-the hierarchy, it will be used.
-** [#B] Structure template
-#+begin_src emacs-lisp :results output silent
-(setq org-structure-template-alist
-  '(("s" . "src")
-    ("se" . "src emacs-lisp")
-    ("ss" . "src emacs-lisp :results output silent")
-;;    ("h" . "export html")
-;;    ("l" . "export latex")
-;;    ("q" . "quote")
-;;    ("c" . "comment")
-    ))
-#+end_src
-*** TODO [#B] Org Tempo oder yasnippet einrichten
-*** Info zu Source Blocks
- They changed the template system in orgmode 9.2.
-
- The new mechanism is called structured template. The command org-insert-structure-template bound to *C-c C-,* gives you a list of #+begin_-#+end_ pairs that narrows down while you type and you can use completion.
-
- But, you can also get the old easy template system back, either
-
-     by adding (require 'org-tempo) to your init file or
-     by adding org-tempo to the list org-modules. You can do that by customizing org-modules.
-
-** [#B] Make org beautiful
-#+BEGIN_SRC emacs-lisp
-;; Make Org beautiful
-;;-------------------
-(setq org-hide-emphasis-markers t) ;; hide Markers like *this* for bold
-#+END_SRC
-*** Use Org-Bulles
-    Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
-   #+BEGIN_SRC emacs-lisp
-   (require 'org-bullets)
-   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-  #+END_SRC
-  #+BEGIN_SRC  emacs-lisp
-   ;; make available "org-bullet-face" such that I can control the font size individually
-  (setq org-bullets-bullet-list '("⚜" "⚙" "❖" "✿" "❄" "❋" "★" "⚛")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
-  #+END_SRC
-*** Set custom ellipsis (...)
-  #+BEGIN_SRC emacs-lisp
-  (setq org-ellipsis "⤵")
-   #+END_SRC
-** [#C] Org-Recur
-   - Paket für die wiederholte Planung von Überchriften
-#+begin_src emacs-lisp :results silent
-(use-package org-recur
-  :hook ((org-mode . org-recur-mode)
-         (org-agenda-mode . org-recur-agenda-mode))
-  :demand t
-  :bind (:map org-recur-agenda-mode-map
-          ("d" . org-recur-finish)
-	  ("C-c d" . org-recur-finish)
-	  :map org-recur-mode-map
-	   ("C-c d" . org-recur-finish))
-;;  :config
-;;  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
-
-  ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
-  ;;  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
-  ;;  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish)
-)
-#+end_src
-** [#C] Calendar-week
-   - Zeigt die Kalenderwiche im Kalender an.
-#+begin_src elisp
-(copy-face font-lock-constant-face 'calendar-iso-week-face)
-(set-face-attribute 'calendar-iso-week-face nil
-                    :height 0.7)
-(setq calendar-intermonth-text
-      '(propertize
-        (format "%2d"
-                (car
-                 (calendar-iso-from-absolute
-                  (calendar-absolute-from-gregorian (list month day year)))))
-        'font-lock-face 'calendar-iso-week-face))
-
-(copy-face 'default 'calendar-iso-week-header-face)
-(set-face-attribute 'calendar-iso-week-header-face nil
-                    :height 0.7)
-(setq calendar-intermonth-header
-      (propertize "KW"                  ; or e.g. "KW" in Germany
-                  'font-lock-face 'calendar-iso-week-header-face))
-
-(setq calendar-week-start-day 1)
-#+end_src**  Keys and Shortcuts
-#+BEGIN_SRC emacs-lisp
-
- ;; Org-mode settings
- (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
- (global-set-key "\C-cl" 'org-store-link)
- (global-set-key "\C-ca" 'org-agenda)
- (global-set-key "\C-cc" 'org-capture)
- (global-font-lock-mode 1)
- ;; Setting custom Keys
- (global-set-key (kbd "C-c s") 'org-sparse-tree)
- (global-set-key (kbd "C-c x") 'other-window)
- (global-set-key (kbd "C-c y") 'delete-other-windows)
-
- (global-set-key (kbd "C-c n") 'org-narrow-to-subtree)
- (global-set-key (kbd "C-c m") 'widen)
- (global-set-key (kbd "C-c i") 'org-clock-in)
- (global-set-key (kbd "C-c o") 'org-clock-out)
- (global-set-key (kbd "C-c j") 'org-clock-goto)
-
-  ;; Activate plain list cycle
-  (setq org-list-use-circular-motion t)
- #+END_SRC
-** Split und Switch
-     - Gibt eine Schnelle übersicht in einem halben Fenster. 
-#+BEGIN_SRC emacs-lisp
- (defun kahiro-split-and-switch ()
-  "Split the window and switch to the other window in sequence."
-  (interactive)
-  (split-window-right)
-  (org-tree-to-indirect-buffer)
-  (other-window 1))
- (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
-
-#+END_SRC
-** Switch und Close
-     - Kehrt wieder zum Übersichtsbuffer zurück. 
-#+BEGIN_SRC emacs-lisp
- (defun kahiro-switch-and-close ()
-  "Split the window and switch to the other window in sequence."
-  (interactive)
-;;  (kill-buffer)
-  (delete-window)
-;;  (other-window -1)
-;;  (delete-other-windows)
- )
-
- (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
-#+END_SRC
-** [#C] org-habit :local:
-Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbringen, oder Sport treiben. Man kann es so einstellen, dass die Aufgabe nur alle x Tage auftaucht. 
-#+BEGIN_SRC emacs-lisp
-;; Den Habit-Graph auf Position (von links) bringen.
-(setq org-habit-graph-column 50)
-#+END_SRC
-** [#C] Clocking / Aufwand
-#+BEGIN_SRC emacs-lisp
-;; CLOCKING: global Effort estimate values
-(setq org-global-properties
-      '(("Effort_ALL" .
-         "1:00 2:00 3:00 4:00 5:00 0:10 0:20 0:30 0:45 0:00 6:00 7:20 8:00 9:00 10:00")))
-;;        1    2    3    4    5    6    7    8    9    0
-;; These are the hotkeys
-
-;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
-(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TAGS %TODO")
-#+END_SRC
-*** Clock-Report bis auf 3 Level tief
-#+begin_src emacs-lisp
-;; Clock-Report-View auf Level 3
-(setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 3))
-#+end_src
-** [#C] Agenda-Mode
+*** Inspirationsquellen
+    - quasiquote für funktionen in einer liste, wie concat oder buffer-file-name :: [[https://lists.gnu.org/archive/html/emacs-orgmode/2012-07/msg00561.html][Link]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Backquote.html][elisp-Manual]]. 
+** [#A] Agenda-Mode
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-skip-scheduled-if-done t
       org-agenda-skip-deadline-if-done t
@@ -379,11 +170,21 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 	    (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
      ))
 #+END_SRC
-*** Custom Agenda Commands
-#+BEGIN_SRC emacs-lisp
+*** TODO Custom Agenda Commands
+ - Hilfe unter :: [[help:org-agenda-custom-commands][org-agenda-custom-commands]]
+ - Beipiele :: [[https://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][worg]], 
+#+BEGIN_SRC emacs-lisp :results output silent
 ;; default agenda commands
 (setq org-agenda-custom-commands
    '(
+     ("o"                                        ;; Key
+      "heutige Tasks im aktuellen Buffer"        ;; Beschreibung
+      agenda                                     ;; Typ
+      ""                                         ;; Suche, muss ggf. leer sein ""
+      (
+    ;; (org-agenda-overriding-restriction (current-buffer)) ;; für aktuellen Buffer
+       (org-agenda-span 1))
+     )
      ("g" tags-tree "g" ((org-show-context-detail 'ancestors)))
      ("w" tags-tree "w" ((org-show-context-detail 'ancestors)))
     )
@@ -445,6 +246,192 @@ information."
             (visual-line-mode -1)
             (toggle-truncate-lines 1)))
 #+end_src
+** [#B] Structure template
+#+begin_src emacs-lisp :results output silent
+(setq org-structure-template-alist
+  '(("s" . "src")
+    ("se" . "src emacs-lisp")
+    ("ss" . "src emacs-lisp :results output silent")
+;;    ("h" . "export html")
+;;    ("l" . "export latex")
+;;    ("q" . "quote")
+;;    ("c" . "comment")
+    ))
+#+end_src
+*** TODO [#B] Org Tempo oder yasnippet einrichten
+*** Info zu Source Blocks
+ They changed the template system in orgmode 9.2.
+
+ The new mechanism is called structured template. The command org-insert-structure-template bound to *C-c C-,* gives you a list of #+begin_-#+end_ pairs that narrows down while you type and you can use completion.
+
+ But, you can also get the old easy template system back, either
+
+     by adding (require 'org-tempo) to your init file or
+     by adding org-tempo to the list org-modules. You can do that by customizing org-modules.
+
+** [#B] Make org beautiful
+#+BEGIN_SRC emacs-lisp
+;; Make Org beautiful
+;;-------------------
+(setq org-hide-emphasis-markers t) ;; hide Markers like *this* for bold
+#+END_SRC
+*** Use Org-Bulles
+    Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
+   #+BEGIN_SRC emacs-lisp
+   (require 'org-bullets)
+   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  #+END_SRC
+  #+BEGIN_SRC  emacs-lisp
+   ;; make available "org-bullet-face" such that I can control the font size individually
+  (setq org-bullets-bullet-list '("⚜" "⚙" "❖" "✿" "❄" "❋" "★" "⚛")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
+  #+END_SRC
+*** Set custom ellipsis (...)
+  #+BEGIN_SRC emacs-lisp
+  (setq org-ellipsis "⤵")
+   #+END_SRC
+** [#C] Neuestes Org-Paket aus MELPA verwenden
+#+BEGIN_SRC emacs-lisp
+;; use Melpa-Org-Version instead of builtin. Vorher habe ich die neueste org-Version aus Melpa installiert.
+(assq-delete-all 'org package--builtins)
+;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
+#+END_SRC
+** [#C] Archiv-Location
+ - Link zur Hilfe: [[help:org-archive-location]]
+*** Beispiele
+    - in der config: (setq org-archive-location "datei::** unterDieserHeadingSortieren")
+    - in der datei: #+ARCHIVE: datei::** unterDieserHeadingSortieren
+      oder: #+ARCHIVE: %s_archive::datetree/
+    - in der subheading
+      :PROPERTIES:
+      :ARCHIVE: datei::** unterdieserheadingsortieren
+      :END:
+
+Here are a few examples:
+"%s_archive::"
+	If the current file is Projects.org, archive in file
+	Projects.org_archive, as top-level trees.  This is the default.
+
+"::* Archived Tasks"
+	Archive in the current file, under the top-level headline
+	"* Archived Tasks".
+
+"~/org/archive.org::"
+	Archive in file ~/org/archive.org (absolute path), as top-level trees.
+
+"~/org/archive.org::* From %s"
+	Archive in file ~/org/archive.org (absolute path), under headlines
+        "From FILENAME" where file name is the current file name.
+
+"~/org/datetree.org::datetree/* Finished Tasks"
+        The "datetree/" string is special, signifying to archive
+        items to the datetree.  Items are placed in either the CLOSED
+        date of the item, or the current date if there is no CLOSED date.
+        The heading will be a subentry to the current date.  There doesn’t
+        need to be a heading, but there always needs to be a slash after
+        datetree.  For example, to store archived items directly in the
+        datetree, use "~/org/datetree.org::datetree/".
+
+"basement::** Finished Tasks"
+	Archive in file ./basement (relative path), as level 3 trees
+	below the level 2 heading "** Finished Tasks".
+
+You may set this option on a per-file basis by adding to the buffer a
+line like
+
+#+ARCHIVE: basement::** Finished Tasks
+
+You may also define it locally for a subtree by setting an ARCHIVE property
+in the entry.  If such a property is found in an entry, or anywhere up
+the hierarchy, it will be used.
+** [#C] Org-Recur
+   - Paket für die wiederholte Planung von Überchriften
+#+begin_src emacs-lisp :results silent
+(use-package org-recur
+  :hook ((org-mode . org-recur-mode)
+         (org-agenda-mode . org-recur-agenda-mode))
+  :demand t
+  :bind (:map org-recur-agenda-mode-map
+          ("d" . org-recur-finish)
+	  ("C-c d" . org-recur-finish)
+	  :map org-recur-mode-map
+	   ("C-c d" . org-recur-finish))
+;;  :config
+;;  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
+
+  ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
+  ;;  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
+  ;;  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish)
+)
+#+end_src
+** [#C] Calendar-week
+   - Zeigt die Kalenderwiche im Kalender an.
+#+begin_src elisp
+(copy-face font-lock-constant-face 'calendar-iso-week-face)
+(set-face-attribute 'calendar-iso-week-face nil
+                    :height 0.7)
+(setq calendar-intermonth-text
+      '(propertize
+        (format "%2d"
+                (car
+                 (calendar-iso-from-absolute
+                  (calendar-absolute-from-gregorian (list month day year)))))
+        'font-lock-face 'calendar-iso-week-face))
+
+(copy-face 'default 'calendar-iso-week-header-face)
+(set-face-attribute 'calendar-iso-week-header-face nil
+                    :height 0.7)
+(setq calendar-intermonth-header
+      (propertize "KW"                  ; or e.g. "KW" in Germany
+                  'font-lock-face 'calendar-iso-week-header-face))
+
+(setq calendar-week-start-day 1)
+#+end_src
+**  Keys and Shortcuts
+#+BEGIN_SRC emacs-lisp :results output silent
+
+ ;; Org-mode settings
+ (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+ (global-set-key "\C-cl" 'org-store-link)
+ (global-set-key "\C-ca" 'org-agenda)
+ (global-set-key "\C-cc" 'org-capture)
+ (global-font-lock-mode 1)
+ ;; Setting custom Keys
+ (global-set-key (kbd "C-c s") 'org-sparse-tree)
+ (global-set-key (kbd "C-c x") 'other-window)
+ (global-set-key (kbd "C-c y") 'delete-other-windows)
+
+ (global-set-key (kbd "C-c n") 'org-narrow-to-subtree)
+ (global-set-key (kbd "C-c m") 'widen)
+ (global-set-key (kbd "C-c i") 'org-clock-in)
+ (global-set-key (kbd "C-c o") 'org-clock-out)
+ (global-set-key (kbd "C-c j") 'org-clock-goto)
+
+  ;; Activate plain list cycle
+  (setq org-list-use-circular-motion t)
+ #+END_SRC
+** [#C] org-habit :local:
+Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbringen, oder Sport treiben. Man kann es so einstellen, dass die Aufgabe nur alle x Tage auftaucht. 
+#+BEGIN_SRC emacs-lisp
+;; Den Habit-Graph auf Position (von links) bringen.
+(setq org-habit-graph-column 50)
+#+END_SRC
+** [#C] Clocking / Aufwand
+#+BEGIN_SRC emacs-lisp
+;; CLOCKING: global Effort estimate values
+(setq org-global-properties
+      '(("Effort_ALL" .
+         "1:00 2:00 3:00 4:00 5:00 0:10 0:20 0:30 0:45 0:00 6:00 7:20 8:00 9:00 10:00")))
+;;        1    2    3    4    5    6    7    8    9    0
+;; These are the hotkeys
+
+;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
+(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TAGS %TODO")
+#+END_SRC
+*** Clock-Report bis auf 3 Level tief
+#+begin_src emacs-lisp
+;; Clock-Report-View auf Level 3
+(setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 3))
+#+end_src
 ** COMMENT Electric Pair Mode :ARCHIVE:
 - [2020-04-28 Tue 22:40] deaktiviert weil die doppelten Anführungszeichen beim Schreiben nerven.
 #+BEGIN_SRC emacs-lisp
@@ -494,7 +481,7 @@ information."
   (let ((level (org-current-level)))
     (org-match-sparse-tree  t (format "+LEVEL=%d" (1+ level)))))
 #+END_SRC
-** Todos eines Subtrees
+** Zeige nur spezielle TODOs und fokussiere den Ast
 #+BEGIN_SRC emacs-lisp
 
 (defun kahiro-show-todos-in-subtree ()
@@ -508,7 +495,7 @@ information."
    "Narrow to a subtree and show only headings with TODO keywords"
    (interactive)
    (org-narrow-to-subtree)
-   (org-show-todo-tree 3)
+   (org-occur (concat "^" org-outline-regexp " *" "\\(NEXT\\|WAITING\\)"))
    (org-ctrl-c-ctrl-c))
 
 (defun kahiro-show-PLAN-in-subtree ()
@@ -518,6 +505,39 @@ information."
    (org-show-todo-tree 1)
    (org-ctrl-c-ctrl-c))
 
+#+END_SRC
+** Test
+*** TODO Todo 1
+    SCHEDULED: <2020-08-04 Di>
+*** FEHLER Todo 2
+<2020-08-04 Di 12:00>
+*** OK Todo3
+
+** Split und Switch
+     - Gibt eine Schnelle übersicht in einem halben Fenster. 
+#+BEGIN_SRC emacs-lisp
+ (defun kahiro-split-and-switch ()
+  "Split the window and switch to the other window in sequence."
+  (interactive)
+  (split-window-right)
+  (org-tree-to-indirect-buffer)
+  (other-window 1))
+ (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
+
+#+END_SRC
+** Switch und Close
+     - Kehrt wieder zum Übersichtsbuffer zurück. 
+#+BEGIN_SRC emacs-lisp
+ (defun kahiro-switch-and-close ()
+  "Split the window and switch to the other window in sequence."
+  (interactive)
+;;  (kill-buffer)
+  (delete-window)
+;;  (other-window -1)
+;;  (delete-other-windows)
+ )
+
+ (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
 #+END_SRC
 * Bewegen
 **  Jump in the document
@@ -632,8 +652,8 @@ information."
       ("n" kahiro-show-NEXT-in-subtree) 
       ("j" ess/org-show-just-me)
       ("p" kahiro-show-PLAN-in-subtree)
-;;      ("x" org-agenda-set-restriction-lock)
-;;      ("y" org-agenda-remove-restriction-lock)
+      ("b" org-agenda-set-restriction-lock)
+      ("v" org-agenda-remove-restriction-lock)
       ))  
     ("s" (
      ("s" isearch-forward)
