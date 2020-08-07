@@ -1,8 +1,9 @@
 #+TITLE: Org-Config
+#+TAGS: Funktionen(f) deaktiviert(d)
 * Allgemeines
 ** TODO Ideen
    - Mark ring auf angenehmerer Combo legen (c-b-m / c-b-b)
-** COMMENT unfill paragraph 
+** COMMENT unfill paragraph :deaktiviert:
 #+BEGIN_SRC emacs-lisp
 ;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph    
 (defun unfill-paragraph (&optional region)
@@ -17,7 +18,7 @@
 (define-key global-map "\M-Q" 'unfill-paragraph)
 #+END_SRC
 * Fokussieren 
-** Alles einklappen außer aktuellen Subtree
+** Alles einklappen außer aktuellen Subtree :Funktionen:
   - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
 #+BEGIN_SRC emacs-lisp
 (defun ess/org-show-just-me (&rest _)
@@ -30,7 +31,7 @@
 (add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
 
 #+END_SRC
-** Split and switch
+** Split and switch :Funktionen:
 *** Split und Switch
      - Gibt eine Schnelle übersicht in einem halben Fenster. 
 #+BEGIN_SRC emacs-lisp
@@ -56,7 +57,7 @@
  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
 #+END_SRC
 
-** Todos eines Subtrees
+** Todos eines Subtrees :Funktionen:
 #+BEGIN_SRC emacs-lisp
 
 (defun kahiro-show-todos-in-subtree ()
@@ -81,7 +82,7 @@
    (org-ctrl-c-ctrl-c))
 
 #+END_SRC
-** COMMENT :ARCHIVE-Tag automatisch  Tag to DONE Tasks
+** COMMENT :ARCHIVE-Tag automatisch  Tag to DONE Tasks :deaktiviert:
 deaktiviert weil nervig.
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-state-tags-triggers
@@ -96,6 +97,93 @@ deaktiviert weil nervig.
       )
 #+END_SRC
 * Org Mode Settings
+** TODO [#A] Agenda custom commands
+ - [[help:org-agenda-custom-commands][Helpfile]]
+#+BEGIN_SRC emacs-lisp :results output silent
+;; AGENDA MODES - Hier gibt es einen Fehler...
+;;--------------
+(setq org-agenda-custom-commands
+      '(("g" . "My Custom Agendas")
+	("gm" "Ausgaben diesen und nächsten Monat" tags "{20#[3][3-9]}") 
+	("gM" "Ausgaben im nächsten Halbjahr" tags "{20#[3][3-9]}") ;; Suche für Ausgaben im April (14-18)
+	("ga" "Autorentexte" tags "Autor|AUTOR<>\"\""
+	     ((org-agenda-sorting-strategy '(todo-state-down)
+	     )))
+	("gb" "Autorentexte Properties" 
+	   (;;(agenda "")
+	   (tags-todo "TODO=\"NEXT\"+AUTOR<>\"\""
+	     ((org-agenda-overriding-header "Texte von Autoren")))
+;;	      (org-agenda-sorting-strategy '(todo-state-down)))
+	   (tags "TODO=\"WAITING\"+AUTOR<>\"\""
+	     ((org-agenda-overriding-header "\nWarte auf Rückmeldung")))
+	   (tags "TODO=\"TODO\"+AUTOR<>\"\""
+	     ((org-agenda-overriding-header "\nBestellt")))
+	   (tags "TODO=\"PLAN\"+AUTOR<>\"\""
+	     ((org-agenda-overriding-header "\nVorschläge"))))
+	     ((org-agenda-compact-blocks t))
+	     )
+        ("g-" "Nur Deadlines" agenda "Diesen Monat" (
+             (org-agenda-span 'month)
+             (org-agenda-time-grid nil)
+             (org-agenda-show-all-dates nil)
+             (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+             (org-deadline-warning-days 0) ))
+	("n" "Nächste Schritte" todo "NEXT|WAITING"
+	     ((org-agenda-span 1)
+	      (org-show-context-detail 'minimal)))
+	("N" "Nächste Schritte" agenda ""
+	     ((org-agenda-span 1)
+;	      (org-agenda-category-filter-preset '("+xa"))
+	      ))
+	("o" "TODO ohne Zeitpunkt"
+         ((todo ""
+                ((org-agenda-overriding-header "\nUnscheduled TODO")
+                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+	  )))	
+	  nil
+          nil)
+
+	("h" "Arbeitsaufgaben für heute" todo "")
+	))
+
+;; Funktionen für Sortierung nach NEXT-Keywords
+     (defun my-skip-unless-next ()
+       "Skip trees that are not next"
+       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+         (if (re-search-forward "" subtree-end t)
+             nil          ; tag found, do not skip
+           subtree-end))) ; tag not found, continue after end of subtree
+
+#+END_SRC
+** TODO [#A] org-caldav :package:
+#+begin_src emacs-lisp :results silent
+    (use-package org-caldav
+      :init
+      (setq org-caldav-url "https://cloud.ist.gold/remote.php/dav/calendars/fabian")
+      (setq org-caldav-calendars
+      '((:calendar-id "org"
+	 :inbox "c:/org/calinbox.org"
+	 :files ("c:/org/calendar.org")
+         :skip-conditions ('todo 'done)
+  ;;	 :sync-direction ("org->cal") ; weiß nicht, ob die Synthax passt.[[Link][https://github.com/dengste/org-caldav]]
+  ;;     :exclude-tags ("work")
+  ;;     :select-tags ("work") 
+      )))
+      (setq org-icalendar-timezone "Europe/Berlin")
+      (setq org-caldav-backup-file "c:/org/caldav/org-caldav-backup.org")
+      (setq org-caldav-save-directory "c:/org/caldav/")
+
+      :config
+      ;; This enables alarms in entries on export
+      (setq org-icalendar-alarm-time 1)
+      ;; This makes sure to-do items as a category can show up on the calendar
+      (setq org-icalendar-include-todo t)
+      ;; This ensures all org "deadlines" show up, and show up as due dates
+      (setq org-icalendar-use-deadline '(event-if-todo-not-done event-if-not-todo todo-due))
+      ;; This ensures "scheduled" org items show up, and show up as start times
+      (setq org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
+)
+#+end_src
 ** [#A] Org Capture Templates
 *** Beschreibung und Todos
 **** TODO sinnvolles Capture für Ziele
@@ -153,7 +241,7 @@ deaktiviert weil nervig.
 ))
 #+END_SRC
 
-*** COMMENT Test für Ablage in wöchentlichen oder monatlichen Trees.
+*** COMMENT Test für Ablage in wöchentlichen oder monatlichen Trees. :deaktiviert:
 #+begin_src emacs-lisp :results output silent
 (defun org-find-month-in-datetree()
   (org-datetree-find-date-create (calendar-current-date))
@@ -198,7 +286,7 @@ To get the same for a weekly date-tree change the function to
   (let ((org-refile-targets `(((,(buffer-file-name)) :maxlevel . 3))))   ;; Für aktuelle Datei bis in *** Überschriften.
     (call-interactively 'org-refile)))
 #+END_SRC
-*** COMMENT Option: Refile in alle geöffneten Buffer
+*** COMMENT Option: Refile in alle geöffneten Buffer :deaktiviert:
     - geklaut von hier :: https://emacs.stackexchange.com/questions/22128/how-to-org-refile-to-a-target-within-the-current-file
 #+begin_src emacs-lisp :results output silent
 (defun my-org-files-list ()
@@ -221,7 +309,7 @@ To get the same for a weekly date-tree change the function to
 ;;    ("c" . "comment")
     ))
 #+end_src
-** TODO Agenda
+** Agenda
 #+BEGIN_SRC emacs-lisp
 ;;    ###     ######   ######## ##    ## ########     ###    
 ;;   ## ##   ##    ##  ##       ###   ## ##     ##   ## ##   
@@ -241,11 +329,6 @@ To get the same for a weekly date-tree change the function to
 
 ;; Clock-Report-View auf Level 3
 (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 3))
-#+END_SRC
-** TODO Verteilen
-#+BEGIN_SRC emacs-lisp
-;; öffne Dateien mit der Endung .org mit emacs.
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 #+END_SRC
 ** Agenda Ansichten
 #+BEGIN_SRC emacs-lisp
@@ -278,63 +361,6 @@ To get the same for a weekly date-tree change the function to
 #+BEGIN_SRC emacs-lisp
   ;; Activate plain list cycle
   (setq org-list-use-circular-motion t)
-#+END_SRC
-** TODO Agenda custom commands
- - [[help:org-agenda-custom-commands][Helpfile]]
-#+BEGIN_SRC emacs-lisp :results output silent
-;; AGENDA MODES - Hier gibt es einen Fehler...
-;;--------------
-(setq org-agenda-custom-commands
-      '(("g" . "My Custom Agendas")
-	("gm" "Ausgaben diesen und nächsten Monat" tags "{20#[3][3-9]}") 
-	("gM" "Ausgaben im nächsten Halbjahr" tags "{20#[3][3-9]}") ;; Suche für Ausgaben im April (14-18)
-	("ga" "Autorentexte" tags "Autor|AUTOR<>\"\""
-	     ((org-agenda-sorting-strategy '(todo-state-down)
-	     )))
-	("gb" "Autorentexte Properties" 
-	   (;;(agenda "")
-	   (tags-todo "TODO=\"NEXT\"+AUTOR<>\"\""
-	     ((org-agenda-overriding-header "Texte von Autoren")))
-;;	      (org-agenda-sorting-strategy '(todo-state-down)))
-	   (tags "TODO=\"WAITING\"+AUTOR<>\"\""
-	     ((org-agenda-overriding-header "\nWarte auf Rückmeldung")))
-	   (tags "TODO=\"TODO\"+AUTOR<>\"\""
-	     ((org-agenda-overriding-header "\nBestellt")))
-	   (tags "TODO=\"PLAN\"+AUTOR<>\"\""
-	     ((org-agenda-overriding-header "\nVorschläge"))))
-	     ((org-agenda-compact-blocks t))
-	     )
-        ("dg-" "Nur Deadlines" agenda "Diesen Monat" (
-             (org-agenda-span 'month)
-             (org-agenda-time-grid nil)
-             (org-agenda-show-all-dates nil)
-             (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
-             (org-deadline-warning-days 0) ))
-	("n" "Nächste Schritte" todo "NEXT|WAITING"
-	     ((org-agenda-span 1)
-	      (org-show-context-detail 'minimal)))
-	("N" "Nächste Schritte" todo ""
-	     ((org-agenda-span 1)
-	      ))
-	("o" "TODO ohne Zeitpunkt"
-         ((todo ""
-                ((org-agenda-overriding-header "\nUnscheduled TODO")
-                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
-	  )))	
-	  nil
-          nil)
-
-	("h" "Arbeitsaufgaben für heute" todo "")
-	))
-
-;; Funktionen für Sortierung nach NEXT-Keywords
-     (defun my-skip-unless-next ()
-       "Skip trees that are not next"
-       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-         (if (re-search-forward "" subtree-end t)
-             nil          ; tag found, do not skip
-           subtree-end))) ; tag not found, continue after end of subtree
-
 #+END_SRC
 ** Clocking/Aufwand
 #+BEGIN_SRC emacs-lisp
@@ -378,7 +404,7 @@ To get the same for a weekly date-tree change the function to
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate) ;; Erklärung
 #+END_SRC
-*** COMMENT Tags mit eigener Farbe
+*** COMMENT Tags mit eigener Farbe :deaktiviert:
  - deaktiviert weil die funktion im neuen Org-Mode nicht funktioniert.
  #+BEGIN_SRC emacs-lisp
  ;; Change Faces for specific Tags
@@ -414,61 +440,6 @@ To get the same for a weekly date-tree change the function to
   ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
   (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
   (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish))
-#+end_src
-** [#A] org-caldav :package:
-#+begin_src emacs-lisp :results silent
-  (use-package org-caldav
-    :init
-    ;; This is the sync on close function; it also prompts for save after syncing so 
-    ;; no late changes get lost 
-    (defun org-caldav-sync-at-close ()
-  ;;    (org-caldav-sync)  ;; deaktiviert, weil es bei Fehlern Probleme mit dem Beenden gibt.
-      (save-some-buffers))
-  
-    ;; This is the delayed sync function; it waits until emacs has been idle for 
-    ;; "secs" seconds before syncing.  The delay is important because the caldav-sync
-    ;; can take five or ten seconds, which would be painful if it did that right at save.  
-    ;; This way it just waits until you've been idle for a while to avoid disturbing 
-    ;; the user.
-    (defvar org-caldav-sync-timer nil
-       "Timer that `org-caldav-push-timer' used to reschedule itself, or nil.")
-    (defun org-caldav-sync-with-delay (secs)
-      (when org-caldav-sync-timer
-	(cancel-timer org-caldav-sync-timer))
-      (setq org-caldav-sync-timer
-	    (run-with-idle-timer
-	     (* 1 secs) nil 'org-caldav-sync)))
-  
-    ;; Actual calendar configuration edit this to meet your specific needs
-    (setq org-caldav-url "https://cloud.ist.gold/remote.php/dav/calendars/fabian")
-    (setq org-caldav-calendars
-    '((:calendar-id "org"
-       :inbox "c:/org/calinbox.org"
-       :files ("c:/org/calendar.org")
-;;       :skip-conditions ('todo 'done)
-;;     :exclude-tags ("work")
-;;     :select-tags ("work") 
-    )))
-    (setq org-caldav-skip-conditions '('todo 'done))
-    (setq org-icalendar-timezone "Europe/Berlin")
-    (setq org-caldav-backup-file "c:/org/caldav/org-caldav-backup.org")
-    (setq org-caldav-save-directory "c:/org/caldav/")
-
-    :config
-    (setq org-icalendar-alarm-time 1)
-    ;; This makes sure to-do items as a category can show up on the calendar
-    (setq org-icalendar-include-todo t)
-    ;; This ensures all org "deadlines" show up, and show up as due dates
-    (setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due))
-    ;; This ensures "scheduled" org items show up, and show up as start times
-    (setq org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
-    ;; Add the delayed save hook with a five minute idle timer
-    (add-hook 'after-save-hook
-	      (lambda ()
-		(when (eq major-mode 'org-mode)
-		  (org-caldav-sync-with-delay 300))))
-    ;; Add the close emacs hook ;; deaktiviert wegen Problemen wenn kein Internet verfügbar
-    (add-hook 'kill-emacs-hook 'org-caldav-sync-at-close))
 #+end_src
 ** Sticky Agenda
 #+begin_src emacs-lisp
@@ -731,7 +702,7 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
 #+end_src
 
 *** Befehle mit r prefix
-#+BEGIN_SRC emacs-lisp :results slient
+#+BEGIN_SRC emacs-lisp :results output slient
  (ryo-modal-keys 
     ("r"
      (
@@ -795,8 +766,11 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
      ("ü" org-self-insert-command)
      ("ä" org-self-insert-command)
      ("ö" org-self-insert-command)
+     (";" org-self-insert-command)
      )))
 #+END_SRC
+
+#+RESULTS:
 
 *** Single Binds
     Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
@@ -946,7 +920,7 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
     )
 #+END_SRC
 
-** COMMENT RYO Key settings old
+** COMMENT RYO Key settings old :deaktiviert:
 *** Funktionen
 **** Timer mit offset starten
 #+begin_src emacs-lisp :results silent
