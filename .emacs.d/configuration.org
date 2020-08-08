@@ -1,49 +1,40 @@
 #+TODO: TODO FEHLER  | OK DONE
 * Allgemeine Einstellungen
+:PROPERTIES:
+:CATEGORY: allg
+:END:
 ** TODO Sicherung
 *** Ordner für Autosave-Dateien
 Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei.org# oder datei.org~). Diese machen den Ordner unübersichtlich, können aber in einem eigenen Verzeichnis angesiedelt werden. 
 #+BEGIN_SRC emacs-lisp 
 (setq backup-directory-alist '(("." . "~/ncloud/_config/backups/")))
 #+END_SRC
+** Default Modes
+#+begin_src emacs-lisp :results output silent
+;; Default Modes ON
+(global-visual-line-mode t)
+#+end_src
 
-* Weg zur perfekten Config
-** Look [2/3]
-*** TODO Theme - Farben aussuchen und anpassen
-*** DONE Schrift auf IBM umstellen und Größen anpassen :ARCHIVE:
-*** DONE Bullets verschönern :ARCHIVE:
-** Editing
-*** Cheatsheet für Editing-Befehle
-*** Tastenkürzel anpassen
-** Versionierung (git)
-** Termine Synchronisieren (tickler)
-** File-Struktur überarbeiten (arbeit/home/someday)
-** Erweiterungen
-*** Super Agenda
-*** General.el
-*** Hydra.el /hercules.el
-*** Rechtschreibung
-*** Export-Templates
-*** Suche per Ivy/Helm/ripgrep
-*** RSS-Reader?
-*** Notmuch Emails
-*** Doom-Emacs Lazy load
-** Publemacs - Emacs für Publisher
-*** Hilfsprogramm, das einen Entscheidungsweg über einen Minibuffer liefert
-*** Tastenkürzel optimiert für Redakteure
-*** Wissensmanagement in Emacs
-*** Fragen
-**** Was müssen Coding-Journalisten (CJs) können? 
-     - Auch visuelle möglichkeiten wie 3D.js oder nur Infromationsbeschaffung über Sraping, Datenverarbeitung?
-** Jouraling
-*** Date-Trees
-*** CaptureTemplates
-*** Archivieren
-*** Verschlüsselung
-** Gestalten
-*** Grundlagen Emacs Lisp
-*** JS-Modes und Webdev-Modes
-* Org Mode Settings
+** Saving Desktop Sessions
+ #+BEGIN_SRC emacs-lisp
+ ;; SAVING DESKTOP SESSIONS
+ ;;------------------------
+ (desktop-save-mode 1)
+#+END_SRC
+** Start any Windows maximised
+#+BEGIN_SRC emacs-lisp
+ ;; Start any Windows maximised
+ (add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+END_SRC
+** Sentence end to just one space
+#+BEGIN_SRC emacs-lisp
+ ;; Set Sentence end to just one space
+ (setq sentence-end-double-space nil)
+#+END_SRC
+* Org Mode Einstellungen
+:PROPERTIES:
+:CATEGORY: org
+:END:
 ** [#A] Org Capture Templates
 *** Beschreibung und Todos
 **** TODO sinnvolles Capture für Ziele
@@ -158,18 +149,6 @@ To get the same for a weekly date-tree change the function to
 *** Inspirationsquellen
     - quasiquote für funktionen in einer liste, wie concat oder buffer-file-name :: [[https://lists.gnu.org/archive/html/emacs-orgmode/2012-07/msg00561.html][Link]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Backquote.html][elisp-Manual]]. 
 ** [#A] Agenda-Mode
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-skip-scheduled-if-done t
-      org-agenda-skip-deadline-if-done t
-      org-agenda-skip-deadline-prewarning-if-scheduled t
-      org-deadline-warning-days 2)
-
-(add-hook 'org-agenda-mode-hook
-	  (lambda()
-	    (local-set-key (kbd "S-<up>") 'org-agenda-date-earlier-hours)
-	    (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
-     ))
-#+END_SRC
 *** TODO Custom Agenda Commands
  - Hilfe unter :: [[help:org-agenda-custom-commands][org-agenda-custom-commands]]
  - Beipiele :: [[https://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][worg]], 
@@ -228,23 +207,50 @@ information."
         (when (memq detail '(canonical t)) (org-show-entry))
         (when (memq detail '(tree canonical t)) (org-show-children))))))
 #+END_SRC
-*** Default Org-Agenda Span
+*** Generelle Agenda Einstellungen
 #+BEGIN_SRC emacs-lisp
-;; Default span
-(setq org-agenda-span 2)
-#+END_SRC
-*** Sticky Agenda
-    - Agenda wird nicht gekillt, sondern bleibt als Buffer im Hintergrund. 
- #+begin_src emacs-lisp
- (setq org-agenda-sticky t)
- #+end_src
-*** Zeilen in der Agenda nicht umbrechen
-#+begin_src emacs-lisp
-;; Kein visual-line-mode in Agendas - Lange Zeilen werden nicht umbebrochen
+(setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-skip-deadline-prewarning-if-scheduled t
+      org-deadline-warning-days 2)
+
 (add-hook 'org-agenda-mode-hook
-          (lambda ()
-            (visual-line-mode -1)
-            (toggle-truncate-lines 1)))
+	  (lambda()
+	    (local-set-key (kbd "S-<up>") 'org-agenda-date-earlier-hours)
+	    (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
+     ))
+
+  ;; Activate plain list cycle
+  (setq org-list-use-circular-motion t)
+#+END_SRC
+**** Default Org-Agenda Span
+ #+BEGIN_SRC emacs-lisp
+ ;; Default span
+ (setq org-agenda-span 2)
+ #+END_SRC
+**** Zeilen in der Agenda nicht umbrechen
+ #+begin_src emacs-lisp
+ ;; Kein visual-line-mode in Agendas - Lange Zeilen werden nicht umbebrochen
+ (add-hook 'org-agenda-mode-hook
+           (lambda ()
+             (visual-line-mode -1)
+             (toggle-truncate-lines 1)))
+ #+end_src
+**** Sticky Agenda
+     - Agenda wird nicht gekillt, sondern bleibt als Buffer im Hintergrund. 
+  #+begin_src emacs-lisp
+  (setq org-agenda-sticky t)
+  #+end_src
+*** Eigene Agenda-Funktionen :defun:
+**** Start Agenda with current buffer
+#+begin_src emacs-lisp :results output silent
+(defun kahiro-agenda-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "a" t))
+
+(defun kahiro-todo-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "t" t))
 #+end_src
 ** [#B] Structure template
 #+begin_src emacs-lisp :results output silent
@@ -386,7 +392,7 @@ the hierarchy, it will be used.
 
 (setq calendar-week-start-day 1)
 #+end_src
-**  Keys and Shortcuts
+**  [#C] Allgemeine org-Einstellungen
 #+BEGIN_SRC emacs-lisp :results output silent
 
  ;; Org-mode settings
@@ -395,19 +401,6 @@ the hierarchy, it will be used.
  (global-set-key "\C-ca" 'org-agenda)
  (global-set-key "\C-cc" 'org-capture)
  (global-font-lock-mode 1)
- ;; Setting custom Keys
- (global-set-key (kbd "C-c s") 'org-sparse-tree)
- (global-set-key (kbd "C-c x") 'other-window)
- (global-set-key (kbd "C-c y") 'delete-other-windows)
-
- (global-set-key (kbd "C-c n") 'org-narrow-to-subtree)
- (global-set-key (kbd "C-c m") 'widen)
- (global-set-key (kbd "C-c i") 'org-clock-in)
- (global-set-key (kbd "C-c o") 'org-clock-out)
- (global-set-key (kbd "C-c j") 'org-clock-goto)
-
-  ;; Activate plain list cycle
-  (setq org-list-use-circular-motion t)
  #+END_SRC
 ** [#C] org-habit :local:
 Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbringen, oder Sport treiben. Man kann es so einstellen, dass die Aufgabe nur alle x Tage auftaucht. 
@@ -452,14 +445,6 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 (setq org-hide-leading-stars t)
 #+END_SRC
 * Fokus 
-** COMMENT Apply :Archive: Tag to DONE Tasks
-#+BEGIN_SRC emacs-lisp
-(setq org-todo-state-tags-triggers
-  (quote 
-  (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
-   ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
-  )))
-#+END_SRC
 ** Alles einklappen außer aktuellen Subtree
   - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
 #+BEGIN_SRC emacs-lisp
@@ -506,13 +491,6 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    (org-ctrl-c-ctrl-c))
 
 #+END_SRC
-** Test
-*** TODO Todo 1
-    SCHEDULED: <2020-08-04 Di>
-*** FEHLER Todo 2
-<2020-08-04 Di 12:00>
-*** OK Todo3
-
 ** Split und Switch
      - Gibt eine Schnelle übersicht in einem halben Fenster. 
 #+BEGIN_SRC emacs-lisp
@@ -539,7 +517,23 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 
  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
 #+END_SRC
-* Bewegen
+** COMMENT Apply :Archive: Tag to DONE Tasks
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-state-tags-triggers
+  (quote 
+  (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
+   ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
+  )))
+#+END_SRC
+* Keys / Tastenkürzel
+** F1 bis F12 (+ Modifiers)
+#+begin_src emacs-lisp :results output silent
+ (global-set-key (kbd "<f12>") 'org-agenda)
+ (global-set-key (kbd "<S-f12>") 'kahiro-agenda-of-current-buffer)
+ (global-set-key (kbd "<s-f12>") 'kahiro-todo-of-current-buffer)
+ ;; (global-set-key (kbd "<s-f1>") 'pop-global-mark) ;; Jump in the document
+ ;; (global-set-key (kbd "<s-f2>") 'xah-pop-local-mark-ring)
+#+end_src
 **  Jump in the document
    "Move cursor to last mark position of current buffer.
    Call this repeatedly will cycle all positions in `mark-ring'.
@@ -549,8 +543,8 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    (defun xah-pop-local-mark-ring ()
      (interactive)
      (set-mark-command t))
-   (global-set-key (kbd "<f8>") 'pop-global-mark)
-   (global-set-key (kbd "<f7>") 'xah-pop-local-mark-ring) 
+   (global-set-key (kbd "<s-f1>") 'pop-global-mark)
+   (global-set-key (kbd "<s-f2>") 'xah-pop-local-mark-ring) 
  #+END_SRC 
 
 ** RYO Key settings
@@ -652,8 +646,8 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("n" kahiro-show-NEXT-in-subtree) 
       ("j" ess/org-show-just-me)
       ("p" kahiro-show-PLAN-in-subtree)
-      ("b" org-agenda-set-restriction-lock)
-      ("v" org-agenda-remove-restriction-lock)
+      ("v" org-agenda-set-restriction-lock)
+      ("x" org-agenda-remove-restriction-lock)
       ))  
     ("s" (
      ("s" isearch-forward)
@@ -818,8 +812,78 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ("ü" org-self-insert-command)
      ("ä" org-self-insert-command)
      ("ö" org-self-insert-command)
+     (";" org-self-insert-command)
+     ("," org-self-insert-command)
+     (":" org-self-insert-command)
+     ("." org-self-insert-command)
      )))
 #+END_SRC
+
+#+RESULTS:
+| SPC | org-self-insert-command |
+| a   | org-self-insert-command |
+| b   | org-self-insert-command |
+| c   | org-self-insert-command |
+| d   | org-self-insert-command |
+| e   | org-self-insert-command |
+| f   | org-self-insert-command |
+| g   | org-self-insert-command |
+| h   | org-self-insert-command |
+| i   | org-self-insert-command |
+| j   | org-self-insert-command |
+| k   | org-self-insert-command |
+| l   | org-self-insert-command |
+| m   | org-self-insert-command |
+| n   | org-self-insert-command |
+| o   | org-self-insert-command |
+| p   | org-self-insert-command |
+| q   | org-self-insert-command |
+| r   | org-self-insert-command |
+| s   | org-self-insert-command |
+| t   | org-self-insert-command |
+| u   | org-self-insert-command |
+| v   | org-self-insert-command |
+| w   | org-self-insert-command |
+| x   | org-self-insert-command |
+| y   | org-self-insert-command |
+| z   | org-self-insert-command |
+| A   | org-self-insert-command |
+| B   | org-self-insert-command |
+| C   | org-self-insert-command |
+| D   | org-self-insert-command |
+| E   | org-self-insert-command |
+| F   | org-self-insert-command |
+| G   | org-self-insert-command |
+| H   | org-self-insert-command |
+| I   | org-self-insert-command |
+| J   | org-self-insert-command |
+| K   | org-self-insert-command |
+| L   | org-self-insert-command |
+| M   | org-self-insert-command |
+| N   | org-self-insert-command |
+| O   | org-self-insert-command |
+| P   | org-self-insert-command |
+| Q   | org-self-insert-command |
+| R   | org-self-insert-command |
+| S   | org-self-insert-command |
+| T   | org-self-insert-command |
+| U   | org-self-insert-command |
+| V   | org-self-insert-command |
+| W   | org-self-insert-command |
+| X   | org-self-insert-command |
+| Y   | org-self-insert-command |
+| Z   | org-self-insert-command |
+| Ü   | org-self-insert-command |
+| Ä   | org-self-insert-command |
+| Ö   | org-self-insert-command |
+| ß   | org-self-insert-command |
+| ü   | org-self-insert-command |
+| ä   | org-self-insert-command |
+| ö   | org-self-insert-command |
+| ;   | org-self-insert-command |
+| ,   | org-self-insert-command |
+| :   | org-self-insert-command |
+| .   | org-self-insert-command |
 
 *** Single Binds
     Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
@@ -969,32 +1033,24 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
     )
 #+END_SRC
 
-* TODO Rechtschreibung
-#+BEGIN_SRC  emacs-lisp
-;; Rechtschreibung
-;;----------------
-;; Ich musste noch das deutsche Wörterbuch installieren, bevor es klappt: sudo apt-get install aspell-de
- (setq ispell-dictionary "deutsch8")
- (setq ispell-local-dictionary "deutsch")
- (setq flyspell-default-dictionary "deutsch8")
- (add-hook 'text-mode-hook 'flyspell-mode)
- (autoload 'flyspell-mode "flyspell" "On-the-fly ispell." t)
- (setq flyspell-issue-welcome-flag nil)
-#+END_SRC
+* Textbearbeitung
+:PROPERTIES:
+:CATEGORY: textEd
+:END:
+** TODO Rechtschreibung
+ #+BEGIN_SRC  emacs-lisp
+ ;; Rechtschreibung
+ ;;----------------
+ ;; Ich musste noch das deutsche Wörterbuch installieren, bevor es klappt: sudo apt-get install aspell-de
+  (setq ispell-dictionary "deutsch8")
+  (setq ispell-local-dictionary "deutsch")
+  (setq flyspell-default-dictionary "deutsch8")
+  (add-hook 'text-mode-hook 'flyspell-mode)
+  (autoload 'flyspell-mode "flyspell" "On-the-fly ispell." t)
+  (setq flyspell-issue-welcome-flag nil)
+ #+END_SRC
 * Package
-** COMMENT Enable Pakages from the MELPA Repositories
-#+BEGIN_SRC emacs-lisp
-#+END_SRC
-** COMMENT Initialize
-This initializes all packages. 
-
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-#+BEGIN_SRC emacs-lisp(package-initialize)
-#+END_SRC
-** Smartparens
+** TODO [#B] Smartparens
  - Paket um Klammern etc. zu vervollständigen.
 #+BEGIN_SRC emacs-lisp
 (require 'smartparens)
@@ -1019,8 +1075,8 @@ In org-mode, you can click links in order to run your games. This will bring up 
 
 If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
 * Appearance :appearance:
-** Style Tags based on Regular Expressions :one:
-*** Code
+** COMMENT Style Tags based on Regular Expressions :one:
+*** Code 
 #+BEGIN_SRC emacs-lisp
 ;; (require 'org)
 (set-face-attribute 'org-tag nil :height 0.5 :slant 'normal :weight 'normal :foreground "LavenderBlush3")
@@ -1061,72 +1117,76 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
 *** Font Weight :wissen:
     - :weight ([[https://www.gnu.org/software/emacs/manual/html_node/elisp/Face-Attributes.html][Quelle]])
       - Font weight—one of the symbols (from densest to faintest) ultra-bold, extra-bold, bold, semi-bold, normal, semi-light, light, extra-light, or ultra-light. On text terminals which support variable-brightness text, any weight greater than normal is displayed as extra bright, and any weight less than normal is displayed as half-bright. 
-** Force default Font
-#+BEGIN_SRC  emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Noto Mono-15" ))
-(set-face-attribute 'default t :font "Noto Mono-15" )
-;; To see available fonts evaluate the following in the *scratch* buffer
-;; (message (mapconcat (quote identity) (sort (font-family-list) #'string-lessp) "\n"))
-
-#+END_SRC
-** Set variable pitch font
-#+BEGIN_SRC emacs-lisp
-
-;; Set variable-pitch font using customize-face variable-pitch
-;; Set the fonts to format correctly for specific modes. Default is set for fixed
-;; so we only need to have the exceptions
-(defun set-buffer-variable-pitch ()
-  (interactive)
-  (variable-pitch-mode t)
-  (setq line-spacing 3)
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-link nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
-  )
-
-(add-hook 'org-mode-hook 'set-buffer-variable-pitch)
-(add-hook 'Info-mode-hook 'set-buffer-variable-pitch)
-
-#+END_SRC
-** Org Meta Line (#+-Lines)
-#+BEGIN_SRC emacs-lisp
-(set-face-attribute 'org-meta-line nil :height 0.5 :slant 'normal :foreground "LavenderBlush3")
-#+END_SRC
-
-* Default Modes ON
-#+BEGIN_SRC emacs-lisp
-;; Default Modes ON
-(global-visual-line-mode t)
-
-#+END_SRC
-* Sonstiges
-** Saving Desktop Sessions
+*** [#B] Set variable pitch font
  #+BEGIN_SRC emacs-lisp
- ;; SAVING DESKTOP SESSIONS
- ;;------------------------
- (desktop-save-mode 1)
-#+END_SRC
-** Start any Windows maximised
-#+BEGIN_SRC emacs-lisp
- ;; Start any Windows maximised
- (add-to-list 'default-frame-alist '(fullscreen . maximized))
-#+END_SRC
-** Sentence end to just one space
-#+BEGIN_SRC emacs-lisp
- ;; Set Sentence end to just one space
- (setq sentence-end-double-space nil)
-#+END_SRC
-** Workarounds 
+
+ ;; Set variable-pitch font using customize-face variable-pitch
+ ;; Set the fonts to format correctly for specific modes. Default is set for fixed
+ ;; so we only need to have the exceptions
+ (defun set-buffer-variable-pitch ()
+   (interactive)
+   (variable-pitch-mode t)
+   (setq line-spacing 3)
+   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-link nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
+   )
+
+ (add-hook 'org-mode-hook 'set-buffer-variable-pitch)
+ (add-hook 'Info-mode-hook 'set-buffer-variable-pitch)
+
+ #+END_SRC
+*** [#C] Org Meta Line (#+-Lines)
+ #+BEGIN_SRC emacs-lisp
+ (set-face-attribute 'org-meta-line nil :height 0.5 :slant 'normal :foreground "LavenderBlush3")
+ #+END_SRC
+
+*** [#C] Use fancy lambdas
+ Ersetzt lamba ( ) mit dem Lambda-Symbol
+
+ #+begin_src emacs-lisp
+   (global-prettify-symbols-mode t)
+ #+end_src
+
+** [#C] Tool- Scroll- und Menu-Bar
+    I don't usually use the menu or scroll bar, and they take up useful space.
+ #+begin_src emacs-lisp
+   (tool-bar-mode 0)
+   (menu-bar-mode 0)
+   (scroll-bar-mode -1)
+ #+end_src
+
+ There's a tiny scroll bar that appears in the minibuffer window. This disables
+ that:
+
+ #+begin_src emacs-lisp
+   (set-window-scroll-bars (minibuffer-window) nil nil)
+ #+end_src
+** [#B] Use =moody= for a beautiful modeline
+
+This gives me a truly lovely ribbon-based modeline.
+
+#+begin_src emacs-lisp
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+
+
+#+end_src
+
+* FEHLER COMMENT Workarounds 
 #+BEGIN_SRC emacs-lisp
  ;; Workarounds
  ;; Bug 34341
  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
  #+END_SRC
 * Custom Functions
-** FEHLER COMMENT Count Tags
+** FEHLER COMMENT Count Tags :defun:
    - [2020-04-19 Sun] ggf. gibt es einen Konflikt mit [[*Style Tags based on Regular Expressions][Style Tags based on Regular Expressions]]
 #+BEGIN_SRC emacs-lisp
 (defun count-tags ()
@@ -1159,45 +1219,6 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
 |  1 | @two  |
 |  1 | three |
 
-* UI preferences
-** Tweak window chrome
-
-    I don't usually use the menu or scroll bar, and they take up useful space.
-
- #+begin_src emacs-lisp
-   (tool-bar-mode 0)
-   (menu-bar-mode 0)
-   (scroll-bar-mode -1)
- #+end_src
-
- There's a tiny scroll bar that appears in the minibuffer window. This disables
- that:
-
- #+begin_src emacs-lisp
-   (set-window-scroll-bars (minibuffer-window) nil nil)
- #+end_src
-** [#C] Use fancy lambdas
-Ersetzt lamba ( ) mit dem Lambda-Symbol
-
-#+begin_src emacs-lisp
-  (global-prettify-symbols-mode t)
-#+end_src
-
-** [#B] Use =moody= for a beautiful modeline
-
-This gives me a truly lovely ribbon-based modeline.
-
-#+begin_src emacs-lisp
-  (use-package moody
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
-
-
-#+end_src
-
-
 * Notizen
 
 ** Difference in Files
@@ -1222,3 +1243,42 @@ With a numeric argument, compare-windows ignores changes in whitespace. If the v
 You can use M-x smerge-mode to turn on Smerge mode, a minor mode for editing output from the diff3 program. This is typically the result of a failed merge from a version control system update outside VC, due to conflicting changes to a file. Smerge mode provides commands to resolve conflicts by selecting specific changes.
 
 See Emerge, for the Emerge facility, which provides a powerful interface for merging files. 
+* Weg zur perfekten Config
+** Look [2/3]
+:PROPERTIES:
+:CATEGORY: ziel
+:END:
+*** TODO Theme - Farben aussuchen und anpassen
+*** DONE Schrift auf IBM umstellen und Größen anpassen :ARCHIVE:
+*** DONE Bullets verschönern :ARCHIVE:
+** Editing
+*** Cheatsheet für Editing-Befehle
+*** Tastenkürzel anpassen
+** Versionierung (git)
+** Termine Synchronisieren (tickler)
+** File-Struktur überarbeiten (arbeit/home/someday)
+** Erweiterungen
+*** Super Agenda
+*** General.el
+*** Hydra.el /hercules.el
+*** Rechtschreibung
+*** Export-Templates
+*** Suche per Ivy/Helm/ripgrep
+*** RSS-Reader?
+*** Notmuch Emails
+*** Doom-Emacs Lazy load
+** Publemacs - Emacs für Publisher
+*** Hilfsprogramm, das einen Entscheidungsweg über einen Minibuffer liefert
+*** Tastenkürzel optimiert für Redakteure
+*** Wissensmanagement in Emacs
+*** Fragen
+**** Was müssen Coding-Journalisten (CJs) können? 
+     - Auch visuelle möglichkeiten wie 3D.js oder nur Infromationsbeschaffung über Sraping, Datenverarbeitung?
+** Jouraling
+*** Date-Trees
+*** CaptureTemplates
+*** Archivieren
+*** Verschlüsselung
+** Gestalten
+*** Grundlagen Emacs Lisp
+*** JS-Modes und Webdev-Modes

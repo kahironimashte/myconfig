@@ -12,7 +12,9 @@
    ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
  '(custom-enabled-themes (quote (whiteboard)))
  '(moody-mode-line-height 28)
- '(org-agenda-files (quote ("~/ncloud/org/inbox.org" "~/ncloud/org/htasks.org" "~/ncloud/org/atasks.org" "~/ncloud/org/calendar.org")))
+ '(org-agenda-files
+   (quote
+    ("~/ncloud/org/htasks.org" "~/ncloud/org/atasks.org" "~/ncloud/org/calendar.org")))
  '(org-default-priority 67)
  '(org-highest-priority 65)
  '(org-lowest-priority 68)
@@ -37,6 +39,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "IBM Plex Mono" :foundry "outline" :slant normal :weight light :height 148 :width normal))))
  '(fixed-pitch ((t (:family "IBM Plex Mono" :foundry "outline" :slant normal :weight light :height 148 :width normal))))
+ '(fixed-pitch-serif ((t (:family "Nimbus Mono L"))))
  '(font-lock-warning-face ((t (:foreground "maroon"))))
  '(match ((t (:background "MistyRose1"))))
  '(org-agenda-structure ((t (:foreground "DeepSkyBlue4"))))
