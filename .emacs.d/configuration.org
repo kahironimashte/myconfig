@@ -3,6 +3,19 @@
 * Allgemeines
 ** TODO Ideen
    - Mark ring auf angenehmerer Combo legen (c-b-m / c-b-b)
+** Keyboard-Shortuts
+#+begin_src emacs-lisp :results output silent
+ (global-set-key (kbd "<f12>") 'kahiro-agenda-next-xa-tasks) 
+ (global-set-key (kbd "<S-f12>") 'kahiro-agenda-for-current-buffer) 
+
+(defun kahiro-agenda-next-xa-tasks (&optional arg) ;; <f12>
+  (interactive "P")
+  (org-agenda arg "n" nil))
+
+(defun kahiro-agenda-for-current-buffer (&optional arg) ;; Shift+<f12>
+  (interactive "P")
+  (org-agenda arg "a" nil))
+#+end_src
 ** COMMENT unfill paragraph :deaktiviert:
 #+BEGIN_SRC emacs-lisp
 ;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph    
@@ -61,7 +74,7 @@
 #+BEGIN_SRC emacs-lisp
 
 (defun kahiro-show-todos-in-subtree ()
-   "Narrow to a subtree and show only headings with TODO keywords"
+   "Narrow to a subtree and show only headings with any TODO-keywords"
    (interactive)
    (org-narrow-to-subtree)
    (org-show-todo-tree nil)
@@ -74,6 +87,13 @@
    (org-occur (concat "^" org-outline-regexp " *" "\\(NEXT\\|WAITING\\)"))
    (org-ctrl-c-ctrl-c))
 
+(defun kahiro-show-TODO-in-subtree ()
+   "Narrow to a subtree and show only headings with TODO keywords"
+   (interactive)
+   (org-narrow-to-subtree)
+   (org-occur (concat "^" org-outline-regexp " *" "\\(TODO\\|NEXT\\|WAITING\\)"))
+   (org-ctrl-c-ctrl-c))
+
 (defun kahiro-show-PLAN-in-subtree ()
    "Narrow to a subtree and show only headings with TODO keywords"
    (interactive)
@@ -82,6 +102,10 @@
    (org-ctrl-c-ctrl-c))
 
 #+END_SRC
+
+#+RESULTS:
+: kahiro-show-PLAN-in-subtree
+
 ** COMMENT :ARCHIVE-Tag automatisch  Tag to DONE Tasks :deaktiviert:
 deaktiviert weil nervig.
 #+BEGIN_SRC emacs-lisp
@@ -98,18 +122,19 @@ deaktiviert weil nervig.
 #+END_SRC
 * Org Mode Settings
 ** TODO [#A] Agenda custom commands
+*** TODO Code
  - [[help:org-agenda-custom-commands][Helpfile]]
 #+BEGIN_SRC emacs-lisp :results output silent
-;; AGENDA MODES - Hier gibt es einen Fehler...
+;; AGENDA MODES
 ;;--------------
 (setq org-agenda-custom-commands
       '(("g" . "My Custom Agendas")
-	("gm" "Ausgaben diesen und nächsten Monat" tags "{20#[3][3-9]}") 
-	("gM" "Ausgaben im nächsten Halbjahr" tags "{20#[3][3-9]}") ;; Suche für Ausgaben im April (14-18)
-	("ga" "Autorentexte" tags "Autor|AUTOR<>\"\""
+;	("gm" "Ausgaben diesen und nächsten Monat" tags "{20#[3][3-9]}") 
+;	("gM" "Ausgaben im nächsten Halbjahr" tags "{20#[3][3-9]}") ;; Suche für Ausgaben im April (14-18)
+	("gA" "alle Autorentexte" tags "Autor|AUTOR<>\"\""
 	     ((org-agenda-sorting-strategy '(todo-state-down)
 	     )))
-	("gb" "Autorentexte Properties" 
+	("ga" "Autorentexte via Properties" 
 	   (;;(agenda "")
 	   (tags-todo "TODO=\"NEXT\"+AUTOR<>\"\""
 	     ((org-agenda-overriding-header "Texte von Autoren")))
@@ -128,13 +153,27 @@ deaktiviert weil nervig.
              (org-agenda-show-all-dates nil)
              (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
              (org-deadline-warning-days 0) ))
-	("n" "Nächste Schritte" todo "NEXT|WAITING"
+	("n" "Nächste Schritte für aktuelle Ausgabe" 
+	     ((todo "WAITING|NEXT"
+	      ((org-agenda-overriding-header "Nächste Schritte für aktuelle Ausgabe")
+      	       (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	       (org-show-context-detail 'minimal)))
+	      (agenda ""
+       	       ((org-agenda-sorting-strategy '(time-up todo-state-down priority-up))
+	      )))
+	     ((org-agenda-category-filter-preset '("+xa"))
+	      (org-agenda-span 1)
+              (org-deadline-warning-days 0)      
+	       ))
+	("N" "alle nächsten Schritte" agenda ""
 	     ((org-agenda-span 1)
-	      (org-show-context-detail 'minimal)))
-	("N" "Nächste Schritte" agenda ""
-	     ((org-agenda-span 1)
-;	      (org-agenda-category-filter-preset '("+xa"))
-	      ))
+	      (org-agenda-overriding-header "Alle nächsten Schritte in Agenda-Files")
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("NEXT" "WAITING"))) ;[1]
+	      (org-agenda-sorting-strategy '(todo-state-down))
+	     ))
+	     ;; [1] die funktion "...skip-entry-if" verbirgt alle Treffer in der Agenda. 
+	     ;;     "'todo '("NEXT")" würde alle Tasks mit dem NEXT keyword ausblenden. 
+	     ;;     "'nottodo '("NEXT") zeigt nur Tasks mit NEXT keyword. 
 	("o" "TODO ohne Zeitpunkt"
          ((todo ""
                 ((org-agenda-overriding-header "\nUnscheduled TODO")
@@ -143,18 +182,18 @@ deaktiviert weil nervig.
 	  nil
           nil)
 
-	("h" "Arbeitsaufgaben für heute" todo "")
+	("h" "PLAN und TODO in Agenda-Files" agenda ""
+	     ((org-agenda-span 1)
+	      (org-agenda-overriding-header "PLAN und TODO in Agenda-Files")
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PLAN" "TODO"))) ;[1]
+	      (org-agenda-sorting-strategy '(time-up todo-state-down priority-up))
+;	      (org-agenda-time-grid '(nil))
+              (org-deadline-warning-days 0)
+	      ))
 	))
-
-;; Funktionen für Sortierung nach NEXT-Keywords
-     (defun my-skip-unless-next ()
-       "Skip trees that are not next"
-       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-         (if (re-search-forward "" subtree-end t)
-             nil          ; tag found, do not skip
-           subtree-end))) ; tag not found, continue after end of subtree
-
 #+END_SRC
+*** Erläuterungen
+
 ** TODO [#A] org-caldav :package:
 #+begin_src emacs-lisp :results silent
     (use-package org-caldav
@@ -520,6 +559,8 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
        :commands ryo-modal-mode
        :bind ("S-SPC" . ryo-modal-mode)
        :bind ("µ" . ryo-modal-mode)
+       :bind ("<pause>" . ryo-modal-mode)
+       :bind ("<scroll>" . ryo-modal-mode)
        :config
        (ryo-modal-keys
 	("," ryo-modal-repeat)
@@ -554,6 +595,9 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
 
    )
  #+End_SRC
+
+ #+RESULTS:
+ : ryo-modal-mode
 
 *** Multiple Keys
     Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
@@ -595,13 +639,14 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
     ("n" 
      (("s" org-narrow-to-subtree)
       ("w" widen)
-      ("t" kahiro-show-todos-in-subtree) 
+      ("t" kahiro-show-TODO-in-subtree)
+      ("T" kahiro-show-todos-in-subtree) 
       ("n" kahiro-show-NEXT-in-subtree) 
       ("j" ess/org-show-just-me)
       ("p" kahiro-show-PLAN-in-subtree)
       ("b" org-agenda-set-restriction-lock)
       ("v" org-agenda-remove-restriction-lock)
-      ))  
+      ))
     ("s" (
      ("s" isearch-forward)
      ("r" isearch-backward)
@@ -629,7 +674,6 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
       ("n" org-timer-start)
       ("N" org-timer-start-with-offset)
       ("." org-timer :exit t)
-
       ("z" org-time-stamp :exit t)
       ("t" org-time-stamp-inactive :exit t)
       ("c" org-toggle-timestamp-type)
@@ -663,6 +707,7 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
      ("s" org-schedule)
      ("t" org-todo)
      ("w" org-refile)
+     ("W" my/org-refile-in-file)
      ("*" org-list-make-subtree)
      ("TAB" org-ctrl-c-tab)
      ("RET" org-ctrl-c-ret)
@@ -700,6 +745,8 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
      ("~" org-table-create-with-table.el)
      )))
 #+end_src
+
+#+RESULTS:
 
 *** Befehle mit r prefix
 #+BEGIN_SRC emacs-lisp :results output slient
@@ -1338,3 +1385,5 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
 #+end_src
 
 * Heading for tests
+* Erledigt
+** DONE Mehrere Werte für eine Variable
