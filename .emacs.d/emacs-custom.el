@@ -29,7 +29,7 @@
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight))))
  '(package-selected-packages
    (quote
-    (org nov smartparens org-bookmark-heading org-recur yafolding steam ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
+    (modus-operandi-theme modus-vivendi-theme smex ido-completing-read+ org nov smartparens org-bookmark-heading org-recur yafolding steam ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
 ;; FONTS
 ;; -----
 (custom-set-faces

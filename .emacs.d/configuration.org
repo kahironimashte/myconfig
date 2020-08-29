@@ -15,6 +15,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (global-visual-line-mode t)
 #+end_src
 
+** Keys
+#+begin_src emacs-lisp :results output silent
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+#+end_src
+
 ** Saving Desktop Sessions
  #+BEGIN_SRC emacs-lisp
  ;; SAVING DESKTOP SESSIONS
@@ -528,11 +533,41 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 * Keys / Tastenkürzel
 ** F1 bis F12 (+ Modifiers)
 #+begin_src emacs-lisp :results output silent
+ (global-set-key (kbd "<f2>") 'toggle-window-split)
+ (global-set-key (kbd "<S-f2>") 'enlarge-window-horizontally)
+ (global-set-key (kbd "<s-f2>") 'shrink-window-horizontally)
  (global-set-key (kbd "<f12>") 'org-agenda)
  (global-set-key (kbd "<S-f12>") 'kahiro-agenda-of-current-buffer)
  (global-set-key (kbd "<s-f12>") 'kahiro-todo-of-current-buffer)
  ;; (global-set-key (kbd "<s-f1>") 'pop-global-mark) ;; Jump in the document
  ;; (global-set-key (kbd "<s-f2>") 'xah-pop-local-mark-ring)
+#+end_src
+*** Switch windows
+#+begin_src emacs-lisp :results output silent
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
 #+end_src
 **  Jump in the document
    "Move cursor to last mark position of current buffer.
@@ -543,8 +578,8 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    (defun xah-pop-local-mark-ring ()
      (interactive)
      (set-mark-command t))
-   (global-set-key (kbd "<s-f1>") 'pop-global-mark)
-   (global-set-key (kbd "<s-f2>") 'xah-pop-local-mark-ring) 
+   (global-set-key (kbd "<S-f3>") 'pop-global-mark)
+   (global-set-key (kbd "<s-f3>") 'xah-pop-local-mark-ring) 
  #+END_SRC 
 
 ** RYO Key settings
@@ -910,14 +945,10 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
     #+END_SRC
 
 *** Keys für den Org-Agenda-Mode
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :results output silent
 (add-hook 'org-agenda-mode-hook 'ryo-modal-mode)
     (ryo-modal-major-mode-keys
      'org-agenda-mode
-	    ("x"
-	     (("s" org-save-all-org-buffers)
-	      ("w" org-agenda-write)
-	      ("u" org-agenda-undo)))
 	    ("t" org-agenda-todo)
 	    ("h" backward-char)
 	    ("j" next-line)
@@ -999,10 +1030,10 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 	    ("]" org-agenda-manipulate-query-subtract)
 	    ("^" org-agenda-filter-by-top-headline)
 	    ("_" org-agenda-filter-by-effort)
-	    ("a" org-agenda-archive-default-with-confirmation)
+;;	    ("a" org-agenda-archive-default-with-confirmation)
 	    ("b" org-agenda-earlier)
 	    ("d" org-recur-finish)
-	    ("e" org-agenda-set-effort)
+;;	    ("e" org-agenda-set-effort)
 	    ("f" org-agenda-later)
 ;;	    ("g" org-agenda-redo-all) ;; führt zu Konflikten mit switch-buffer
 	    ("H" org-agenda-holidays)
@@ -1018,7 +1049,6 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 	    ("u" universal-argument)
 	    ("v" org-agenda-view-mode-dispatch)
 	    ("w" org-agenda-week-view)
-	    ("x" org-agenda-exit)
 	    ("y" org-agenda-year-view)
 	    ("z" 
 	    (("z" org-agenda-add-note)
@@ -1030,8 +1060,14 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 	    ("|" org-agenda-filter-remove-all)
 	    ("}" org-agenda-manipulate-query-subtract-re)
 	    ("~" org-agenda-limit-interactively)
+	    ("x"
+	     (("h" org-habit-toggle-display-in-agenda)
+	      ("s" org-save-all-org-buffers)
+	      ("w" org-agenda-write)
+	      ("u" org-agenda-undo)))
     )
 #+END_SRC
+
 
 * Textbearbeitung
 :PROPERTIES:
@@ -1050,6 +1086,119 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
   (setq flyspell-issue-welcome-flag nil)
  #+END_SRC
 * Package
+** ido-mode
+*** Beschreibung
+ This is the built-in framework for interactively narrowing down the
+ list of matching candidates when performing a relevant search.  Ido
+ underpins functions such as those that change buffers, navigate the
+ filesystem, query for help…  I used to be an Ivy user, but have found
+ that Ido is just as good for my case.  Plus, I prefer its default
+ horizontal layout.  Simple and effective.
+
+ Here is an overview of my configurations:
+
+ + Use =ido-mode= and make sure it runs everywhere it can.
+ + Enable "flexible matching".  If there is no matching string of
+   adjacent characters, Ido will instead search for any item containing
+   the characters in their given sequence even if they are not
+   positioned directly next to each other.  Their sequence is all that
+   matters.
+ + Also disable regexp and prefix matching by default.  These can be
+   toggled on at any moment with =C-t= or =C-p= respectively (read
+   below for more key bindings).
+ + Only consider the current frame.  I seldom use more than one (recall
+   that what Emacs calls "frames" is what window managers call
+   "windows").
+ + Create a buffer with completion candidates (manually invoke it with
+   "?" after having typed a search), but do not place all completions
+   there—just the current list of matches.
+ + No need to confirm anything when there is a unique match.
+ + Create a buffer when there is no match for the given search.  Ask for
+   confirmation.  This is great for producing a scratch-like buffer,
+   whose contents can then be saved with =C-x C-s= or =C-x C-w=.
+ + By default open matching buffers and files in the selected window.
+   I use separate commands for doing the same for the "other window".
+   By default, these are always accessed via =C-x 4=.
+ + Keep track of selected directories (recall that navigating history
+   is done with =M-n= and =M-p=).
+ + Do not try to guess whether the symbol at point is a file name.
+   This gives many false positives and consequently hampers the
+   commands for filesystem navigation.
+ + Same for URLs.
+ + Use "virtual buffers" (e.g. recent files without a current buffer).
+   I also have a separate key binding for that (see my =use-package=
+   declaration for =recentf=).
+ + Allow the theme's styles for Ido.  I have configured those in my
+   Modus themes (defined elsewhere in this document).
+ + Keep the prompt to a single line.  I find that a horizontal layout
+   that spans multiple lines is counter-productive.  One line is nice
+   and simple.  We are anyhow going to narrow down the list of
+   candidates by typing a search.  The =:hook= for the minibuffer ensures
+   that this aesthetic is not anyhow interfered with.
+ + As for =ido-decorations= it is better you search for its help buffer
+   with =C-h v ido-decorations RET=.  Basically, I tweak it to have
+   less visual noise.
+ + Do not allow Ido to employ its "merge" functionality.  What that does
+   is to automatically switch directory if the file name you type in does
+   not exist in the current directory but is available in some other
+   place you recently visited.  This makes it difficult to just create a
+   new file.  By the by, when using =ido-find-file= you can always just
+   confirm the inserted text with =C-j=.
+
+ Then I just bind some common commands to the Super key.  Where you see
+ a capital letter, it means Super-Shift-KEY.  For a complete overview
+ of some useful key bindings, type =C-h f ido-find-file RET=.  The
+ bindings I define in =ido-common-completion-map= are for consistency
+ with their equivalents in =isearch=.
+*** code
+#+begin_src emacs-lisp :results output silent
+(use-package ido
+  :custom
+  (ido-everywhere t)
+  (ido-enable-flex-matching t)
+  (ido-enable-regexp nil)
+  (ido-enable-prefix nil)
+  (ido-all-frames nil)
+  (ido-buffer-disable-smart-matches t)
+  (ido-completion-buffer "*Ido Completions*")
+  (ido-completion-buffer-all-completions nil)
+  (ido-confirm-unique-completion nil)
+  (ido-create-new-buffer 'prompt)
+  (ido-default-buffer-method 'selected-window)
+  (ido-default-file-method 'selected-window)
+  (ido-enable-last-directory-history t)
+  (ido-use-filename-at-point nil)
+  (ido-use-url-at-point nil)
+  (ido-use-virtual-buffers t)
+  (ido-use-faces t)
+  (ido-max-window-height 1)
+  (ido-decorations
+   '(" "
+     "   "
+     " | "
+     " | …"
+     "["
+     "]"
+     " [No match]"
+     " [Matched]"
+     " [Not readable]"
+     " [Too big]"
+     " [Confirm]"
+     " "
+     " "))
+  (ido-auto-merge-work-directories-length -1)
+  :config
+  (ido-mode 1)
+)
+
+;;The following ensures that Ido mode is implemented in as many places as possible.  I am not sure what is not covered by it, but so far every relevant interface provides Ido-style matching.
+
+(use-package ido-completing-read+
+  :ensure t
+  :after ido
+  :config
+  (ido-ubiquitous-mode 1))
+#+end_src
 ** TODO [#B] Smartparens
  - Paket um Klammern etc. zu vervollständigen.
 #+BEGIN_SRC emacs-lisp
@@ -1075,6 +1224,105 @@ In org-mode, you can click links in order to run your games. This will bring up 
 
 If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
 * Appearance :appearance:
+** Modus-Themes
+#+begin_src emacs-lisp :results output silent
+(use-package emacs
+  :config
+  (setq custom-safe-themes t)           ; Due to my dev needs
+
+  (defmacro contrib/format-sexp (sexp &rest objects)
+    `(eval (read (format ,(format "%S" sexp) ,@objects))))
+
+  ;; This is currently not used in this section.  Search for it in the
+  ;; section about setting fonts, `prot/font-bold-face' in particular.
+  (defvar prot/modus-theme-after-load-hook nil
+    "Hook that runs after loading a Modus theme.
+See `prot/modus-operandi' or `prot/modus-vivendi'.")
+
+  ;; The variables do not reveal my preferences.  Always testing things.
+  (dolist (theme '("operandi" "vivendi"))
+    (contrib/format-sexp
+     (defun prot/modus-%1$s ()
+       (setq modus-%1$s-theme-slanted-constructs t
+             modus-%1$s-theme-bold-constructs t
+             modus-%1$s-theme-fringes 'subtle ; {nil,'subtle,'intense}
+             modus-%1$s-theme-3d-modeline nil
+             modus-%1$s-theme-faint-syntax nil
+             modus-%1$s-theme-intense-hl-line nil
+             modus-%1$s-theme-intense-paren-match nil
+             modus-%1$s-theme-prompts 'subtle ; {nil,'subtle,'intense}
+             modus-%1$s-theme-completions 'moderate ; {nil,'moderate,'opinionated}
+             modus-%1$s-theme-diffs 'desaturated ; {nil,'desaturated,'fg-only}
+             modus-%1$s-theme-org-blocks 'greyscale ; {nil,'greyscale,'rainbow}
+             modus-%1$s-theme-variable-pitch-headings t
+             modus-%1$s-theme-rainbow-headings nil
+             modus-%1$s-theme-section-headings nil
+             modus-%1$s-theme-scale-headings t
+             modus-%1$s-theme-scale-1 1.1
+             modus-%1$s-theme-scale-2 1.15
+             modus-%1$s-theme-scale-3 1.21
+             modus-%1$s-theme-scale-4 1.27
+             modus-%1$s-theme-scale-5 1.33)
+       (load-theme 'modus-%1$s t)
+       (run-hooks 'prot/modus-theme-after-load-hook))
+     theme))
+
+  (define-minor-mode prot/modus-themes-alt-mode
+    "Override specific palette variables with custom values.
+
+This is intended as a proof-of-concept.  It is, nonetheless, a
+perfectly accessible alternative, conforming with the design
+principles of the Modus themes.  It still is not as good as the
+default colours."
+    :init-value nil
+    :global t
+    (if prot/modus-themes-alt-mode
+        (setq modus-operandi-theme-override-colors-alist
+              '(("bg-main" . "#fefcf4")
+                ("bg-dim" . "#faf6ef")
+                ("bg-alt" . "#f7efe5")
+                ("bg-hl-line" . "#f4f0e3")
+                ("bg-active" . "#e8dfd1")
+                ("bg-inactive" . "#f6ece5")
+                ("bg-region" . "#c6bab1")
+                ("bg-header" . "#ede3e0")
+                ("bg-tab-bar" . "#dcd3d3")
+                ("bg-tab-active" . "#fdf6eb")
+                ("bg-tab-inactive" . "#c8bab8")
+                ("fg-unfocused" . "#55556f"))
+              modus-vivendi-theme-override-colors-alist
+              '(("bg-main" . "#100b17")
+                ("bg-dim" . "#161129")
+                ("bg-alt" . "#181732")
+                ("bg-hl-line" . "#191628")
+                ("bg-active" . "#282e46")
+                ("bg-inactive" . "#1a1e39")
+                ("bg-region" . "#393a53")
+                ("bg-header" . "#202037")
+                ("bg-tab-bar" . "#262b41")
+                ("bg-tab-active" . "#120f18")
+                ("bg-tab-inactive" . "#3a3a5a")
+                ("fg-unfocused" . "#9a9aab")))
+      (setq modus-operandi-theme-override-colors-alist nil
+            modus-vivendi-theme-override-colors-alist nil)))
+
+  (defun prot/modus-themes-toggle (&optional arg)
+    "Toggle between `prot/modus-operandi' and `prot/modus-vivendi'."
+    (interactive "P")
+    (if arg
+        (prot/modus-themes-alt-mode 1)
+      (prot/modus-themes-alt-mode -1))
+    (if (eq (car custom-enabled-themes) 'modus-operandi)
+        (progn
+          (disable-theme 'modus-operandi)
+          (prot/modus-vivendi))
+      (disable-theme 'modus-vivendi)
+      (prot/modus-operandi)))
+
+  :hook (after-init-hook . prot/modus-operandi)
+  :bind ("<f5>" . prot/modus-themes-toggle))
+ 
+#+end_src
 ** COMMENT Style Tags based on Regular Expressions :one:
 *** Code 
 #+BEGIN_SRC emacs-lisp
@@ -1165,7 +1413,7 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
  #+begin_src emacs-lisp
    (set-window-scroll-bars (minibuffer-window) nil nil)
  #+end_src
-** [#B] Use =moody= for a beautiful modeline
+** [#B] COMMENT Use =moody= for a beautiful modeline
 
 This gives me a truly lovely ribbon-based modeline.
 
@@ -1282,3 +1530,7 @@ See Emerge, for the Emerge facility, which provides a powerful interface for mer
 ** Gestalten
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
+* test
+** test
+*** test
+**** test
