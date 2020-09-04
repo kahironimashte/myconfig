@@ -35,7 +35,7 @@
  '(font-use-system-font t)
  '(org-agenda-files
    (quote
-    ("c:/org/calendar.org" "c:/org/atasks.org" "c:/org/ziele.org" "c:/org/inbox.org")))
+    ("c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org" "c:/org/ziele.org")))
  '(org-default-priority 67)
  '(org-hide-leading-stars t)
  '(org-highest-priority 65)
@@ -135,6 +135,7 @@
 (desktop-save-mode 1)
 
 ;; Open File-Extensions in emacs
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
@@ -267,6 +268,11 @@
   (moody-replace-vc-mode)
   (setq moody-mode-line-height 24)
   )
+
+(add-to-list 'load-path "c:/Software/Emacs/Plugins/valign-master")
+(use-package valign
+;;  :hook org-mode
+)
 
 
 ;; ELECTRIC PAIR MODE (BUILT IN)
