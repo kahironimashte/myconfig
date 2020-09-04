@@ -3,8 +3,17 @@
 * Allgemeines
 ** TODO Ideen
    - Mark ring auf angenehmerer Combo legen (c-b-m / c-b-b)
-** Keyboard-Shortuts
+** ido-mode
 #+begin_src emacs-lisp :results output silent
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+#+end_src
+** Keyboard-Shortuts
+*** for org-agendas
+#+begin_src emacs-lisp :results output silent
+;; Org-Agendas
+;; -----------
  (global-set-key (kbd "<f12>") 'kahiro-agenda-next-xa-tasks) 
  (global-set-key (kbd "<S-f12>") 'kahiro-agenda-for-current-buffer) 
 
@@ -14,7 +23,24 @@
 
 (defun kahiro-agenda-for-current-buffer (&optional arg) ;; Shift+<f12>
   (interactive "P")
-  (org-agenda arg "a" nil))
+  (org-agenda arg "gh" nil))
+#+end_src
+*** for org-columns
+#+begin_src emacs-lisp :results output silent
+(with-eval-after-load "org-colview"
+  (define-key org-columns-map (kbd "a") nil)
+  (define-key org-columns-map (kbd "o") nil)
+  (define-key org-columns-map (kbd "c") nil)
+  (define-key org-columns-map (kbd "n") nil)
+  (define-key org-columns-map (kbd "p") nil)
+  (define-key org-columns-map (kbd "g") nil)
+)
+#+end_src
+*** allgemein
+#+begin_src emacs-lisp :results output silent
+;; Escape-Command - use ESC for Ctrl + g
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+(define-key key-translation-map (kbd "C-<escape>") (kbd "ESC"))
 #+end_src
 ** COMMENT unfill paragraph :deaktiviert:
 #+BEGIN_SRC emacs-lisp
@@ -153,6 +179,25 @@ deaktiviert weil nervig.
              (org-agenda-show-all-dates nil)
              (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
              (org-deadline-warning-days 0) ))
+	 ("gp" "PLAN und TODO in Agenda-Files" agenda ""
+	     ((org-agenda-span 1)
+	      (org-agenda-overriding-header "PLAN und TODO in Agenda-Files")
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PLAN" "TODO"))) ;[1]
+	      (org-agenda-sorting-strategy '(time-up todo-state-down priority-up))
+;	      (org-agenda-time-grid '(nil))
+              (org-deadline-warning-days 0)
+	      ))
+	  ("gh" "Agenda für heute" agenda ""
+	     ((org-agenda-span 1)
+	      (org-agenda-overriding-header "Alle Aufgaben für heute")
+	      (org-deadline-warning-days 0)))
+	  ("gw" "Agenda für diese Woche" agenda ""
+	     ((org-agenda-span 7)
+	      (org-agenda-overriding-header "Alle Aufgaben für die nächsten 7 Tage")
+	      (org-deadline-warning-days 3)))
+	  ("gk" "Themen für Konferenzen" tags "Konferenz"
+	     ((org-agenda-orverriding-header "Offene Themen für Konferenzen")
+	     ))
 	("n" "Nächste Schritte für aktuelle Ausgabe" 
 	     ((todo "WAITING|NEXT"
 	      ((org-agenda-overriding-header "Nächste Schritte für aktuelle Ausgabe")
@@ -182,14 +227,7 @@ deaktiviert weil nervig.
 	  nil
           nil)
 
-	("h" "PLAN und TODO in Agenda-Files" agenda ""
-	     ((org-agenda-span 1)
-	      (org-agenda-overriding-header "PLAN und TODO in Agenda-Files")
-	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PLAN" "TODO"))) ;[1]
-	      (org-agenda-sorting-strategy '(time-up todo-state-down priority-up))
-;	      (org-agenda-time-grid '(nil))
-              (org-deadline-warning-days 0)
-	      ))
+	
 	))
 #+END_SRC
 *** Erläuterungen
@@ -336,7 +374,7 @@ To get the same for a weekly date-tree change the function to
 
 (setq org-refile-targets '((my-org-files-list :maxlevel . 1)))
 #+end_src
-** [#B] Structure template
+** [#B] org-structure-template
 #+begin_src emacs-lisp :results output silent
 (setq org-structure-template-alist
   '(("s" . "src")
@@ -348,6 +386,13 @@ To get the same for a weekly date-tree change the function to
 ;;    ("c" . "comment")
     ))
 #+end_src
+** [#B] COMMENT org-tempo :package:
+ es funktionieren ebenfalls die Kürzel von [[*org-structure-template][org-structure-template]]
+#+begin_src emacs-lisp :results output silent
+(require 'org-tempo)
+;;(setq org-tempo-keywords-alist '(("t" . "*** Planung*** Recherche")))
+#+end_src
+  - [2020-08-25 Di 10:17] Als Template-Engine nur bedingt tauchlich, da immer ein # voran und ein : nachgestellt wird. 
 ** Agenda
 #+BEGIN_SRC emacs-lisp
 ;;    ###     ######   ######## ##    ## ########     ###    
@@ -402,7 +447,7 @@ To get the same for a weekly date-tree change the function to
   (setq org-list-use-circular-motion t)
 #+END_SRC
 ** Clocking/Aufwand
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :results output silent
 ;; CLOCKING: global Effort estimate values
 (setq org-global-properties
       '(("Effort_ALL" .
@@ -411,9 +456,11 @@ To get the same for a weekly date-tree change the function to
 ;; These are the hotkeys
 
 ;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
-(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TODO %SCHEDULED %DEADLINE")
+(setq org-columns-default-format "%43ITEM(Tätigkeit) %5Effort(EFRT){:} %5CLOCKSUM %TODO %17SCHEDULED")
 #+END_SRC
-** Org-Logging von Aufgaben (TODOs)
+
+
+** org-Logging von Aufgaben (TODOs)
 #+BEGIN_SRC emacs-lisp
 ;; Org-mode TODO
 ;;(setq org-log-done 'time)
@@ -466,7 +513,7 @@ To get the same for a weekly date-tree change the function to
  ;;         'org-tag)))
 
  #+END_SRC
-** Org-Recur :package:
+** org-recur :package:
    - Paket für die wiederholte Planung von Überchriften
 #+begin_src emacs-lisp
 (use-package org-recur
@@ -738,6 +785,7 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
      ("\\" org-match-sparse-tree)
      ("\]" org-remove-file)
      ("^" org-sort)
+     ("v" org-sort)
      ("`" org-table-edit-field)
      ("{" org-table-toggle-formula-debugger)
      ("|" org-table-create-or-convert-from-region)
