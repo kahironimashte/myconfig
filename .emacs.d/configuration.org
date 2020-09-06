@@ -15,11 +15,6 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (global-visual-line-mode t)
 #+end_src
 
-** Keys
-#+begin_src emacs-lisp :results output silent
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-#+end_src
-
 ** Saving Desktop Sessions
  #+BEGIN_SRC emacs-lisp
  ;; SAVING DESKTOP SESSIONS
@@ -73,7 +68,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
       :prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
     ("h" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
-      "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
+      "** %^{Status eintragen|TODO|PLAN} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
       :empty-lines-after 1)
     ("a" "Todo für die Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
       "** %^{Status|PLAN|TODO} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
@@ -531,44 +526,12 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
   )))
 #+END_SRC
 * Keys / Tastenkürzel
-** F1 bis F12 (+ Modifiers)
+** Allgemein
 #+begin_src emacs-lisp :results output silent
- (global-set-key (kbd "<f2>") 'toggle-window-split)
- (global-set-key (kbd "<S-f2>") 'enlarge-window-horizontally)
- (global-set-key (kbd "<s-f2>") 'shrink-window-horizontally)
- (global-set-key (kbd "<f12>") 'org-agenda)
- (global-set-key (kbd "<S-f12>") 'kahiro-agenda-of-current-buffer)
- (global-set-key (kbd "<s-f12>") 'kahiro-todo-of-current-buffer)
- ;; (global-set-key (kbd "<s-f1>") 'pop-global-mark) ;; Jump in the document
- ;; (global-set-key (kbd "<s-f2>") 'xah-pop-local-mark-ring)
+;; use ibuffer as default
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 #+end_src
-*** Switch windows
-#+begin_src emacs-lisp :results output silent
-(defun toggle-window-split ()
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
-#+end_src
+
 **  Jump in the document
    "Move cursor to last mark position of current buffer.
    Call this repeatedly will cycle all positions in `mark-ring'.
@@ -581,7 +544,6 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    (global-set-key (kbd "<S-f3>") 'pop-global-mark)
    (global-set-key (kbd "<s-f3>") 'xah-pop-local-mark-ring) 
  #+END_SRC 
-
 ** RYO Key settings
 *** Tastenfunktionen
 #+BEGIN_SRC emacs-lisp
@@ -691,12 +653,14 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
     ("t" org-todo)
     ("x"
      (("a" org-archive-subtree-default)
-      ("s" save-some-buffers)
-      ("f" find-file)
-      ("c" save-buffers-kill-terminal)
-      ("k" kill-buffer)
       ("b" switch-to-buffer)
+      ("c" save-buffers-kill-terminal)
       ("d" dired)
+      ("f" find-file)
+      ("k" kill-buffer)
+      ("+" text-scale-adjust)
+      ("-" text-scale-adjust)
+      ("s" save-some-buffers)
      ))
     ("z"
      (("i" org-clock-in)
@@ -1061,14 +1025,57 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 	    ("}" org-agenda-manipulate-query-subtract-re)
 	    ("~" org-agenda-limit-interactively)
 	    ("x"
-	     (("h" org-habit-toggle-display-in-agenda)
+	     (
+	      ;;("h" org-habit-toggle-display-in-agenda)
 	      ("s" org-save-all-org-buffers)
 	      ("w" org-agenda-write)
 	      ("u" org-agenda-undo)))
     )
 #+END_SRC
 
-
+** F1 bis F12 (+ Modifiers)
+#+begin_src emacs-lisp :results output silent
+ (global-set-key (kbd "<f2>") 'toggle-window-split)
+ (global-set-key (kbd "<S-f2>") 'enlarge-window-horizontally)
+ (global-set-key (kbd "<s-f2>") 'shrink-window-horizontally)
+ (global-set-key (kbd "<f12>") 'org-agenda)
+ (global-set-key (kbd "<S-f12>") 'kahiro-agenda-of-current-buffer)
+ (global-set-key (kbd "<s-f12>") 'kahiro-todo-of-current-buffer)
+ ;; (global-set-key (kbd "<s-f1>") 'pop-global-mark) ;; Jump in the document
+ ;; (global-set-key (kbd "<s-f2>") 'xah-pop-local-mark-ring)
+#+end_src
+*** Switch windows
+#+begin_src emacs-lisp :results output silent
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+#+end_src
+** <escape> auf ESC
+#+begin_src emacs-lisp :results output silent
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+(define-key key-translation-map (kbd "C-<escape>") (kbd "ESC"))
+#+end_src
 * Textbearbeitung
 :PROPERTIES:
 :CATEGORY: textEd
