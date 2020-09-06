@@ -36,7 +36,16 @@
  '(org-agenda-files
    (quote
     ("c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org" "c:/org/ziele.org")))
+ '(org-agenda-sorting-strategy
+   (quote
+    ((agenda time-up priority-down category-keep)
+     (todo priority-down category-keep)
+     (tags priority-down category-keep)
+     (search category-keep))))
  '(org-default-priority 67)
+ '(org-habit-completed-glyph 43)
+ '(org-habit-show-done-always-green t)
+ '(org-habit-today-glyph 9728)
  '(org-hide-leading-stars t)
  '(org-highest-priority 65)
  '(org-lowest-priority 68)
@@ -68,6 +77,14 @@
  '(org-done ((t (:inherit org-todo :foreground "honeydew3"))))
  '(org-drawer ((t (:inherit org-special-keyword))))
  '(org-ellipsis ((t (:foreground "turquoise1" :underline nil :height 0.65))))
+ '(org-habit-alert-face ((t (:background "coral"))))
+ '(org-habit-alert-future-face ((t (:background "navajo white"))))
+ '(org-habit-clear-face ((t (:background "mint cream"))))
+ '(org-habit-clear-future-face ((t (:background "mint cream"))))
+ '(org-habit-overdue-face ((t (:background "gray"))))
+ '(org-habit-overdue-future-face ((t (:background "gainsboro"))))
+ '(org-habit-ready-face ((t (:background "lime green"))))
+ '(org-habit-ready-future-face ((t (:background "PaleGreen2"))))
  '(org-level-1 ((t (:family "IBM Plex Serif Medium" :weight normal :foreground "dark gray" :height 230 :antialias subpixel))))
  '(org-level-2 ((t (:inherit org-level-1 :foreground "dark cyan" :height 0.9))))
  '(org-level-3 ((t (:inherit org-level-1 :foreground "DeepSkyBlue4" :height 0.8))))
