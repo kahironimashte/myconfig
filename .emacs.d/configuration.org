@@ -483,6 +483,13 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    (org-occur (concat "^" org-outline-regexp " *" "\\(NEXT\\|WAITING\\)"))
    (org-ctrl-c-ctrl-c))
 
+(defun kahiro-show-TODO-in-subtree ()
+   "Narrow to a subtree and show only headings with TODO keywords"
+   (interactive)
+   (org-narrow-to-subtree)
+   (org-occur (concat "^" org-outline-regexp " *" "\\(TODO\\|NEXT\\|WAITING\\)"))
+   (org-ctrl-c-ctrl-c))
+
 (defun kahiro-show-PLAN-in-subtree ()
    "Narrow to a subtree and show only headings with TODO keywords"
    (interactive)
@@ -639,7 +646,8 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
     ("n" 
      (("s" org-narrow-to-subtree)
       ("w" widen)
-      ("t" kahiro-show-todos-in-subtree) 
+      ("t" kahiro-show-TODO-in-subtree)
+      ("T" kahiro-show-todos-in-subtree) 
       ("n" kahiro-show-NEXT-in-subtree) 
       ("j" ess/org-show-just-me)
       ("p" kahiro-show-PLAN-in-subtree)
@@ -674,9 +682,10 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("n" org-timer-start)
       ("N" org-timer-start-with-offset)
       ("." org-timer :exit t)
-
       ("z" org-time-stamp :exit t)
+      ("Z" org-time-stamp)
       ("t" org-time-stamp-inactive :exit t)
+      ("T" org-time-stamp-inactive)
       ("c" org-toggle-timestamp-type)
      ))
    )
@@ -1092,7 +1101,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
   (autoload 'flyspell-mode "flyspell" "On-the-fly ispell." t)
   (setq flyspell-issue-welcome-flag nil)
  #+END_SRC
-* Package
+* Pakete
 ** ido-mode
 *** Beschreibung
  This is the built-in framework for interactively narrowing down the
