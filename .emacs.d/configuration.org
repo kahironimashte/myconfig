@@ -23,7 +23,7 @@
 
 (defun kahiro-agenda-for-current-buffer (&optional arg) ;; Shift+<f12>
   (interactive "P")
-  (org-agenda arg "gh" nil))
+  (org-agenda arg "N" t))
 #+end_src
 *** for org-columns
 #+begin_src emacs-lisp :results output silent
@@ -97,7 +97,7 @@
 #+END_SRC
 
 ** Todos eines Subtrees :Funktionen:
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :results output silent
 
 (defun kahiro-show-todos-in-subtree ()
    "Narrow to a subtree and show only headings with any TODO-keywords"
@@ -107,10 +107,17 @@
    (org-ctrl-c-ctrl-c))
 
 (defun kahiro-show-NEXT-in-subtree ()
-   "Narrow to a subtree and show only headings with TODO keywords"
+   "Narrow to a subtree and show only headings with keywords NEXT or WAITING"
    (interactive)
    (org-narrow-to-subtree)
    (org-occur (concat "^" org-outline-regexp " *" "\\(NEXT\\|WAITING\\)"))
+   (org-ctrl-c-ctrl-c))
+
+(defun kahiro-show-only-NEXT-in-subtree ()
+   "Narrow to a subtree and show only headings with NEXT keyword"
+   (interactive)
+   (org-narrow-to-subtree)
+   (org-show-todo-tree 4)
    (org-ctrl-c-ctrl-c))
 
 (defun kahiro-show-TODO-in-subtree ()
@@ -128,9 +135,6 @@
    (org-ctrl-c-ctrl-c))
 
 #+END_SRC
-
-#+RESULTS:
-: kahiro-show-PLAN-in-subtree
 
 ** COMMENT :ARCHIVE-Tag automatisch  Tag to DONE Tasks :deaktiviert:
 deaktiviert weil nervig.
@@ -210,11 +214,16 @@ deaktiviert weil nervig.
 	      (org-agenda-span 1)
               (org-deadline-warning-days 0)      
 	       ))
-	("N" "alle nächsten Schritte" agenda ""
+	("N" "alle nächsten Schritte" 
+	     ((agenda ""
 	     ((org-agenda-span 1)
-	      (org-agenda-overriding-header "Alle nächsten Schritte in Agenda-Files")
+	      (org-agenda-overriding-header "Alle nächsten Schritte heute für diese Datei")
 	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("NEXT" "WAITING"))) ;[1]
-	      (org-agenda-sorting-strategy '(todo-state-down))
+	      (org-agenda-sorting-strategy '(todo-state-down))))
+	     (todo "WAITING|NEXT"
+	      ((org-agenda-overriding-header "Nächste Schritte für aktuelle Datei")
+      	       (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	       (org-show-context-detail 'minimal)))
 	     ))
 	     ;; [1] die funktion "...skip-entry-if" verbirgt alle Treffer in der Agenda. 
 	     ;;     "'todo '("NEXT")" würde alle Tasks mit dem NEXT keyword ausblenden. 
@@ -312,9 +321,9 @@ deaktiviert weil nervig.
     ("t" "Todo [inbox]" entry (file+headline "c:/org/inbox.org" "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
     ("n" "Neuer Text")
     ("na" "Template für neuen Autoren-Text" entry (file+headline "c:/org/atasks.org" "Texte Autoren") 
-      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :%^{voraussichtliche Ausgabe}#20: \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Nachhaken am}t \n:PROPERTIES:\n:AUTOR: %^{Autorname}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:HONORAR: %^{Vereinbartes Honorar in EUR}\n:ZEICHENZAHL: %^{vereinbarte Zeichenzahl}\n:JAHR: 2020\n:AUSGABE: %^{erscheint voraussichtlich in XX#XX}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Bilder\n**** PLAN Layout\n**** PLAN Redigieren\n**** PLAN Lesen lassen\n**** PLAN Korrekturen" :empty-lines-after 1)
+      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :20#%^{voraussichtliche Ausgabe}: \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Nachhaken am}t \n:PROPERTIES:\n:AUTOR: %^{Autorname}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:HONORAR: %^{Vereinbartes Honorar in EUR}\n:ZEICHENZAHL: %^{vereinbarte Zeichenzahl}\n:JAHR: 2020\n:AUSGABE: %^{erscheint voraussichtlich in XX#XX}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Text und Kästen in Tango anlegen \n**** PLAN Bilder besorgen\n**** PLAN Bilder in Tango stellen\n**** PLAN Layouten lassen\n**** PLAN Redigieren\n**** PLAN Lesen lassen\n**** PLAN Korrekturen\n**** PLAN Honorare kommunizieren" :empty-lines-after 1)
     ("ne" "Template für neuen Eigenen-Text" entry (file+headline "c:/org/atasks.org" "Eigene Texte") 
-      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :%^{voraussichtliche Ausgabe}#20:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n:PROPERTIES:\n:MITARBEIT: %^{Co-Autoren}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:ZEICHENZAHL: %^{angepeilte Zeichenzahl}\n:JAHR: 2020\n:AUSGABE: %^{erscheint voraussichtlich in XX#XX}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Recherche\n**** PLAN Bilder besorgen\n**** PLAN Layouten lassen\n**** PLAN Texten\n**** PLAN Lesen lassen\n**** PLAN Korrekturen" :empty-lines-after 1)
+      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :20#%^{voraussichtliche Ausgabe}:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n:PROPERTIES:\n:MITARBEIT: %^{Co-Autoren}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:ZEICHENZAHL: %^{angepeilte Zeichenzahl}\n:JAHR: 2020\n:AUSGABE: %^{erscheint voraussichtlich in XX#XX}\n:END:\n  -Link zum Artikel Dokumen\n  - Anmerkungen :: %?\n\n**** PLAN Planung\n**** PLAN Recherche\n**** PLAN Bilder besorgen\n**** PLAN Bilder in Tango schieben\n**** PLAN Layouten lassen\n**** PLAN Texten\n**** PLAN Bildunterschriften und Zwischenzeilen\n**** PLAN Lesen lassen\n**** PLAN Korrekturen\n**** PLAN Belege veranlassen" :empty-lines-after 1)
 ))
 #+END_SRC
 
@@ -646,7 +655,7 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
  #+RESULTS:
  : ryo-modal-mode
 
-*** Multiple Keys
+*** Multiple Keys :new:
     Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
 #+BEGIN_SRC emacs-lisp :results silent
  (require 'org-timer)
@@ -672,7 +681,6 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
      ))
     ("g"
      (("a" org-agenda)
-      ("f" org-agenda)
       ("g" switch-to-buffer)
       ("o" other-window)
       ("s" kahiro-split-and-switch)
@@ -681,7 +689,13 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
       ("l" xah-pop-local-mark-ring)
       ("L" pop-global-mark)
       ("j" ess/org-show-just-me)
-      ("h" delete-other-windows)
+      ("f" delete-other-windows)
+      ("r" split-window-right)
+      ("b" split-window-below)
+      ("n" clone-indirect-buffer-other-window)
+      ("N" make-frame-command)
+      ("K" delete-frame)
+      ("k" delete-window)
      ))
     ("n" 
      (("s" org-narrow-to-subtree)
@@ -689,6 +703,7 @@ k(copy-face font-lock-constant-face 'calendar-iso-week-face)
       ("t" kahiro-show-TODO-in-subtree)
       ("T" kahiro-show-todos-in-subtree) 
       ("n" kahiro-show-NEXT-in-subtree) 
+      ("N" kahiro-show-only-NEXT-in-subtree)
       ("j" ess/org-show-just-me)
       ("p" kahiro-show-PLAN-in-subtree)
       ("b" org-agenda-set-restriction-lock)
