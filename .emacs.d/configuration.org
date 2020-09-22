@@ -919,6 +919,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 
 *** Keys für den Org-Agenda-Mode
 #+BEGIN_SRC emacs-lisp :results output silent
+(require 'org-habit)
 (add-hook 'org-agenda-mode-hook 'ryo-modal-mode)
     (ryo-modal-major-mode-keys
      'org-agenda-mode
