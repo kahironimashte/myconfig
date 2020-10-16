@@ -14,17 +14,17 @@
  '(moody-mode-line-height 28)
  '(org-agenda-files
    (quote
-    ("~/ncloud/org/htasks.org" "~/ncloud/org/atasks.org" "~/ncloud/org/calendar.org")))
+    ("~/ncloud/org/prsn/karriere.org" "~/ncloud/org/htasks.org" "~/ncloud/org/atasks.org" "~/ncloud/org/calendar.org")))
  '(org-agenda-sorting-strategy
    (quote
     ((agenda time-up priority-down category-keep)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep))))
+ '(org-default-priority 67)
  '(org-habit-completed-glyph 43)
  '(org-habit-show-done-always-green t)
  '(org-habit-today-glyph 9728)
- '(org-default-priority 67)
  '(org-highest-priority 65)
  '(org-lowest-priority 68)
  '(org-modules
