@@ -252,6 +252,50 @@ information."
    (interactive "P")
    (org-agenda arg "t" t))
 #+end_src
+**** beschränkte Agendas :new:
+ - [X] alle TODOS aus einem Subtree
+ - [X] TODO-Liste für NEXT aus dem Subtree
+ - [X] TODO-Liste für Waiting aus dem Buffer/Subtree
+ - [X] TODO-Liste für Waiting der Agenda mit Prio A
+ - [X] TODO-Liste für Waiting aus dem Subtree
+ - [ ] TODO-Liste für Waiting mit xa-Kategorie
+ - [ ] DONE-Lise eines Subtrees
+ - [ ] TODO-Liste aller Aufgaben eines Buffers/Subtrees mit Prio A
+ - [ ] TODO-Liste aller PLAN Aufgaben eines Subtrees
+ - [ ] Tasks mit dem Tag Heute
+ - [ ] 
+#+begin_src emacs-lisp :results output silent
+;; alle TODOs eines Subtrees
+(defun kahiro-todo-of-current-subtree (&optional arg)
+   (interactive "P")
+   (org-agenda arg "t" 'subtree))
+
+;; alle NEXT aus dem Subtree
+(defun kahiro-NEXT-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" 'subtree)) ;; edit
+
+;; alle WAITING aus dem Subtree
+(defun kahiro-WAITING-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" 'subtree)) ;; edit
+
+;; alle WAITING aus dem Buffer
+(defun kahiro-NEXT-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" 'buffer)) ;; edit
+
+;; alle WAITING der Agenda-Files mit Prio A aus dem Buffer
+(defun kahiro-NEXT-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" nil)) ;; edit
+
+;; alle WAITING mit Kategorie "xa"
+(defun kahiro-WAITING-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" nil)) ;; edit
+
+#+end_src
 ** [#B] Structure template
 #+begin_src emacs-lisp :results output silent
 (setq org-structure-template-alist
