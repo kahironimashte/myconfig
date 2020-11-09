@@ -676,7 +676,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ))
     ("g"
      (("a" org-agenda)
-      ("f" org-agenda)
+      ("f" delete-other-windows)
       ("g" switch-to-buffer)
       ("o" other-window)
       ("s" kahiro-split-and-switch)
