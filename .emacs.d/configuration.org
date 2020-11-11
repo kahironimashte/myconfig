@@ -31,6 +31,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  ;; Set Sentence end to just one space
  (setq sentence-end-double-space nil)
 #+END_SRC
+** Hallo Dave
 * Org Mode Einstellungen
 :PROPERTIES:
 :CATEGORY: org
