@@ -19,8 +19,16 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  #+BEGIN_SRC emacs-lisp
  ;; SAVING DESKTOP SESSIONS
  ;;------------------------
- (desktop-save-mode 1)
+;;(require 'desktop)
+(when (eq system-type 'windows-nt)
+    (desktop-change-dir "C:/Software/Emacs/Desktops/")
+ )
+(desktop-save-mode 1)
 #+END_SRC
+
+#+RESULTS:
+: t
+
 ** Start any Windows maximised
 #+BEGIN_SRC emacs-lisp
  ;; Start any Windows maximised
@@ -334,8 +342,19 @@ information."
   #+END_SRC
   #+BEGIN_SRC  emacs-lisp
    ;; make available "org-bullet-face" such that I can control the font size individually
-  (setq org-bullets-bullet-list '("⚜" "⚙" "❖" "✿" "❄" "❋" "★" "⚛")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
+(when (string-equal system-type "windows-nt")
+   (setq org-bullets-bullet-list '("✥" "✤" "❖" "✿" "❄" "❋" "★" "✚")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
+  )
+
+(when (string-equal system-type "gnu/linux")
+    (setq org-bullets-bullet-list '("⚜" "⚙" "❖" "✿" "❄" "❋" "★" "⚛")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
+  )
+
+
   #+END_SRC
+
+  #+RESULTS:
+
 *** Set custom ellipsis (...)
   #+BEGIN_SRC emacs-lisp
   (setq org-ellipsis "⤵")
@@ -464,7 +483,13 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 
 ;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
 (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TAGS %TODO")
+
+;; Clocking
+;;---------
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate) ;; Erklaerung
 #+END_SRC
+*** TODO [#C] Erklärung für org-clock-persistence-insinuate
 *** Clock-Report bis auf 3 Level tief
 #+begin_src emacs-lisp
 ;; Clock-Report-View auf Level 3
@@ -681,12 +706,19 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("g" switch-to-buffer)
       ("o" other-window)
       ("s" kahiro-split-and-switch)
+      ("S" kahiro-vsplit-and-switch)
       ("k" kahiro-switch-and-close)
       ("t" org-sparse-tree)
       ("l" xah-pop-local-mark-ring)
       ("L" pop-global-mark)
       ("j" ess/org-show-just-me)
-      ("h" delete-other-windows)
+      ("f" delete-other-windows)
+      ("r" split-window-right)
+      ("b" split-window-below)
+      ("n" clone-indirect-buffer-other-window)
+      ("N" make-frame-command)
+      ("K" delete-frame)
+      ("k" delete-window)
      ))
     ("n" 
      (("s" org-narrow-to-subtree)
@@ -694,6 +726,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("t" kahiro-show-TODO-in-subtree)
       ("T" kahiro-show-todos-in-subtree) 
       ("n" kahiro-show-NEXT-in-subtree) 
+      ("N" kahiro-show-only-NEXT-in-subtree)
       ("j" ess/org-show-just-me)
       ("p" kahiro-show-PLAN-in-subtree)
       ("v" org-agenda-set-restriction-lock)
@@ -724,6 +757,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("d" org-clock-display)
       ("," org-timer-pause-or-continue)
       ("-" org-timer-item :exit t)
+      ("h" org-timer-item :exit t)
       ("n" org-timer-start)
       ("N" org-timer-start-with-offset)
       ("." org-timer :exit t)
@@ -762,6 +796,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ("s" org-schedule)
      ("t" org-todo)
      ("w" org-refile)
+     ("W" my/org-refile-in-file)
      ("*" org-list-make-subtree)
      ("TAB" org-ctrl-c-tab)
      ("RET" org-ctrl-c-ret)
@@ -792,6 +827,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ("\\" org-match-sparse-tree)
      ("\]" org-remove-file)
      ("^" org-sort)
+     ("v" org-sort)
      ("`" org-table-edit-field)
      ("{" org-table-toggle-formula-debugger)
      ("|" org-table-create-or-convert-from-region)
@@ -801,7 +837,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 #+end_src
 
 *** Befehle mit r prefix
-#+BEGIN_SRC emacs-lisp :results slient
+#+BEGIN_SRC emacs-lisp :results output slient
  (ryo-modal-keys 
     ("r"
      (
@@ -873,70 +909,6 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 #+END_SRC
 
 #+RESULTS:
-| SPC | org-self-insert-command |
-| a   | org-self-insert-command |
-| b   | org-self-insert-command |
-| c   | org-self-insert-command |
-| d   | org-self-insert-command |
-| e   | org-self-insert-command |
-| f   | org-self-insert-command |
-| g   | org-self-insert-command |
-| h   | org-self-insert-command |
-| i   | org-self-insert-command |
-| j   | org-self-insert-command |
-| k   | org-self-insert-command |
-| l   | org-self-insert-command |
-| m   | org-self-insert-command |
-| n   | org-self-insert-command |
-| o   | org-self-insert-command |
-| p   | org-self-insert-command |
-| q   | org-self-insert-command |
-| r   | org-self-insert-command |
-| s   | org-self-insert-command |
-| t   | org-self-insert-command |
-| u   | org-self-insert-command |
-| v   | org-self-insert-command |
-| w   | org-self-insert-command |
-| x   | org-self-insert-command |
-| y   | org-self-insert-command |
-| z   | org-self-insert-command |
-| A   | org-self-insert-command |
-| B   | org-self-insert-command |
-| C   | org-self-insert-command |
-| D   | org-self-insert-command |
-| E   | org-self-insert-command |
-| F   | org-self-insert-command |
-| G   | org-self-insert-command |
-| H   | org-self-insert-command |
-| I   | org-self-insert-command |
-| J   | org-self-insert-command |
-| K   | org-self-insert-command |
-| L   | org-self-insert-command |
-| M   | org-self-insert-command |
-| N   | org-self-insert-command |
-| O   | org-self-insert-command |
-| P   | org-self-insert-command |
-| Q   | org-self-insert-command |
-| R   | org-self-insert-command |
-| S   | org-self-insert-command |
-| T   | org-self-insert-command |
-| U   | org-self-insert-command |
-| V   | org-self-insert-command |
-| W   | org-self-insert-command |
-| X   | org-self-insert-command |
-| Y   | org-self-insert-command |
-| Z   | org-self-insert-command |
-| Ü   | org-self-insert-command |
-| Ä   | org-self-insert-command |
-| Ö   | org-self-insert-command |
-| ß   | org-self-insert-command |
-| ü   | org-self-insert-command |
-| ä   | org-self-insert-command |
-| ö   | org-self-insert-command |
-| ;   | org-self-insert-command |
-| ,   | org-self-insert-command |
-| :   | org-self-insert-command |
-| .   | org-self-insert-command |
 
 *** Single Binds
     Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
@@ -948,6 +920,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
     ("H" "C-h")    
     ("K" "C-k")
     ("L" "C-l")
+    ("R" rename-buffer) ;; new [2020-10-05 Mo 11:04]
     ("_" "C-_")
     ("y" "C-y")
     ("w" "M-w")
@@ -968,6 +941,10 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 (add-hook 'org-agenda-mode-hook 'ryo-modal-mode)
     (ryo-modal-major-mode-keys
      'org-agenda-mode
+	    ("x"
+	     (("s" org-save-all-org-buffers)
+	      ("w" org-agenda-write)
+	      ("u" org-agenda-undo)))
 	    ("t" org-agenda-todo)
 	    ("h" backward-char)
 	    ("j" next-line)
@@ -1140,12 +1117,14 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
  ;; Rechtschreibung
  ;;----------------
  ;; Ich musste noch das deutsche Wörterbuch installieren, bevor es klappt: sudo apt-get install aspell-de
+(when (string-equal system-type "gnu/linux")
   (setq ispell-dictionary "deutsch8")
   (setq ispell-local-dictionary "deutsch")
   (setq flyspell-default-dictionary "deutsch8")
   (add-hook 'text-mode-hook 'flyspell-mode)
   (autoload 'flyspell-mode "flyspell" "On-the-fly ispell." t)
   (setq flyspell-issue-welcome-flag nil)
+  )
  #+END_SRC
 * Pakete
 ** ido-mode
@@ -1475,16 +1454,18 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
  #+begin_src emacs-lisp
    (set-window-scroll-bars (minibuffer-window) nil nil)
  #+end_src
-** [#B] COMMENT Use =moody= for a beautiful modeline
+** [#B] Use =moody= for a beautiful modeline
 
 This gives me a truly lovely ribbon-based modeline.
 
 #+begin_src emacs-lisp
-  (use-package moody
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
+(use-package moody
+  :config
+  (setq x-underline-at-descent-line t)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode)
+  (setq moody-mode-line-height 24)
+  )
 
 
 #+end_src

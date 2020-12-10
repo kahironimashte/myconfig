@@ -1,6 +1,6 @@
 (require 'package) ;; aktiviert package.el, den Paketmanager
 
-;; Paketquellen MELPA hinzufügen
+;; Paketquellen MELPA hinzufuegen
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
        (proto (if no-ssl "http" "https")))
@@ -11,13 +11,28 @@
 
 (package-initialize) ;; Mit (package-initialize t) werden die Pakete NICHT geladen. Das kann nützlich sein, wenn man Pakete über use-package laden will. 
 
+;; use Melpa-Org-Version instead of builtin. Vorher habe ich die neueste org-Version aus Melpa installiert.
+(assq-delete-all 'org package--builtins)
+;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
 
+;; Lokalisierung
+;; von https://karl-voit.at/2017/02/11/my-system-is-foobar/
+(when (string-equal system-type "windows-nt")
+  (setq homedir "C:/Software/Emacs/myconfig/")
+  )
+
+(when (string-equal system-type "gnu/linux")
+  (setq homedir "~/")
+  )
 
 ;; Lade Einstellungen, die über das Custom-Interface gemacht wurden. Meistens für die Darstellung und Gestaltung
-(setq custom-file (concat "~/.emacs.d/emacs-custom.el"))
+;; - Meistens fuer die Darstellung und Gestaltung
+(setq custom-file (concat homedir ".emacs.d/emacs-custom.el"))
 (load custom-file)
 
-
+;; Lade configuration.org
+(setq config-org-file (concat homedir ".emacs.d/configuration.org"))
+(org-babel-load-file config-org-file)
 
 ;; Pfade auf lokale Umgebungen anpassen. Die Pfade müssen dann mit (concat variable "/realtiv/pfad") angegeben werden
 (require 'org)
@@ -25,5 +40,3 @@
     (setq org-directory "c:/org")
   (setq org-directory "~/ncloud/org"))
 
-;; Lade emacs Konfiguration aus einer .org-Datei.
-(org-babel-load-file "~/.emacs.d/configuration.org")
