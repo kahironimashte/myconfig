@@ -16,18 +16,21 @@
 ;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
 
 ;; Lokalisierung
+;;   spezielle Anpassungen für Windows oder Linux-Systeme
 ;; von https://karl-voit.at/2017/02/11/my-system-is-foobar/
 (when (string-equal system-type "windows-nt")
   (setq homedir "C:/Software/Emacs/myconfig/")
+  (setq custom-file-name "win-custom.el")
   )
 
 (when (string-equal system-type "gnu/linux")
   (setq homedir "~/")
+  (setq custom-file-name "linux-custom.el")
   )
 
 ;; Lade Einstellungen, die über das Custom-Interface gemacht wurden. Meistens für die Darstellung und Gestaltung
 ;; - Meistens fuer die Darstellung und Gestaltung
-(setq custom-file (concat homedir ".emacs.d/emacs-custom.el"))
+(setq custom-file (concat homedir ".emacs.d/" custom-file-name))
 (load custom-file)
 
 ;; Lade configuration.org
