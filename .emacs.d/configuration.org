@@ -930,7 +930,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("g" switch-to-buffer)
       ("o" other-window)
       ("s" kahiro-split-and-switch)
-      ("S" kahiro-vsplit-and-switch)
+;      ("S" kahiro-vsplit-and-switch)
       ("k" kahiro-switch-and-close)
       ("t" org-sparse-tree)
       ("l" xah-pop-local-mark-ring)
