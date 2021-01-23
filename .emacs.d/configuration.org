@@ -429,13 +429,17 @@ the hierarchy, it will be used.
 ;; These are the hotkeys
 
 ;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
-(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TAGS %TODO")
+(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TODO %TAGS")
 
 ;; Clocking
 ;;---------
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate) ;; Erklaerung
 #+END_SRC
+
+#+RESULTS:
+| recentf-save-list | ido-kill-emacs-hook | desktop-kill | org-clock-save | org-babel-remove-temporary-directory |
+
 *** TODO [#C] Erklärung für org-clock-persistence-insinuate
 *** Clock-Report bis auf 3 Level tief
 #+begin_src emacs-lisp

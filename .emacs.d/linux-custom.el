@@ -28,12 +28,15 @@
  '(org-modules
    (quote
     (org-docview org-habit org-info org-inlinetask org-mhe org-w3m)))
+ '(org-priority-default 67)
  '(org-priority-faces
    (quote
     ((65 :inherit org-priority :family "IBM Plex Mono" :weight semibold)
      (66 :inherit org-priority :family "IBM Plex Mono" :weight normal)
      (67 :inherit org-priority :family "IBM Plex Mono" :weight light)
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight))))
+ '(org-priority-highest 65)
+ '(org-priority-lowest 68)
  '(package-selected-packages
    (quote
     (modus-operandi-theme modus-vivendi-theme smex ido-completing-read+ org nov smartparens org-bookmark-heading org-recur yafolding steam ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
@@ -53,6 +56,8 @@
  '(org-archived ((t (:inherit shadow :foreground "honeydew3" :height 0.8))))
  '(org-block ((t (:inherit shadow :foreground "dim gray"))))
  '(org-block-begin-line ((t (:inherit org-meta-line :foreground "gray" :height 0.5))))
+ '(org-column ((t (:inherit fixed-pitch :background "#f0f0f0"))))
+ '(org-column-title ((t (:inherit fixed-pitch :background "#f0f0f0" :underline t :weight bold))))
  '(org-date ((t (:inherit fixed-pitch :foreground "Purple"))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :underline t))))
  '(org-done ((t (:inherit org-todo :foreground "honeydew2"))))
@@ -83,7 +88,7 @@
  '(org-scheduled-previously ((t (:foreground "IndianRed3"))))
  '(org-scheduled-today ((t (:foreground "SeaGreen4"))))
  '(org-special-keyword ((t (:inherit fixed-pitch :foreground "dim gray" :height 0.8))))
- '(org-tag ((t (:foreground "dark gray" :weight light :height 0.5))))
+ '(org-tag ((t (:foreground "dark gray" :height 0.8 :family "IBM Plex Serif Light"))))
  '(org-time-grid ((t (:foreground "PeachPuff4"))))
  '(org-todo ((t (:foreground "gray34" :weight semi-bold :family "IBM Plex Sans Condensed"))))
  '(org-verbatim ((t (:inherit shadow :foreground "honeydew4"))))
