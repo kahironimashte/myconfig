@@ -1,3 +1,5 @@
+#+TITLE: Emacs-Konfiguration
+#+STARTUP: overview
 #+TODO: TODO FEHLER  | OK DONE
 #+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p)
 * Allgemeine Einstellungen
@@ -1748,6 +1750,12 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
   ) 
 #+end_src
 
+*** org-fontify-done-headline
+    - wenn =true= dann werden Überschriften anders formatiert, wenn sie in einem =DONE=-Status sind. 
+#+begin_src emacs-lisp :results output silent
+(setq org-fontify-done-headline nil)
+#+end_src
+
 ** [#C] Tool- Scroll- und Menu-Bar
     I don't usually use the menu or scroll bar, and they take up useful space.
  #+begin_src emacs-lisp
@@ -1778,6 +1786,11 @@ This gives me a truly lovely ribbon-based modeline.
   )
 
 
+#+end_src
+** Split-Verhalten
+   - legt die Mindestbreite fest, um horizontal zu teilen, also rechts einen neuen Buffer hinzuzufügen. 
+#+begin_src emacs-lisp :results output silent
+(setq split-width-threshold 80)
 #+end_src
 
 * FEHLER COMMENT Workarounds 
@@ -1885,5 +1898,6 @@ See Emerge, for the Emerge facility, which provides a powerful interface for mer
 *** JS-Modes und Webdev-Modes
 * test
 ** test
-*** test
+*** FEHLER test
 **** test
+    

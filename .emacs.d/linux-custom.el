@@ -15,7 +15,7 @@
     ("~/ncloud/org/prsn/karriere.org" "~/ncloud/org/htasks.org" "~/ncloud/org/atasks.org" "~/ncloud/org/calendar.org")))
  '(org-agenda-sorting-strategy
    (quote
-    ((agenda time-up priority-down category-keep)
+    ((agenda time-up habit-down priority-down category-keep)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep))))
