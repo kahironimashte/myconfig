@@ -89,7 +89,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 :END:
 ** Agenda-Mode
 *** TODO [#A] Agenda custom commands
-**** TODO Code
+**** Config Start und Hilfe
   - [[help:org-agenda-custom-commands][Helpfile]]
   - [[*for org-agendas][Key-Definitionen]]
  #+BEGIN_SRC emacs-lisp :results output silent
@@ -97,8 +97,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  ;;--------------
  (setq org-agenda-custom-commands
        '(
-         ("c" . "gefiltere Agendas")
-	 ("c1" "alles ohne Habits" 
+#+end_src
+**** f - gefilterte Agendas
+#+begin_src emacs-lisp :results output silent
+         ("f" . "gefiltere Agendas")
+	 ("f1" "alles ohne Habits" 
 	      ((agenda ""
 	      (
 	       (org-agenda-category-filter-preset '("-habit"))
@@ -108,24 +111,48 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
                (org-deadline-warning-days 0)      
 	      )))
 	 )
-         ("g" . "My Custom Agendas")
-
- ;;
- ;;      vvv Ab hier die täglichen Übersichten mit Eingrenzungen vvv
- ;;
-	 ("g1" "alle Tasks ohne Habits" agenda ""
+#+end_src
+**** d - tägliche Übersichten
+#+begin_src emacs-lisp :results output silent
+         ("d" . "Tägliche Übersichen und Filter")
+	 ("d1" "alle Tasks ohne Habits" agenda ""
 	  ((org-agenda-span 1)
 	   (org-agenda-overriding-header "Heute ohne Habits")
 	   (org-agenda-category-filter-preset '("+atasks" "+calendar" "+xa" "+reg"))
 	   ))
-	 ("g4" "alle Tasks ohne Habits" agenda ""
+	 ("d4" "alle Tasks ohne Habits" agenda ""
 	  ((org-agenda-span 1)
 	   (org-agenda-overriding-header "Heute ohne Habits")
 	   (org-agenda-category-filter-preset '("-habit"))
 	   ))
+	 ("d3" "Alle Autorentexte" 
+	  ((tags-todo "TODO=\"AUFTR\"|TODO=\"VORH\"+Autor"
+	     ((org-agenda-overriding-header "Alle offenen Autorentexte"))
+	     )
+	   (tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor"
+	     ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
+	     ))
+	  ((org-agenda-sorting-strategy '(todo-state-down priority-up)))
+	 )
+
+	 ("d6" "Autorentexte bestellt und da" tags-todo "TODO=\"AUFTR\"|TODO=\"VORH\"+Autor"
+	  ((org-agenda-overriding-header "Alle offenen Autorentexte")
+	   (org-agenda-sorting-strategy '(todo-state-down priority-up))
+	   ))
+	 ("d9" "Autorentexte " tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor"
+	  ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
+	   (org-agenda-sorting-strategy '(todo-state-down priority-up))
+	   ))
  ;;
  ;;      ^^^ Bis hier die täglichen Übersichten mit Eingrenzungen ^^^
  ;;
+
+#+end_src
+
+**** g - eigene Agendas
+#+begin_src emacs-lisp :results output silent
+         ("g" . "My Custom Agendas")
+
  ;	("gm" "Ausgaben diesen und nächsten Monat" tags "{20#[3][3-9]}") 
  ;	("gM" "Ausgaben im nächsten Halbjahr" tags "{20#[3][3-9]}") ;; Suche für Ausgaben im April (14-18)
 	 ("gA" "alle Autorentexte" tags "Autor|AUTOR<>\"\""
@@ -169,6 +196,9 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	   ("gk" "Themen für Konferenzen" tags "Konferenz"
 	      ((org-agenda-orverriding-header "Offene Themen für Konferenzen")
 	      ))
+#+end_src
+**** n - nächste Schritte
+#+begin_src emacs-lisp :results output silent
 	 ("n" "Nächste Schritte für aktuelle Ausgabe" 
 	      ((todo "WAITING|NEXT"
 	       ((org-agenda-overriding-header "Nächste Schritte für aktuelle Ausgabe")
@@ -195,6 +225,9 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	      ;; [1] die funktion "...skip-entry-if" verbirgt alle Treffer in der Agenda. 
 	      ;;     "'todo '("NEXT")" würde alle Tasks mit dem NEXT keyword ausblenden. 
 	      ;;     "'nottodo '("NEXT") zeigt nur Tasks mit NEXT keyword. 
+#+end_src
+**** o - Todos ohne Zeitupunkt (stuck)
+#+begin_src emacs-lisp :results output silent
 	 ("o" "TODO ohne Zeitpunkt"
           ((todo ""
                  ((org-agenda-overriding-header "\nUnscheduled TODO")
@@ -202,12 +235,13 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	   )))	
 	   nil
            nil)
-
+#+end_src
+**** Config ENDE
+#+begin_src emacs-lisp :results output silent
 	
 	 ))
  #+END_SRC
-**** TODO Erläuterungen
-**** TODO COMMENT Custom Agenda Commands
+**** TODO COMMENT Erläuterungen
   - Hilfe unter :: [[help:org-agenda-custom-commands][org-agenda-custom-commands]]
   - Beipiele :: [[https://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][worg]], 
  #+BEGIN_SRC emacs-lisp :results output silent
@@ -227,6 +261,9 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
      )
  )
   #+END_SRC
+**** Agenda Bauprozess
+- [ ] Custom Agenda anlegen
+- [ ] Custom Agenda einer Taste zuweisen
 **** COMMENT Patch for Ancestors-View
      - Erweitert die Headlines beim Sparse-Tree oder in custom Agendas. Nützlich für Reviews, aber nervig für die Übersicht. 
 #+BEGIN_SRC emacs-lisp
@@ -694,6 +731,20 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      by adding (require 'org-tempo) to your init file or
      by adding org-tempo to the list org-modules. You can do that by customizing org-modules.
 
+** Tags
+#+begin_src emacs-lisp :results output silent
+(setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer"))
+#+end_src
+
+** Todo-States und Sequenzen
+#+begin_src emacs-lisp :results output silent
+(setq org-todo-keywords
+  '((sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")
+    (sequence "IDEE(i)" "SUCHE(s)" "AUFTR(a)" "VORH(v)" "|" "ERSCH(e)")
+    (sequence "|"  "CANC(c)")
+   ))
+#+end_src
+
 ** Textbearbeitung
 *** TODO [#D] COMMENT unfill paragraph :Funktionen:deaktiviert:
  #+BEGIN_SRC emacs-lisp
@@ -857,7 +908,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    (global-set-key (kbd "<S-f3>") 'pop-global-mark)
    (global-set-key (kbd "<s-f3>") 'xah-pop-local-mark-ring) 
  #+END_SRC 
-** COMMENT RYO Key settings
+** RYO Key settings
 *** Tastenfunktionen
 #+BEGIN_SRC emacs-lisp
 (defun org-timer-start-with-offset ()
@@ -916,11 +967,43 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    )
  #+End_SRC
 
+*** Single Binds
+    Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
+#+BEGIN_SRC emacs-lisp :results output silent
+  (ryo-modal-keys
+    ("ä" org-mark-subtree :then '(next-line count-words))
+    ("d" "C-k")
+    ("C" org-ctrl-c-ctrl-c)
+    ("H" org-metaleft)    
+    ("J" org-metadown)    
+    ("K" org-metaup)
+    ("L" org-metaright)
+    ("t" org-todo)
+    ("R" rename-buffer) ;; new [2020-10-05 Mo 11:04]
+    ("_" "C-_")
+    ("y" "C-y")
+    ("w" "M-w")
+    ("W" "C-w")
+    ("v" "C-v")
+    ("V" "M-v")
+    ("i" "M-b")
+    ("o" "M-f")
+    ("SPC" org-cycle)
+    ("ö" set-mark-command)
+    (";" org-toggle-comment)
+  )
+    #+END_SRC
+
 *** Multiple Keys
     Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
+**** Start
 #+BEGIN_SRC emacs-lisp :results silent
  (require 'org-timer)
  (ryo-modal-keys 
+#+end_src
+
+**** b
+#+begin_src emacs-lisp
     ("b"
      (("b" bookmark-jump)
       ("m" bookmark-set)
@@ -930,93 +1013,12 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("v" org-mark-ring-push)
       ("n" org-mark-ring-goto)
      ))
-    ("f"
-     (("e" org-emphasize)
-      ("j" ess/org-show-just-me)
-      ("f" ess/org-show-just-me)
-     ))
-    ("g"
-     (("a" org-agenda)
-      ("b" split-window-below)     ;; r for split-window-right
-      ("c" kahiro-switch-and-close)
-      ("D" delete-frame)
-      ("d" delete-window)
-      ("f" delete-other-windows)
-      ("g" switch-to-buffer)
-      ("h" org-backward-heading-same-level)
-      ("j" org-next-visible-heading)
-      ("k" org-previous-visible-heading)
-      ("l" org-forward-heading-same-level)
-      ("n" clone-indirect-buffer-other-window)
-      ("N" make-frame-command)
-      ("o" other-window)
-      ("p" xah-pop-local-mark-ring)
-      ("P" pop-global-mark)
-      ("r" split-window-right)      ;; b for split-window-below
-      ("s" kahiro-split-and-switch)
-;      ("S" kahiro-vsplit-and-switch)
-      ("t" org-sparse-tree)
-      ("u" outline-up-heading)
-     ))
-    ("n" 
-     (("s" org-narrow-to-subtree)
-      ("w" widen)
-      ("t" kahiro-show-TODO-in-subtree)
-      ("T" kahiro-show-todos-in-subtree) 
-      ("n" kahiro-show-NEXT-in-subtree) 
-      ("N" kahiro-show-only-NEXT-in-subtree)
-      ("j" ess/org-show-just-me)
-      ("p" kahiro-show-PLAN-in-subtree)
-      ("v" org-agenda-set-restriction-lock)
-      ("x" org-agenda-remove-restriction-lock)
-      ))  
-    ("s" (
-     ("s" isearch-forward)
-     ("r" isearch-backward)
-     ))
-    ("t" org-todo)
-    ("x"
-     (("a" org-archive-subtree-default)
-      ("b" switch-to-buffer)
-      ("c" save-buffers-kill-terminal)
-      ("d" dired)
-      ("f" find-file)
-      ("k" kill-buffer)
-      ("+" text-scale-adjust)
-      ("-" text-scale-adjust)
-      ("s" save-some-buffers)
-     ))
-    ("z"
-     (("i" org-clock-in)
-      ("o" org-clock-out)
-      ("j" org-clock-goto)
-      ("x" org-clock-in-last)
-      ("q" org-clock-cancel)
-      ("d" org-clock-display)
-      ("," org-timer-pause-or-continue)
-      ("-" org-timer-item :exit t)
-      ("h" org-timer-item :exit t)
-      ("n" org-timer-start)
-      ("N" org-timer-start-with-offset)
-      ("." org-timer :exit t)
-      ("z" org-time-stamp :exit t)
-      ("Z" org-time-stamp)
-      ("t" org-time-stamp-inactive :exit t)
-      ("T" org-time-stamp-inactive)
-      ("c" org-toggle-timestamp-type)
-     ))
-   )
-   
+#+end_src
 
-(define-key universal-argument-map (kbd "u") 'universal-argument-more)
-#+END_SRC
-
-*** Befehle mit c prefix
-#+begin_src emacs-lisp :results output slient
- (ryo-modal-keys 
+**** c
+#+begin_src emacs-lisp
     ("c"
-     (
-     ("c" org-ctrl-c-ctrl-c) ;; getauscht mit c C weil häufiger genutzt 
+    (("c" org-ctrl-c-ctrl-c) ;; getauscht mit c C weil häufiger genutzt 
      ("a" org-attach)
      ("b" org-backward-heading-same-level)
      ("C" org-capture)       ;; getauscht mit c c
@@ -1071,12 +1073,64 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ("|" org-table-create-or-convert-from-region)
      ("}" org-table-toggle-coordinate-overlays)
      ("~" org-table-create-with-table.el)
-     )))
+     ))
 #+end_src
 
-*** Befehle mit r prefix
-#+BEGIN_SRC emacs-lisp :results output slient
- (ryo-modal-keys 
+**** f
+#+begin_src emacs-lisp
+    ("f"
+     (("e" org-emphasize)
+      ("j" ess/org-show-just-me)
+      ("f" ess/org-show-just-me)
+     ))
+#+end_src
+
+**** g
+#+begin_src emacs-lisp
+    ("g"
+     (("a" org-agenda)
+      ("b" split-window-below)     ;; r for split-window-right
+      ("c" kahiro-switch-and-close)
+      ("D" delete-frame)
+      ("d" delete-window)
+      ("f" delete-other-windows)
+      ("g" switch-to-buffer)
+      ("h" org-backward-heading-same-level)
+      ("j" org-next-visible-heading)
+      ("k" org-previous-visible-heading)
+      ("l" org-forward-heading-same-level)
+      ("n" clone-indirect-buffer-other-window)
+      ("N" make-frame-command)
+      ("o" other-window)
+      ("p" xah-pop-local-mark-ring)
+      ("P" pop-global-mark)
+      ("r" split-window-right)      ;; b for split-window-below
+      ("s" kahiro-split-and-switch)
+;      ("S" kahiro-vsplit-and-switch)
+      ("t" org-sparse-tree)
+      ("u" outline-up-heading)
+     ))
+#+end_src
+
+**** n
+     - hier kommt alles rein, was mit Fokussierung und Ansichten zu tun hat.
+#+begin_src emacs-lisp
+    ("n" 
+     (("s" org-narrow-to-subtree)
+      ("w" widen)
+      ("t" kahiro-show-TODO-in-subtree)
+      ("a" kahiro-show-todos-in-subtree) 
+      ("n" kahiro-show-NEXT-in-subtree) 
+      ("N" kahiro-show-only-NEXT-in-subtree)
+      ("j" ess/org-show-just-me)
+      ("p" kahiro-show-PLAN-in-subtree)
+      ("v" org-agenda-set-restriction-lock)
+      ("x" org-agenda-remove-restriction-lock)
+      ))
+#+end_src
+
+**** r
+#+begin_src emacs-lisp
     ("r"
      (
      ("SPC" org-self-insert-command)
@@ -1143,36 +1197,61 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ("," org-self-insert-command)
      (":" org-self-insert-command)
      ("." org-self-insert-command)
-     )))
+     ))
+#+end_src
+**** s
+#+begin_src emacs-lisp  
+    ("s" (
+     ("s" isearch-forward)
+     ("r" isearch-backward)
+     ))
+#+end_src
+
+**** x
+#+begin_src emacs-lisp
+    ("x"
+     (("a" org-archive-subtree-default)
+      ("b" switch-to-buffer)
+      ("c" save-buffers-kill-terminal)
+      ("d" dired)
+      ("f" find-file)
+      ("k" kill-buffer)
+      ("+" text-scale-adjust)
+      ("-" text-scale-adjust)
+      ("s" save-some-buffers)
+     ))
+#+end_src
+
+**** z
+#+begin_src emacs-lisp
+    ("z"
+     (("i" org-clock-in)
+      ("o" org-clock-out)
+      ("j" org-clock-goto)
+      ("x" org-clock-in-last)
+      ("q" org-clock-cancel)
+      ("d" org-clock-display)
+      ("," org-timer-pause-or-continue)
+      ("-" org-timer-item :exit t)
+      ("h" org-timer-item :exit t)
+      ("n" org-timer-start)
+      ("N" org-timer-start-with-offset)
+      ("." org-timer :exit t)
+      ("z" org-time-stamp :exit t)
+      ("Z" org-time-stamp)
+      ("t" org-time-stamp-inactive :exit t)
+      ("T" org-time-stamp-inactive)
+      ("c" org-toggle-timestamp-type)
+     ))
+#+end_src
+
+**** End
+#+begin_src emacs-lisp
+   )
+   
+
+(define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
-
-#+RESULTS:
-
-*** Single Binds
-    Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
-#+BEGIN_SRC emacs-lisp :results output silent
-  (ryo-modal-keys
-    ("ä" org-mark-subtree :then '(next-line count-words))
-    ("d" "C-k")
-    ("C" org-ctrl-c-ctrl-c)
-    ("H" org-metaleft)    
-    ("J" org-metadown)    
-    ("K" org-metaup)
-    ("L" org-metaright)
-    ("R" rename-buffer) ;; new [2020-10-05 Mo 11:04]
-    ("_" "C-_")
-    ("y" "C-y")
-    ("w" "M-w")
-    ("W" "C-w")
-    ("v" "C-v")
-    ("V" "M-v")
-    ("i" "M-b")
-    ("o" "M-f")
-    ("SPC" org-cycle)
-    ("ö" set-mark-command)
-    (";" org-toggle-comment)
-  )
-    #+END_SRC
 
 *** Keys für den Org-Agenda-Mode
 #+BEGIN_SRC emacs-lisp :results output silent
