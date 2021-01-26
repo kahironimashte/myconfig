@@ -12,6 +12,12 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+BEGIN_SRC emacs-lisp 
 (setq backup-directory-alist '(("." . "~/ncloud/_config/backups/")))
 #+END_SRC
+** Startup
+   - disable splash screen and startup message
+#+begin_src emacs-lisp :results output silent
+(setq inhibit-startup-message t) 
+(setq initial-scratch-message nil)
+#+end_src
 ** Keyboard-Shortuts
 *** for org-agendas
 **** Keyboard :Funktionen:
@@ -493,7 +499,7 @@ the hierarchy, it will be used.
 ;;-------------------
 (setq org-hide-emphasis-markers t) ;; hide Markers like *this* for bold
 #+END_SRC
-*** Use Org-Bulles
+*** Use Org-Bullets
     Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
    #+BEGIN_SRC emacs-lisp
    (require 'org-bullets)
@@ -851,7 +857,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    (global-set-key (kbd "<S-f3>") 'pop-global-mark)
    (global-set-key (kbd "<s-f3>") 'xah-pop-local-mark-ring) 
  #+END_SRC 
-** RYO Key settings
+** COMMENT RYO Key settings
 *** Tastenfunktionen
 #+BEGIN_SRC emacs-lisp
 (defun org-timer-start-with-offset ()
@@ -862,8 +868,12 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 *** Colors
 #+BEGIN_SRC emacs-lisp
 (setq ryo-modal-cursor-color "maroon")
-(setq ryo-modal-default-cursor-color "grey15")
+(setq ryo-modal-default-cursor-color "sea green")
 #+END_SRC
+
+#+RESULTS:
+: sea green
+
 *** Basics
     + [2020-05-12 Di 13:36] Zahlen ausgeklammert, da ich sie kaum als Prefix brauche.
  #+BEGIN_SRC emacs-lisp
@@ -920,35 +930,33 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("v" org-mark-ring-push)
       ("n" org-mark-ring-goto)
      ))
-    ("d"
-     (("u" outline-up-heading)
-      ("l" org-forward-heading-same-level)
-      ("h" org-backward-heading-same-level)
-      ("j" org-next-visible-heading)
-      ("k" org-previous-visible-heading)
-      ))
     ("f"
      (("e" org-emphasize)
+      ("j" ess/org-show-just-me)
+      ("f" ess/org-show-just-me)
      ))
     ("g"
      (("a" org-agenda)
+      ("b" split-window-below)     ;; r for split-window-right
+      ("c" kahiro-switch-and-close)
+      ("D" delete-frame)
+      ("d" delete-window)
       ("f" delete-other-windows)
       ("g" switch-to-buffer)
-      ("o" other-window)
-      ("s" kahiro-split-and-switch)
-;      ("S" kahiro-vsplit-and-switch)
-      ("k" kahiro-switch-and-close)
-      ("t" org-sparse-tree)
-      ("l" xah-pop-local-mark-ring)
-      ("L" pop-global-mark)
-      ("j" ess/org-show-just-me)
-      ("f" delete-other-windows)
-      ("r" split-window-right)
-      ("b" split-window-below)
+      ("h" org-backward-heading-same-level)
+      ("j" org-next-visible-heading)
+      ("k" org-previous-visible-heading)
+      ("l" org-forward-heading-same-level)
       ("n" clone-indirect-buffer-other-window)
       ("N" make-frame-command)
-      ("K" delete-frame)
-      ("k" delete-window)
+      ("o" other-window)
+      ("p" xah-pop-local-mark-ring)
+      ("P" pop-global-mark)
+      ("r" split-window-right)      ;; b for split-window-below
+      ("s" kahiro-split-and-switch)
+;      ("S" kahiro-vsplit-and-switch)
+      ("t" org-sparse-tree)
+      ("u" outline-up-heading)
      ))
     ("n" 
      (("s" org-narrow-to-subtree)
@@ -1145,11 +1153,12 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 #+BEGIN_SRC emacs-lisp :results output silent
   (ryo-modal-keys
     ("ä" org-mark-subtree :then '(next-line count-words))
+    ("d" "C-k")
     ("C" org-ctrl-c-ctrl-c)
-    ("J" "C-j")    
-    ("H" "C-h")    
-    ("K" "C-k")
-    ("L" "C-l")
+    ("H" org-metaleft)    
+    ("J" org-metadown)    
+    ("K" org-metaup)
+    ("L" org-metaright)
     ("R" rename-buffer) ;; new [2020-10-05 Mo 11:04]
     ("_" "C-_")
     ("y" "C-y")
@@ -1764,9 +1773,11 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
     I don't usually use the menu or scroll bar, and they take up useful space.
  #+begin_src emacs-lisp
    (tool-bar-mode 0)
-   (menu-bar-mode 0)
+   (menu-bar-mode 1)
    (scroll-bar-mode -1)
  #+end_src
+
+ #+RESULTS:
 
  There's a tiny scroll bar that appears in the minibuffer window. This disables
  that:
@@ -1775,7 +1786,7 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
    (set-window-scroll-bars (minibuffer-window) nil nil)
  #+end_src
 
-*** TODO [#D] Make toolbar toggle-able
+*** TODO [#D] Make menu toggle-able
 ** [#B] Use =moody= for a beautiful modeline
 
 This gives me a truly lovely ribbon-based modeline.
@@ -1794,15 +1805,13 @@ This gives me a truly lovely ribbon-based modeline.
 ** Split-Verhalten
    - legt die Mindestbreite fest, um horizontal zu teilen, also rechts einen neuen Buffer hinzuzufügen. 
 #+begin_src emacs-lisp :results output silent
-(setq split-width-threshold 80)
+(when (string-equal system-type "windows-nt")
+(setq split-width-threshold 160))
+
+(when (string-equal system-type "gnu/linux")
+(setq split-width-threshold 80))
 #+end_src
 
-* FEHLER COMMENT Workarounds 
-#+BEGIN_SRC emacs-lisp
- ;; Workarounds
- ;; Bug 34341
- (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
- #+END_SRC
 * Custom Functions
 ** FEHLER COMMENT Count Tags :defun:
    - [2020-04-19 Sun] ggf. gibt es einen Konflikt mit [[*Style Tags based on Regular Expressions][Style Tags based on Regular Expressions]]

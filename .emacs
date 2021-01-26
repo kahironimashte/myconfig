@@ -34,11 +34,11 @@
 (load custom-file)
 
 ;; Lade configuration.org
+(require 'org)
 (setq config-org-file (concat homedir ".emacs.d/configuration.org"))
 (org-babel-load-file config-org-file)
 
 ;; Pfade auf lokale Umgebungen anpassen. Die Pfade müssen dann mit (concat variable "/realtiv/pfad") angegeben werden
-(require 'org)
 (if (eq system-type 'windows-nt)
     (setq org-directory "c:/org")
   (setq org-directory "~/ncloud/org"))
