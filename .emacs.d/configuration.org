@@ -1,7 +1,7 @@
 #+TITLE: Emacs-Konfiguration
 #+STARTUP: overview
 #+TODO: TODO FEHLER  | OK DONE
-#+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p)
+#+TAGS: Funktionen(f) deaktiviert(3d) WindowsOnly(w) LinuxOnly(l) Paket(p)
 * Allgemeine Einstellungen
 :PROPERTIES:
 :CATEGORY: allg
@@ -967,33 +967,6 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    )
  #+End_SRC
 
-*** Single Binds
-    Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
-#+BEGIN_SRC emacs-lisp :results output silent
-  (ryo-modal-keys
-    ("ä" org-mark-subtree :then '(next-line count-words))
-    ("d" "C-k")
-    ("C" org-ctrl-c-ctrl-c)
-    ("H" org-metaleft)    
-    ("J" org-metadown)    
-    ("K" org-metaup)
-    ("L" org-metaright)
-    ("t" org-todo)
-    ("R" rename-buffer) ;; new [2020-10-05 Mo 11:04]
-    ("_" "C-_")
-    ("y" "C-y")
-    ("w" "M-w")
-    ("W" "C-w")
-    ("v" "C-v")
-    ("V" "M-v")
-    ("i" "M-b")
-    ("o" "M-f")
-    ("SPC" org-cycle)
-    ("ö" set-mark-command)
-    (";" org-toggle-comment)
-  )
-    #+END_SRC
-
 *** Multiple Keys
     Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
 **** Start
@@ -1038,7 +1011,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ("w" org-refile)
      ("W" my/org-refile-in-file)
      ("*" org-list-make-subtree)
-     ("TAB" org-ctrl-c-tab)
+;     ("TAB" org-ctrl-c-tab)  ;; für raspi deaktiviert
      ("RET" org-ctrl-c-ret)
      ("y" org-evaluate-time-range)
      ("z" org-add-note)
@@ -1046,7 +1019,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ("_" org-down-element)
      ("SPC" org-table-blank-field)
      ("!" org-time-stamp-inactive)
-     ("#" org-insert-structure-template)
+;     ("#" org-insert-structure-template)  ;; für raspi deaktiviert
      ("%" org-mark-ring-push)
      ("&" org-mark-ring-goto)
      ("'" org-edit-special)
@@ -1252,6 +1225,33 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 
 (define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
+
+*** Single Binds
+    Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
+#+BEGIN_SRC emacs-lisp :results output silent
+  (ryo-modal-keys
+    ("ä" org-mark-subtree :then '(next-line count-words))
+    ("d" "C-k")
+    ("C" org-ctrl-c-ctrl-c)
+    ("H" org-metaleft)    
+    ("J" org-metadown)    
+    ("K" org-metaup)
+    ("L" org-metaright)
+    ("t" org-todo)
+    ("R" rename-buffer) ;; new [2020-10-05 Mo 11:04]
+    ("_" "C-_")
+    ("y" "C-y")
+    ("w" "M-w")
+    ("W" "C-w")
+    ("v" "C-v")
+    ("V" "M-v")
+    ("i" "M-b")
+    ("o" "M-f")
+    ("SPC" org-cycle)
+    ("ö" set-mark-command)
+    (";" org-toggle-comment)
+  )
+    #+END_SRC
 
 *** Keys für den Org-Agenda-Mode
 #+BEGIN_SRC emacs-lisp :results output silent
