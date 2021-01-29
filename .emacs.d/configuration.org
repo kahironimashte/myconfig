@@ -18,6 +18,41 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (setq inhibit-startup-message t) 
 (setq initial-scratch-message nil)
 #+end_src
+** Default Modes
+#+begin_src emacs-lisp :results output silent
+;; Default Modes ON
+(global-visual-line-mode t)
+
+;; Fontlock Mode in jedem Buffer automatisch aktivieren.
+(global-font-lock-mode t)
+
+#+end_src
+
+*** Saving Desktop Sessions
+  #+BEGIN_SRC emacs-lisp
+  ;; SAVING DESKTOP SESSIONS
+  ;;------------------------
+ ;;(require 'desktop)
+;; (when (eq system-type 'windows-nt)
+;;     (desktop-change-dir "C:/Software/Emacs/Desktops/")
+;;  )
+ (desktop-save-mode 1)
+ #+END_SRC
+
+ #+RESULTS:
+ : t
+
+*** Start any Windows maximised
+ #+BEGIN_SRC emacs-lisp
+  ;; Start any Windows maximised
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+ #+END_SRC
+*** Sentence end to just one space
+ #+BEGIN_SRC emacs-lisp
+  ;; Set Sentence end to just one space
+  (setq sentence-end-double-space nil)
+ #+END_SRC
+
 ** Keyboard-Shortuts
 *** for org-agendas
 **** Keyboard :Funktionen:
@@ -49,11 +84,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 
 (defun kahiro-kp-1 (&optional arg)
   (interactive "P")
-  (org-agenda arg "g1" nil))
+  (org-agenda arg "d1" nil))
 
 (defun kahiro-kp-4 (&optional arg)
   (interactive "P")
-  (org-agenda arg "g4" nil))
+  (org-agenda arg "d4" nil))
 
 ;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
 (defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
@@ -125,6 +160,10 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	   (org-agenda-overriding-header "Heute ohne Habits")
 	   (org-agenda-category-filter-preset '("-habit"))
 	   ))
+	 ("d8" "Arbeit - Inbox" tags-todo "inbox"
+	  ((org-agenda-overriding-header "Arbeit - Inbox")
+	   (org-agenda-sorting-strategy '(deadline-down scheduled-down priority-down todo-state-down))
+	   ))
 	 ("d3" "Alle Autorentexte" 
 	  ((tags-todo "TODO=\"AUFTR\"|TODO=\"VORH\"+Autor"
 	     ((org-agenda-overriding-header "Alle offenen Autorentexte"))
@@ -132,16 +171,15 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	   (tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor"
 	     ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
 	     ))
-	  ((org-agenda-sorting-strategy '(todo-state-down priority-up)))
+	  ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
 	 )
-
 	 ("d6" "Autorentexte bestellt und da" tags-todo "TODO=\"AUFTR\"|TODO=\"VORH\"+Autor"
 	  ((org-agenda-overriding-header "Alle offenen Autorentexte")
-	   (org-agenda-sorting-strategy '(todo-state-down priority-up))
+	   (org-agenda-sorting-strategy '(todo-state-down priority-down))
 	   ))
 	 ("d9" "Autorentexte " tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor"
 	  ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
-	   (org-agenda-sorting-strategy '(todo-state-down priority-up))
+	   (org-agenda-sorting-strategy '(todo-state-down priority-down))
 	   ))
  ;;
  ;;      ^^^ Bis hier die täglichen Übersichten mit Eingrenzungen ^^^
@@ -181,7 +219,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	      ((org-agenda-span 1)
 	       (org-agenda-overriding-header "PLAN und TODO in Agenda-Files")
 	       (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PLAN" "TODO"))) ;[1]
-	       (org-agenda-sorting-strategy '(time-up todo-state-down priority-up))
+	       (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
  ;	      (org-agenda-time-grid '(nil))
                (org-deadline-warning-days 0)
 	       ))
@@ -205,7 +243,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
       		(org-agenda-sorting-strategy '(todo-state-down priority-down))
 		(org-show-context-detail 'minimal)))
 	       (agenda ""
-       		((org-agenda-sorting-strategy '(time-up todo-state-down priority-up))
+       		((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
 	       )))
 	      ((org-agenda-category-filter-preset '("+xa"))
 	       (org-agenda-span 1)
@@ -495,41 +533,6 @@ the hierarchy, it will be used.
  (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
  #+END_SRC
-** Default Modes
-#+begin_src emacs-lisp :results output silent
-;; Default Modes ON
-(global-visual-line-mode t)
-
-;; Fontlock Mode in jedem Buffer automatisch aktivieren.
-(global-font-lock-mode t)
-
-#+end_src
-
-*** Saving Desktop Sessions
-  #+BEGIN_SRC emacs-lisp
-  ;; SAVING DESKTOP SESSIONS
-  ;;------------------------
- ;;(require 'desktop)
- (when (eq system-type 'windows-nt)
-     (desktop-change-dir "C:/Software/Emacs/Desktops/")
-  )
- (desktop-save-mode 1)
- #+END_SRC
-
- #+RESULTS:
- : t
-
-*** Start any Windows maximised
- #+BEGIN_SRC emacs-lisp
-  ;; Start any Windows maximised
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
- #+END_SRC
-*** Sentence end to just one space
- #+BEGIN_SRC emacs-lisp
-  ;; Set Sentence end to just one space
-  (setq sentence-end-double-space nil)
- #+END_SRC
-
 ** Make org beautiful
 #+BEGIN_SRC emacs-lisp
 ;; Make Org beautiful
@@ -561,7 +564,8 @@ the hierarchy, it will be used.
   #+BEGIN_SRC emacs-lisp
   (setq org-ellipsis "⤵")
    #+END_SRC
-** Neuestes Org-Paket aus MELPA verwenden :Paket:
+** FEHLER Neuestes Org-Paket aus MELPA verwenden :Paket:
+   - doppelt sich mit Code aus der .emacs-Datei.
 #+BEGIN_SRC emacs-lisp
 ;; use Melpa-Org-Version instead of builtin. Vorher habe ich die neueste org-Version aus Melpa installiert.
 (assq-delete-all 'org package--builtins)
@@ -615,10 +619,10 @@ the hierarchy, it will be used.
       "** %^{Title} \n %^t" :time-prompt t)
     ("t" "Todo [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
     ("n" "Neuer Text")
-    ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Texte Autoren") 
-      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :%^{voraussichtliche Ausgabe}#20: \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Nachhaken am}t \n:PROPERTIES:\n:AUTOR: %^{Autorname}\n:HONORAR: %^{Vereinbartes Honorar in EUR}\n:ZEICHENZAHL: %^{vereinbarte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Bilder\n**** PLAN Layout\n**** PLAN Redigieren\n**** PLAN Lesen lassen\n**** PLAN Korrekturen" :empty-lines-after 1)
+    ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
+      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Nachhaken am}t \n:PROPERTIES:\n:AUTOR: %^{Autorname}\n:HONORAR: %^{Vereinbartes Honorar in EUR}\n:ZEICHENZAHL: %^{vereinbarte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Bilder\n**** PLAN Layout\n**** PLAN Redigieren\n**** PLAN Bildunterschriften und Kästen\n**** PLAN Lesen lassen\n**** PLAN Korrekturen\n**** PLAN Honorare kommunizieren" :empty-lines-after 1)
     ("ne" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :%^{voraussichtliche Ausgabe}#20:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n:PROPERTIES:\n:MITARBEIT: %^{Co-Autoren}\n:ZEICHENZAHL: %^{angepeilte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Recherche\n**** PLAN Bilder besorgen\n**** PLAN Layouten lassen\n**** PLAN Texten\n**** PLAN Lesen lassen\n**** PLAN Korrekturen" :empty-lines-after 1)
+      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n:PROPERTIES:\n:MITARBEIT: %^{Co-Autoren}\n:ZEICHENZAHL: %^{angepeilte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Recherche\n**** PLAN Bilder besorgen\n**** PLAN Layouten lassen\n**** PLAN Texten\n**** PLAN Lesen lassen\n**** PLAN Korrekturen\n**** PLAN ggf. Belege veranlassen" :empty-lines-after 1)
  ))
 #+END_SRC
 
@@ -1046,6 +1050,9 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ("|" org-table-create-or-convert-from-region)
      ("}" org-table-toggle-coordinate-overlays)
      ("~" org-table-create-with-table.el)
+     ("x"
+       (("a" org-archive-subtree-default))
+      )
      ))
 #+end_src
 
@@ -1925,7 +1932,7 @@ This gives me a truly lovely ribbon-based modeline.
 |  1 | @two  |   |
 |  1 | three |   |
 
-* Notizen
+* COMMENT Notizen
 
 ** Difference in Files
 18.9 Comparing Files
@@ -1949,7 +1956,7 @@ With a numeric argument, compare-windows ignores changes in whitespace. If the v
 You can use M-x smerge-mode to turn on Smerge mode, a minor mode for editing output from the diff3 program. This is typically the result of a failed merge from a version control system update outside VC, due to conflicting changes to a file. Smerge mode provides commands to resolve conflicts by selecting specific changes.
 
 See Emerge, for the Emerge facility, which provides a powerful interface for merging files. 
-* Weg zur perfekten Config
+* COMMENT Weg zur perfekten Config
 ** Look [2/3]
 :PROPERTIES:
 :CATEGORY: ziel
@@ -1988,7 +1995,7 @@ See Emerge, for the Emerge facility, which provides a powerful interface for mer
 ** Gestalten
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
-* test
+* COMMENT test
 ** test
 *** FEHLER test
 **** test
