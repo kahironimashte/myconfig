@@ -81,6 +81,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 ;; -----------
  (global-set-key (kbd "<kp-1>") 'kahiro-kp-1) 
  (global-set-key (kbd "<kp-4>") 'kahiro-kp-4) 
+ (global-set-key (kbd "<kp-8>") 'kahiro-kp-8) 
+ (global-set-key (kbd "<kp-3>") 'kahiro-kp-3) 
+ (global-set-key (kbd "<kp-6>") 'kahiro-kp-6) 
+ (global-set-key (kbd "<kp-9>") 'kahiro-kp-9) 
+ (global-set-key (kbd "<kp-0>") 'kahiro-agenda-next-xa-tasks) 
 
 (defun kahiro-kp-1 (&optional arg)
   (interactive "P")
@@ -89,6 +94,22 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (defun kahiro-kp-4 (&optional arg)
   (interactive "P")
   (org-agenda arg "d4" nil))
+
+(defun kahiro-kp-8 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d8" nil))
+
+(defun kahiro-kp-3 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d3" nil))
+
+(defun kahiro-kp-6 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d6" nil))
+
+(defun kahiro-kp-9 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d9" nil))
 
 ;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
 (defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
@@ -1315,6 +1336,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      	        ("<up>" org-agenda-priority-up))
      	       )))
 	    ("SPC" org-agenda-show-and-scroll-up)
+	    ("<backspace>" org-agenda-quit)
 	    ("!" org-agenda-toggle-deadlines)
 	    ("#" org-agenda-dim-blocked-tasks)
 	    ("$" org-agenda-archive)
