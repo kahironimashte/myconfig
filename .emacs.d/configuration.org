@@ -59,21 +59,23 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+begin_src emacs-lisp :results output silent
 ;; Org-Agendas
 ;; -----------
- (global-set-key (kbd "<f12>") 'kahiro-agenda-next-xa-tasks) 
- (global-set-key (kbd "<S-f12>") 'kahiro-agenda-for-current-buffer) 
+ (global-set-key (kbd "<S-f12>") 'kahiro-agenda-next-xa-tasks) 
+ (global-set-key (kbd "<f12>") 'kahiro-agenda-for-current-subtree) 
 
 (defun kahiro-agenda-next-xa-tasks (&optional arg) ;; <f12>
   (interactive "P")
   (org-agenda arg "n" nil))
 
-(defun kahiro-agenda-for-current-buffer (&optional arg) ;; Shift+<f12>
+(defun kahiro-agenda-for-current-subtree (&optional arg) ;; Shift+<f12>
   (interactive "P")
-  (org-agenda arg "N" t))
+  (org-agenda arg "N" 'subtree))
 
 ;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
 (defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
   (interactive "P")
   (org-agenda arg "gh" 'subtree))
+
+
 #+end_src
 **** Keypad :Funktionen:
 #+begin_src emacs-lisp :results output silent
@@ -81,11 +83,13 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 ;; -----------
  (global-set-key (kbd "<kp-1>") 'kahiro-kp-1) 
  (global-set-key (kbd "<kp-4>") 'kahiro-kp-4) 
+ (global-set-key (kbd "<kp-2>") 'kahiro-agenda-next-xa-tasks) 
  (global-set-key (kbd "<kp-8>") 'kahiro-kp-8) 
  (global-set-key (kbd "<kp-3>") 'kahiro-kp-3) 
  (global-set-key (kbd "<kp-6>") 'kahiro-kp-6) 
  (global-set-key (kbd "<kp-9>") 'kahiro-kp-9) 
- (global-set-key (kbd "<kp-0>") 'kahiro-agenda-next-xa-tasks) 
+ (global-set-key (kbd "<kp-0>") 'kahiro-agenda-for-current-subtree) 
+
 
 (defun kahiro-kp-1 (&optional arg)
   (interactive "P")
@@ -170,41 +174,56 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+end_src
 **** d - tägliche Übersichten
 #+begin_src emacs-lisp :results output silent
-         ("d" . "Tägliche Übersichen und Filter")
-	 ("d1" "alle Tasks ohne Habits" agenda ""
-	  ((org-agenda-span 1)
-	   (org-agenda-overriding-header "Heute ohne Habits")
-	   (org-agenda-category-filter-preset '("+atasks" "+calendar" "+xa" "+reg"))
-	   ))
-	 ("d4" "alle Tasks ohne Habits" agenda ""
-	  ((org-agenda-span 1)
-	   (org-agenda-overriding-header "Heute ohne Habits")
-	   (org-agenda-category-filter-preset '("-habit"))
-	   ))
-	 ("d8" "Arbeit - Inbox" tags-todo "inbox"
-	  ((org-agenda-overriding-header "Arbeit - Inbox")
-	   (org-agenda-sorting-strategy '(deadline-down scheduled-down priority-down todo-state-down))
-	   ))
-	 ("d3" "Alle Autorentexte" 
-	  ((tags-todo "TODO=\"AUFTR\"|TODO=\"VORH\"+Autor"
-	     ((org-agenda-overriding-header "Alle offenen Autorentexte"))
-	     )
-	   (tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor"
-	     ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
-	     ))
-	  ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
-	 )
-	 ("d6" "Autorentexte bestellt und da" tags-todo "TODO=\"AUFTR\"|TODO=\"VORH\"+Autor"
-	  ((org-agenda-overriding-header "Alle offenen Autorentexte")
-	   (org-agenda-sorting-strategy '(todo-state-down priority-down))
-	   ))
-	 ("d9" "Autorentexte " tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor"
-	  ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
-	   (org-agenda-sorting-strategy '(todo-state-down priority-down))
-	   ))
- ;;
- ;;      ^^^ Bis hier die täglichen Übersichten mit Eingrenzungen ^^^
- ;;
+	  ("d" . "Tägliche Übersichen und Filter")
+	  ("d1" "alle Tasks ohne Habits" agenda ""
+	   ((org-agenda-span 1)
+	    (org-agenda-overriding-header "Heute ohne Habits")
+	    (org-agenda-category-filter-preset '("+atasks" "+calendar" "+xa" "+reg"))
+	    ))
+	  ("d4" "alle Tasks ohne Habits" agenda ""
+	   ((org-agenda-span 1)
+	    (org-agenda-overriding-header "Heute ohne Habits")
+	    (org-agenda-category-filter-preset '("-habit"))
+	    ))
+	  ("d8" "Arbeit - Inbox" tags-todo "inbox"
+	   ((org-agenda-overriding-header "Arbeit - Inbox")
+	    (org-agenda-sorting-strategy '(deadline-down scheduled-down priority-down todo-state-down))
+	    ))
+	  ;; ("d5" "Nächste Schritte für Inbox" 
+	  ;;      ((todo "WAITING|NEXT"
+	  ;;       ((org-agenda-overriding-header "Nächste Schritte für Inbox")
+	  ;;        (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	  ;;        (org-show-context-detail 'minimal)))
+	  ;;       (agenda ""
+	  ;;        ((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+	  ;;       )))
+	  ;;      ((org-agenda-category-filter-preset '("+inbox"))
+	  ;;       (org-agenda-span 1)
+	  ;;       (org-deadline-warning-days 0)
+	  ;; ))
+	  ("d3" "Alle Autorentexte" 
+	   ((tags-todo "TODO=\"BAUFT\"|TODO=\"VORH\"+Autor"
+	      ((org-agenda-overriding-header "Alle offenen Autorentexte"))
+	      )
+	    (tags-todo "TODO=\"ANGEB\"|TODO=\"SUCHE\"+Autor"
+	      ((org-agenda-overriding-header "Themenangebote und Redaktionsaufträge"))
+	      ))
+	    (tags-todo "TODO=\"IDEE\"+Autor"
+	      ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
+	      ))
+	   ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
+	  )
+	  ("d6" "Autorentexte bestellt und da" tags-todo "TODO=\"AUFTR\"|TODO=\"VORH\"+Autor"
+	   ((org-agenda-overriding-header "Alle offenen Autorentexte")
+	    (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	    ))
+	  ("d9" "Autorentexte " tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor"
+	   ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
+	    (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	    ))
+  ;;
+  ;;      ^^^ Bis hier die täglichen Übersichten mit Eingrenzungen ^^^
+  ;;
 
 #+end_src
 
@@ -275,10 +294,10 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	      ((org-agenda-span 1)
 	       (org-agenda-overriding-header "Alle nächsten Schritte heute für diese Datei")
 	       (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("NEXT" "WAITING"))) ;[1]
-	       (org-agenda-sorting-strategy '(todo-state-down))))
+	       (org-agenda-sorting-strategy '(time-up todo-state-down))))
 	      (todo "WAITING|NEXT"
 	       ((org-agenda-overriding-header "Nächste Schritte für aktuelle Datei")
-      		(org-agenda-sorting-strategy '(todo-state-down priority-down))
+      		(org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
 		(org-show-context-detail 'minimal)))
 	      ))
 	      ;; [1] die funktion "...skip-entry-if" verbirgt alle Treffer in der Agenda. 
@@ -600,7 +619,7 @@ the hierarchy, it will be used.
 **** DONE Schnelle Reaktion auf neue Aufgaben
      - etwas Ungeplante kommt dazu, das ich sofort erledigen soll
      - etwas Ungeplantes kommt dazu das ich im Lauf des Tages erledigen soll
-*** Code
+*** FEHLER Code
     - Hilfe unter :: [[help:org-capture-templates][org-capture-templates]]
 #+BEGIN_SRC emacs-lisp  :results output silent
 
@@ -639,11 +658,15 @@ the hierarchy, it will be used.
     ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
       "** %^{Title} \n %^t" :time-prompt t)
     ("t" "Todo [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
-    ("n" "Neuer Text")
+    ("n" "Neuer Text oder neue Textidee")
     ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Nachhaken am}t \n:PROPERTIES:\n:AUTOR: %^{Autorname}\n:HONORAR: %^{Vereinbartes Honorar in EUR}\n:ZEICHENZAHL: %^{vereinbarte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Bilder\n**** PLAN Layout\n**** PLAN Redigieren\n**** PLAN Bildunterschriften und Kästen\n**** PLAN Lesen lassen\n**** PLAN Korrekturen\n**** PLAN Honorare kommunizieren" :empty-lines-after 1)
+      "*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atdetails \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
+    ("nA" "Template für neuen Autoren-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
+      "*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atdetails \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
+    ("nE" "Template für neuen Eigenen-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
+      "*** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
     ("ne" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n:PROPERTIES:\n:MITARBEIT: %^{Co-Autoren}\n:ZEICHENZAHL: %^{angepeilte Zeichenzahl}\n:TYP: %^{Texttyp wie Bericht oder Technikboulevard}\n:END:\n  - Anmerkungen :: %?\n\n**** PLAN Recherche\n**** PLAN Bilder besorgen\n**** PLAN Layouten lassen\n**** PLAN Texten\n**** PLAN Lesen lassen\n**** PLAN Korrekturen\n**** PLAN ggf. Belege veranlassen" :empty-lines-after 1)
+      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:%^g \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
  ))
 #+END_SRC
 
@@ -764,8 +787,10 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 ** Todo-States und Sequenzen
 #+begin_src emacs-lisp :results output silent
 (setq org-todo-keywords
-  '((sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")
-    (sequence "IDEE(i)" "SUCHE(s)" "AUFTR(a)" "VORH(v)" "|" "ERSCH(e)")
+  '(
+    (sequence "YESNO(y)" "PRIOUPD(u)" "DELEG(l)" "SPLIT(x)" "HELP(h)")               ;; Plan
+    (sequence "IDEE(i)" "SUCHE(s)" "ANGEB(a)" "BAUFT(b)" "VORH(v)" "|" "DONE(d)")   ;; Textstaus
+    (sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
     (sequence "|"  "CANC(c)")
    ))
 #+end_src
@@ -1413,13 +1438,11 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 #+END_SRC
 
 ** F1 bis F12 (+ Modifiers)
+   - F12 ist für die Next-Agenda reserviert.
 #+begin_src emacs-lisp :results output silent
  (global-set-key (kbd "<f2>") 'toggle-window-split)
  (global-set-key (kbd "<S-f2>") 'enlarge-window-horizontally)
  (global-set-key (kbd "<s-f2>") 'shrink-window-horizontally)
- (global-set-key (kbd "<f12>") 'org-agenda)
- (global-set-key (kbd "<S-f12>") 'kahiro-agenda-of-current-buffer)
- (global-set-key (kbd "<s-f12>") 'kahiro-todo-of-current-buffer)
  ;; (global-set-key (kbd "<s-f1>") 'pop-global-mark) ;; Jump in the document
  ;; (global-set-key (kbd "<s-f2>") 'xah-pop-local-mark-ring)
 #+end_src
@@ -1474,6 +1497,20 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
   )
  #+END_SRC
 * Pakete
+** yasnippet
+#+begin_src emacs-lisp :results output silent
+(when (string-equal system-type "windows-nt")
+  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
+    (yas-global-mode 1)  
+    (setq yas-snippet-dirs
+      '("C:/org/_config/yasnippets/"))
+  )
+#+end_src
+
+Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
+(add-hook 'yas-minor-mode-hook (lambda ()
+                                                                 (yas-activate-extra-mode 'fundamental-mode)))
+
 ** ido-mode
 *** Beschreibung
  This is the built-in framework for interactively narrowing down the

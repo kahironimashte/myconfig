@@ -43,7 +43,7 @@
  '(org-tags-column 0)
  '(package-selected-packages
    (quote
-    (org-caldav smartparens nov org-bookmark-heading org-recur which-key org-bullets use-package ryo-modal org spaceline))))
+    (yasnippet org-caldav smartparens nov org-bookmark-heading org-recur which-key org-bullets use-package ryo-modal org spaceline))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
