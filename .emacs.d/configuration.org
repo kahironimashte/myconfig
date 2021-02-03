@@ -177,8 +177,8 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	  ("d" . "Tägliche Übersichen und Filter")
 	  ("d1" "alle Tasks ohne Habits" agenda ""
 	   ((org-agenda-span 1)
-	    (org-agenda-overriding-header "Heute ohne Habits")
-	    (org-agenda-category-filter-preset '("+atasks" "+calendar" "+xa" "+reg"))
+	    (org-agenda-overriding-header "Heute - Aktuelle Ausgabe, Kalender, Inbox")
+	    (org-agenda-category-filter-preset '("+inbox" "+calendar" "+xa" "+reg"))
 	    ))
 	  ("d4" "alle Tasks ohne Habits" agenda ""
 	   ((org-agenda-span 1)
@@ -207,7 +207,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	      )
 	    (tags-todo "TODO=\"ANGEB\"|TODO=\"SUCHE\"+Autor"
 	      ((org-agenda-overriding-header "Themenangebote und Redaktionsaufträge"))
-	      ))
+	      )
 	    (tags-todo "TODO=\"IDEE\"+Autor"
 	      ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
 	      ))
@@ -221,10 +221,6 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 	   ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
 	    (org-agenda-sorting-strategy '(todo-state-down priority-down))
 	    ))
-  ;;
-  ;;      ^^^ Bis hier die täglichen Übersichten mit Eingrenzungen ^^^
-  ;;
-
 #+end_src
 
 **** g - eigene Agendas
@@ -612,14 +608,14 @@ the hierarchy, it will be used.
 ;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
 #+END_SRC
 ** TODO org-capture templates :syncStatus:
-*** Beschreibung und Todos
-**** TODO sinnvolles Capture für Ziele
-**** TODO ryo für Anmerkungen deaktivieren:
+*** TODO sinnvolles Capture für Ziele
+*** TODO ryo für Anmerkungen deaktivieren: :Verbesserung:
 ;;(add-hook 'org-capture-mode-hook 'ryo-modal-mode) funktioniert nicht.
-**** DONE Schnelle Reaktion auf neue Aufgaben
-     - etwas Ungeplante kommt dazu, das ich sofort erledigen soll
-     - etwas Ungeplantes kommt dazu das ich im Lauf des Tages erledigen soll
-*** FEHLER Code
+*** TODO capture für Anrufe :Verbesserung:
+*** DONE Schnelle Reaktion auf neue Aufgaben
+    - etwas Ungeplante kommt dazu, das ich sofort erledigen soll
+    - etwas Ungeplantes kommt dazu das ich im Lauf des Tages erledigen soll
+*** Code
     - Hilfe unter :: [[help:org-capture-templates][org-capture-templates]]
 #+BEGIN_SRC emacs-lisp  :results output silent
 
@@ -634,6 +630,20 @@ the hierarchy, it will be used.
      "** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgaben-Beschreibung} 
      %(org-set-tags-command)\n%c \n\n%^{Notizen}%?"            ;; Template für Capture
      :prepend t :empty-lines 1 :unnarrowed t )                              ;; weitere Eigenschaften -> siehe Hilfe.
+    ("A" "Todo für die Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
+      "** %^{Status|PLAN|TODO} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n  - Anmerkungen :: %?" 
+      :empty-lines-after 1)
+    ("a" "Todo für die Arbeit mit Schedule" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
+      "** %^{Status|TODO|NEXT|WAITING} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %?\n" 
+      :empty-lines-after 1)
+    ("d" "Todo für Arbeit mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
+      "** %^{Status|TODO|NEXT|WAITING} [#%^{Priorität eintragen|C|B|A|D}] %^{Was ist zu tun?} \nDEADLINE: %^{Faellig bis}t \n  - Anmerkungen :: %?"
+      :empty-lines-after 1)
+    ("D" "Todo für Arbeit mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
+      "** %^{Status|TODO|NEXT|WAITING} [#%^{Priorität eintragen|C|B|A|D}] %^{Was ist zu tun?} \nDEADLINE: %^{Faellig bis}t SCHEDULED: %^{Starten am}t\n  - Anmerkungen :: %?"
+      :empty-lines-after 1)
+    ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
+      "** %^{Title} \n %^t" :time-prompt t)
     ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
       :prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
@@ -646,17 +656,6 @@ the hierarchy, it will be used.
     ("h" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
       "** %^{Status eintragen|TODO|PLAN} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
       :empty-lines-after 1)
-    ("a" "Todo für die Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
-      "** %^{Status|PLAN|TODO} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
-      :empty-lines-after 1)
-    ("r" "Todo w Schedule [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks")
-      "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :review: \n ERSTELLT: %u\nSCHEDULED:%^t \n  - Anmerkungen ::%^{Anmerkungen}\n%?" 
-      :empty-lines-after 1)
-    ("d" "Todo w Deadline [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks")
-      "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} \nDEADLINE: %^{Faellig bis}t \n  - Anmerkungen ::%^{Anmerkungen}\n%?"
-      :empty-lines-after 1)
-    ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
-      "** %^{Title} \n %^t" :time-prompt t)
     ("t" "Todo [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
     ("n" "Neuer Text oder neue Textidee")
     ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
