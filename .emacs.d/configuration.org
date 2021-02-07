@@ -761,6 +761,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
   '(("s" . "src")
     ("se" . "src emacs-lisp")
     ("ss" . "src emacs-lisp :results output silent")
+    ("sh" . "src shell")
 ;;    ("h" . "export html")
 ;;    ("l" . "export latex")
 ;;    ("q" . "quote")
