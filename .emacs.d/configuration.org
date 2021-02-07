@@ -1261,12 +1261,13 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("h" org-timer-item :exit t)
       ("n" org-timer-start)
       ("N" org-timer-start-with-offset)
+      ("c" org-timer-set-timer)
       ("." org-timer :exit t)
       ("z" org-time-stamp :exit t)
       ("Z" org-time-stamp)
       ("t" org-time-stamp-inactive :exit t)
       ("T" org-time-stamp-inactive)
-      ("c" org-toggle-timestamp-type)
+      ("s" org-toggle-timestamp-type)
      ))
 #+end_src
 
@@ -1931,7 +1932,7 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
  #+end_src
 
 *** TODO [#D] Make menu toggle-able
-** [#B] Use =moody= for a beautiful modeline
+** [#B] COMMENT Use =moody= for a beautiful modeline
 
 This gives me a truly lovely ribbon-based modeline.
 
