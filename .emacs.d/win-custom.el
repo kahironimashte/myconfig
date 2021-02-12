@@ -14,9 +14,31 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (whiteboard)))
  '(font-use-system-font t)
+ '(ido-all-frames nil)
+ '(ido-auto-merge-work-directories-length -1)
+ '(ido-buffer-disable-smart-matches t)
+ '(ido-completion-buffer "*Ido Completions*")
+ '(ido-completion-buffer-all-completions nil)
+ '(ido-confirm-unique-completion nil)
+ '(ido-create-new-buffer (quote prompt))
+ '(ido-decorations
+   (quote
+    (" " "   " " | " " | …" "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]" " " " ")))
+ '(ido-default-buffer-method (quote selected-window))
+ '(ido-default-file-method (quote selected-window))
+ '(ido-enable-flex-matching t)
+ '(ido-enable-last-directory-history t)
+ '(ido-enable-prefix nil)
+ '(ido-enable-regexp nil)
+ '(ido-everywhere t)
+ '(ido-max-window-height 1)
+ '(ido-use-faces t)
+ '(ido-use-filename-at-point nil)
+ '(ido-use-url-at-point nil)
+ '(ido-use-virtual-buffers t)
  '(org-agenda-files
    (quote
-    ("c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org")))
+    ("c:/org/arbeit/fokus/2021-Fernwärme-Zukunft.org" "c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org")))
  '(org-agenda-sorting-strategy
    (quote
     ((agenda time-up priority-down category-keep)
@@ -54,6 +76,7 @@
  '(fixed-pitch ((t (:foreground "gray44" :slant normal :weight normal :height 120 :width normal :foundry "outline" :family "IBM Plex Mono Text"))))
  '(font-lock-warning-face ((t (:foreground "maroon"))))
  '(match ((t (:background "MistyRose1"))))
+ '(monospace ((t (:foundry "outline" :family "IBM Plex Mono Text"))))
  '(org-agenda-calendar-event ((t (:inherit default :foreground "dark green"))))
  '(org-agenda-current-time ((t (:inherit org-time-grid :foreground "DeepSkyBlue4" :weight semi-bold))))
  '(org-agenda-date ((t (:inherit org-agenda-structure :slant italic :height 1.1))))
@@ -81,7 +104,7 @@
  '(org-level-6 ((t (:inherit org-level-4))))
  '(org-level-7 ((t (:inherit org-level-4))))
  '(org-level-8 ((t (:inherit org-level-4))))
- '(org-link ((t (:inherit fixed-pitch :foreground "SlateBlue3"))))
+ '(org-link ((t (:inherit monospace :underline t))))
  '(org-list-dt ((t (:foreground "gray25" :slant italic))))
  '(org-priority ((t (:inherit font-lock-keyword-face :foreground "gray34" :family "IBM Plex Mono" :weight normal))))
  '(org-property-value ((t (:inherit org-special-keyword))) t)

@@ -83,6 +83,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 ;; -----------
  (global-set-key (kbd "<kp-1>") 'kahiro-kp-1) 
  (global-set-key (kbd "<kp-4>") 'kahiro-kp-4) 
+ (global-set-key (kbd "<kp-7>") 'kahiro-kp-7) 
  (global-set-key (kbd "<kp-2>") 'kahiro-agenda-next-xa-tasks) 
  (global-set-key (kbd "<kp-8>") 'kahiro-kp-8) 
  (global-set-key (kbd "<kp-3>") 'kahiro-kp-3) 
@@ -98,6 +99,10 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (defun kahiro-kp-4 (&optional arg)
   (interactive "P")
   (org-agenda arg "d4" nil))
+
+(defun kahiro-kp-7 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d7" nil))
 
 (defun kahiro-kp-8 (&optional arg)
   (interactive "P")
@@ -175,12 +180,18 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 **** d - tägliche Übersichten
 #+begin_src emacs-lisp :results output silent
 	  ("d" . "Tägliche Übersichen und Filter")
-	  ("d1" "alle Tasks ohne Habits" agenda ""
+	  ("d1" "Wichtigste Arbeits-Tasks" agenda ""
 	   ((org-agenda-span 1)
 	    (org-agenda-overriding-header "Heute - Aktuelle Ausgabe, Kalender, Inbox")
 	    (org-agenda-category-filter-preset '("+inbox" "+calendar" "+xa" "+reg"))
 	    ))
-	  ("d4" "alle Tasks ohne Habits" agenda ""
+	  ("d4" "Alle Arbeits-Tasks" agenda ""
+	   ((org-agenda-span 1)
+	    (org-agenda-overriding-header "Heute - Alle Arbeits-Tasks")
+	    (org-agenda-files `(,(concat org-directory "/atasks.org")))
+	    (org-agenda-category-filter-preset '("+inbox" "+calendar" "+xa" "+reg"))
+	    ))
+	  ("d7" "alle Tasks ohne Habits" agenda ""
 	   ((org-agenda-span 1)
 	    (org-agenda-overriding-header "Heute ohne Habits")
 	    (org-agenda-category-filter-preset '("-habit"))
@@ -555,7 +566,7 @@ the hierarchy, it will be used.
 #+END_SRC
 
 #+RESULTS:
-| recentf-save-list | ido-kill-emacs-hook | desktop-kill | org-clock-save | org-babel-remove-temporary-directory |
+| recentf-save-list | ido-kill-emacs-hook | desktop-kill | org-clock-save | org-babel-remove-temporary-directory |  |
 
 *** TODO [#C] Erklärung für org-clock-persistence-insinuate
 *** Clock-Report bis auf 3 Level tief
@@ -788,12 +799,12 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 #+begin_src emacs-lisp :results output silent
 (setq org-todo-keywords
   '(
-    (sequence "YESNO(y)" "PRIOUPD(u)" "DELEG(l)" "SPLIT(x)" "HELP(h)")               ;; Plan
+    (sequence "PRIOUPD(u)" "DELEG(l)" "SPLIT(x)" "HELP(h)" "PROJ(j)" "|" "CANC(c)")   ;; Plan
     (sequence "IDEE(i)" "SUCHE(s)" "ANGEB(a)" "BAUFT(b)" "VORH(v)" "|" "DONE(d)")   ;; Textstaus
     (sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
-    (sequence "|"  "CANC(c)")
    ))
 #+end_src
+ es ginge auch nur:  (sequence "|"  "CANC(c)")
 
 ** Textbearbeitung
 *** TODO [#D] COMMENT unfill paragraph :Funktionen:deaktiviert:
@@ -939,6 +950,47 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 #+END_SRC
 *** TODO Review
     - aussortiert weil nervig
+* Custom Functions
+** Next und Clock in :neu:
+#+begin_src emacs-lisp :results output silent
+(defun kahiro-next-and-clock-in  (&optional arg)
+  (interactive "P")
+  (org-todo "NEXT")
+  (org-clock-in)
+)
+#+end_src
+** FEHLER COMMENT Count Tags :defun:
+   - [2020-04-19 Sun] ggf. gibt es einen Konflikt mit [[*Style Tags based on Regular Expressions][Style Tags based on Regular Expressions]]
+#+BEGIN_SRC emacs-lisp
+(defun count-tags ()
+  (let (tags count)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward org-complex-heading-regexp nil t)
+        (dolist (tag (org-get-tags))
+          (push tag tags)))
+      (cl-loop with result
+               for tag in tags
+               do (push (list (cl-count tag tags
+                                        :test #'string=)
+                              tag)
+                        count)
+               collect
+               (setq result (cl-remove-duplicates count
+                                                  :test #'equal))
+               finally return
+               (cl-sort result #'> :key #'car)))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+:colnames '(freq tags)
+(count-tags)
+#+END_SRC
+#+results:
+| 67 |       |   |  |
+|  1 | one   |   |  |
+|  1 | @two  |   |  |
+|  1 | three |   |  |
 * Keys / Tastenkürzel
 ** Allgemein
 #+begin_src emacs-lisp :results output silent
@@ -1257,6 +1309,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("x" org-clock-in-last)
       ("q" org-clock-cancel)
       ("d" org-clock-display)
+      ("f" kahiro-next-and-clock-in)
       ("," org-timer-pause-or-continue)
       ("-" org-timer-item :exit t)
       ("h" org-timer-item :exit t)
@@ -1957,40 +2010,6 @@ This gives me a truly lovely ribbon-based modeline.
 (when (string-equal system-type "gnu/linux")
 (setq split-width-threshold 80))
 #+end_src
-
-* Custom Functions
-** FEHLER COMMENT Count Tags :defun:
-   - [2020-04-19 Sun] ggf. gibt es einen Konflikt mit [[*Style Tags based on Regular Expressions][Style Tags based on Regular Expressions]]
-#+BEGIN_SRC emacs-lisp
-(defun count-tags ()
-  (let (tags count)
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward org-complex-heading-regexp nil t)
-        (dolist (tag (org-get-tags))
-          (push tag tags)))
-      (cl-loop with result
-               for tag in tags
-               do (push (list (cl-count tag tags
-                                        :test #'string=)
-                              tag)
-                        count)
-               collect
-               (setq result (cl-remove-duplicates count
-                                                  :test #'equal))
-               finally return
-               (cl-sort result #'> :key #'car)))))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-:colnames '(freq tags)
-(count-tags)
-#+END_SRC
-#+results:
-| 67 |       |   |
-|  1 | one   |   |
-|  1 | @two  |   |
-|  1 | three |   |
 
 * COMMENT Notizen
 
