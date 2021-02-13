@@ -11,8 +11,20 @@
 
 (package-initialize) ;; Mit (package-initialize t) werden die Pakete NICHT geladen. Das kann nützlich sein, wenn man Pakete über use-package laden will. 
 
+;; ### use-package
+;; use-package als Konfigurationsmethode installieren, falls noch nicht vorhanden.
+(unless package-archive-contents
+  (package-refresh-contents))
+
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+;; use-package aktivieren und alle pakete installieren, die von der config verlangt werden.
+(require 'use-package)
+(setq use-package-always-ensure t)
+
 ;; use Melpa-Org-Version instead of builtin. Vorher habe ich die neueste org-Version aus Melpa installiert.
-(assq-delete-all 'org package--builtins)
+;;(assq-delete-all 'org package--builtins)
 ;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
 
 ;; Lokalisierung
@@ -34,7 +46,7 @@
 (load custom-file)
 
 ;; Lade configuration.org
-(require 'org)
+(use-package org)
 (setq config-org-file (concat homedir ".emacs.d/configuration.org"))
 (org-babel-load-file config-org-file)
 

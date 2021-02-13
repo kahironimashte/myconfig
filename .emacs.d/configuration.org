@@ -1,7 +1,7 @@
 #+TITLE: Emacs-Konfiguration
 #+STARTUP: overview
 #+TODO: TODO FEHLER  | OK DONE
-#+TAGS: Funktionen(f) deaktiviert(3d) WindowsOnly(w) LinuxOnly(l) Paket(p)
+##+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p)
 * Allgemeine Einstellungen
 :PROPERTIES:
 :CATEGORY: allg
@@ -586,26 +586,20 @@ the hierarchy, it will be used.
 ;;-------------------
 (setq org-hide-emphasis-markers t) ;; hide Markers like *this* for bold
 #+END_SRC
-*** Use Org-Bullets
+*** Use Org-Bullets :package:appearance:
     Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
    #+BEGIN_SRC emacs-lisp
-   (require 'org-bullets)
-   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-  #+END_SRC
-  #+BEGIN_SRC  emacs-lisp
-   ;; make available "org-bullet-face" such that I can control the font size individually
-(when (string-equal system-type "windows-nt")
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+)
+  (when (string-equal system-type "windows-nt")
    (setq org-bullets-bullet-list '("✥" "✤" "❖" "✿" "❄" "❋" "★" "✚")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
   )
-
-(when (string-equal system-type "gnu/linux")
+  (when (string-equal system-type "gnu/linux")
     (setq org-bullets-bullet-list '("⚜" "⚙" "❖" "✿" "❄" "❋" "★" "⚛")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
   )
-
-
   #+END_SRC
-
-  #+RESULTS:
 
 *** Set custom ellipsis (...)
   #+BEGIN_SRC emacs-lisp
@@ -740,13 +734,13 @@ To get the same for a weekly date-tree change the function to
      )
 )
 #+end_src
-** org-habit :Paket:local:
+** org-habit :package:local:
 Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbringen, oder Sport treiben. Man kann es so einstellen, dass die Aufgabe nur alle x Tage auftaucht. 
 #+BEGIN_SRC emacs-lisp
 ;; Den Habit-Graph auf Position (von links) bringen.
 (setq org-habit-graph-column 50)
 #+END_SRC
-** org-Recur :Paket:
+** org-Recur :package:
    - Paket für die wiederholte Planung von Überchriften
 #+begin_src emacs-lisp :results silent
 (use-package org-recur
@@ -779,7 +773,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 ;;    ("c" . "comment")
     ))
 #+end_src
-*** TODO [#B] Org Tempo oder yasnippet einrichten
+*** OK [#B] Org Tempo oder yasnippet einrichten
 *** Info zu Source Blocks
  They changed the template system in orgmode 9.2.
 
@@ -1550,8 +1544,16 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
   (setq flyspell-issue-welcome-flag nil)
   )
  #+END_SRC
-* Pakete
-** yasnippet
+* Pakete :package:
+** doom-modeline :appearance:
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom (doom-modeline-height 15))
+#+END_SRC
+** org-bookmark-heading :navigation:
+
+** yasnippet :content:
 #+begin_src emacs-lisp :results output silent
 (when (string-equal system-type "windows-nt")
   ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
@@ -1565,7 +1567,7 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 (add-hook 'yas-minor-mode-hook (lambda ()
                                                                  (yas-activate-extra-mode 'fundamental-mode)))
 
-** ido-mode
+** ido-mode :navigation:
 *** Beschreibung
  This is the built-in framework for interactively narrowing down the
  list of matching candidates when performing a relevant search.  Ido
@@ -1678,7 +1680,13 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
   :config
   (ido-ubiquitous-mode 1))
 #+end_src
-** TODO [#B] Smartparens
+
+** which-key :help:
+ #+begin_src elisp
+(use-package which-key
+  :config (which-key-mode))
+#+end_src
+** TODO [#B] COMMENT Smartparens
  - Paket um Klammern etc. zu vervollständigen.
 #+BEGIN_SRC emacs-lisp
 (require 'smartparens)
@@ -1687,8 +1695,9 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
 #+END_SRC
 This is bold and that is bolder. 
-** Steam Games list
+** Steam Games list :orga:
 #+BEGIN_SRC emacs-lisp
+(use-package steam)
 (setq steam-username "mec4nic") ;; Replace Username with your steam username
 #+END_SRC
 steam.el can not get a list of your games unless your Steam profile is public. Visit https://steakmcommunity.com/id/username/edit/settings (where username is replaced with your Steam username). Set your profile to Public and make sure that Game details is set to Public.
@@ -1702,10 +1711,10 @@ Usage
 In org-mode, you can click links in order to run your games. This will bring up a pop-up, asking if it is safe to run the lisp-code. If this annoys you, put this line at the top of your .org-file: #-*- org-confirm-elisp-link-function: nil; -*-
 
 If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
-** Prüfen [/]
-** Nov-mode
+** Nov-mode :content:
    - Paket um epub-Dateien in Emacs zu lesen.
 #+begin_src emacs-lisp :results output silent
+(use-package nov)
 (when (string-equal system-type "windows-nt")
   ;; Set unzip location for nov.el
   (setq nov-unzip-program "C:\\Software\\Emacs\\_unzip-Package\\bin\\unzip.exe")
