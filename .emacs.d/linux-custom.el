@@ -36,10 +36,7 @@
      (67 :inherit org-priority :family "IBM Plex Mono" :weight light)
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight))))
  '(org-priority-highest 65)
- '(org-priority-lowest 68)
- '(package-selected-packages
-   (quote
-    (doom-modeline modus-operandi-theme modus-vivendi-theme smex ido-completing-read+ org nov smartparens org-bookmark-heading org-recur yafolding steam ztree ac-alchemist which-key moody org-bullets use-package yankpad hydra ryo-modal org-super-agenda json-mode js2-mode))))
+ '(org-priority-lowest 68))
 ;; FONTS
 ;; -----
 (custom-set-faces

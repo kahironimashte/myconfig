@@ -148,6 +148,196 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  (global-set-key "\C-ca" 'org-agenda)
  (global-set-key "\C-cc" 'org-capture)
 #+end_src
+* Pakete :package:
+** COMMENT doom-modeline :appearance:
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1)
+    :custom (doom-modeline-height 5))
+  (use-package all-the-icons)
+#+end_src
+*** Fix der Modeline-Höhe von [[https://github.com/seagle0128/doom-modeline/issues/187][hier]]
+#+begin_src emacs-lisp :results output silent
+(defun my-doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (+ (frame-char-height) 2))
+(advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
+#+END_SRC
+** org-bookmark-heading :navigation:
+
+** yasnippet :content:
+#+begin_src emacs-lisp :results output silent
+(when (string-equal system-type "windows-nt")
+  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
+    (yas-global-mode 1)  
+    (setq yas-snippet-dirs
+      '("C:/org/_config/yasnippets/"))
+  )
+#+end_src
+
+Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
+(add-hook 'yas-minor-mode-hook (lambda ()
+                                                                 (yas-activate-extra-mode 'fundamental-mode)))
+
+** ido-mode :navigation:
+*** Beschreibung
+ This is the built-in framework for interactively narrowing down the
+ list of matching candidates when performing a relevant search.  Ido
+ underpins functions such as those that change buffers, navigate the
+ filesystem, query for help…  I used to be an Ivy user, but have found
+ that Ido is just as good for my case.  Plus, I prefer its default
+ horizontal layout.  Simple and effective.
+
+ Here is an overview of my configurations:
+
+ + Use =ido-mode= and make sure it runs everywhere it can.
+ + Enable "flexible matching".  If there is no matching string of
+   adjacent characters, Ido will instead search for any item containing
+   the characters in their given sequence even if they are not
+   positioned directly next to each other.  Their sequence is all that
+   matters.
+ + Also disable regexp and prefix matching by default.  These can be
+   toggled on at any moment with =C-t= or =C-p= respectively (read
+   below for more key bindings).
+ + Only consider the current frame.  I seldom use more than one (recall
+   that what Emacs calls "frames" is what window managers call
+   "windows").
+ + Create a buffer with completion candidates (manually invoke it with
+   "?" after having typed a search), but do not place all completions
+   there—just the current list of matches.
+ + No need to confirm anything when there is a unique match.
+ + Create a buffer when there is no match for the given search.  Ask for
+   confirmation.  This is great for producing a scratch-like buffer,
+   whose contents can then be saved with =C-x C-s= or =C-x C-w=.
+ + By default open matching buffers and files in the selected window.
+   I use separate commands for doing the same for the "other window".
+   By default, these are always accessed via =C-x 4=.
+ + Keep track of selected directories (recall that navigating history
+   is done with =M-n= and =M-p=).
+ + Do not try to guess whether the symbol at point is a file name.
+   This gives many false positives and consequently hampers the
+   commands for filesystem navigation.
+ + Same for URLs.
+ + Use "virtual buffers" (e.g. recent files without a current buffer).
+   I also have a separate key binding for that (see my =use-package=
+   declaration for =recentf=).
+ + Allow the theme's styles for Ido.  I have configured those in my
+   Modus themes (defined elsewhere in this document).
+ + Keep the prompt to a single line.  I find that a horizontal layout
+   that spans multiple lines is counter-productive.  One line is nice
+   and simple.  We are anyhow going to narrow down the list of
+   candidates by typing a search.  The =:hook= for the minibuffer ensures
+   that this aesthetic is not anyhow interfered with.
+ + As for =ido-decorations= it is better you search for its help buffer
+   with =C-h v ido-decorations RET=.  Basically, I tweak it to have
+   less visual noise.
+ + Do not allow Ido to employ its "merge" functionality.  What that does
+   is to automatically switch directory if the file name you type in does
+   not exist in the current directory but is available in some other
+   place you recently visited.  This makes it difficult to just create a
+   new file.  By the by, when using =ido-find-file= you can always just
+   confirm the inserted text with =C-j=.
+
+ Then I just bind some common commands to the Super key.  Where you see
+ a capital letter, it means Super-Shift-KEY.  For a complete overview
+ of some useful key bindings, type =C-h f ido-find-file RET=.  The
+ bindings I define in =ido-common-completion-map= are for consistency
+ with their equivalents in =isearch=.
+*** code
+#+begin_src emacs-lisp :results output silent
+(use-package ido
+  :custom
+  (ido-everywhere t)
+  (ido-enable-flex-matching t)
+  (ido-enable-regexp nil)
+  (ido-enable-prefix nil)
+  (ido-all-frames nil)
+  (ido-buffer-disable-smart-matches t)
+  (ido-completion-buffer "*Ido Completions*")
+  (ido-completion-buffer-all-completions nil)
+  (ido-confirm-unique-completion nil)
+  (ido-create-new-buffer 'prompt)
+  (ido-default-buffer-method 'selected-window)
+  (ido-default-file-method 'selected-window)
+  (ido-enable-last-directory-history t)
+  (ido-use-filename-at-point nil)
+  (ido-use-url-at-point nil)
+  (ido-use-virtual-buffers t)
+  (ido-use-faces t)
+  (ido-max-window-height 1)
+  (ido-decorations
+   '(" "
+     "   "
+     " | "
+     " | …"
+     "["
+     "]"
+     " [No match]"
+     " [Matched]"
+     " [Not readable]"
+     " [Too big]"
+     " [Confirm]"
+     " "
+     " "))
+  (ido-auto-merge-work-directories-length -1)
+  :config
+  (ido-mode 1)
+)
+
+;;The following ensures that Ido mode is implemented in as many places as possible.  I am not sure what is not covered by it, but so far every relevant interface provides Ido-style matching.
+
+(use-package ido-completing-read+
+  :ensure t
+  :after ido
+  :config
+  (ido-ubiquitous-mode 1))
+#+end_src
+
+** which-key :help:
+ #+begin_src elisp
+(use-package which-key
+  :config (which-key-mode))
+#+end_src
+** TODO [#B] COMMENT Smartparens
+ - Paket um Klammern etc. zu vervollständigen.
+#+BEGIN_SRC emacs-lisp
+(require 'smartparens)
+(require 'smartparens-config)   
+(define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-unwrap-sexp)
+(define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
+#+END_SRC
+This is bold and that is bolder. 
+** Steam Games list :orga:
+#+BEGIN_SRC emacs-lisp
+(use-package steam)
+(setq steam-username "mec4nic") ;; Replace Username with your steam username
+#+END_SRC
+steam.el can not get a list of your games unless your Steam profile is public. Visit https://steakmcommunity.com/id/username/edit/settings (where username is replaced with your Steam username). Set your profile to Public and make sure that Game details is set to Public.
+Usage
+
+    To launch a game: M-x steam-launch
+    To insert your game list in org-mode format: M-x steam-insert-org-text
+    Download logotypes for your games, and insert them into org-mode: M-x steam-insert-org-images
+    To update your game list (if you’ve installed new games without restarting Emacs): M-x steam-get-games
+
+In org-mode, you can click links in order to run your games. This will bring up a pop-up, asking if it is safe to run the lisp-code. If this annoys you, put this line at the top of your .org-file: #-*- org-confirm-elisp-link-function: nil; -*-
+
+If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
+** Nov-mode                                                         :content:
+   - Paket um epub-Dateien in Emacs zu lesen.
+#+begin_src emacs-lisp :results output silent
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode))
+(when (string-equal system-type "windows-nt")
+  ;; Set unzip location for nov.el
+  (setq nov-unzip-program "C:\\Software\\Emacs\\_unzip-Package\\bin\\unzip.exe")
+  )
+
+#+end_src
+** TODO Neotree
+** TODO Minimap
+** TODO Fold-this
+** TODO valign 
 * Org Mode Settings
 :PROPERTIES:
 :CATEGORY: org
@@ -578,7 +768,7 @@ the hierarchy, it will be used.
 #+BEGIN_SRC emacs-lisp :results output silent
  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
  (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
- (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+;; (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
  #+END_SRC
 ** Make org beautiful
 #+BEGIN_SRC emacs-lisp
@@ -1544,187 +1734,6 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
   (setq flyspell-issue-welcome-flag nil)
   )
  #+END_SRC
-* Pakete :package:
-** doom-modeline :appearance:
-#+BEGIN_SRC emacs-lisp
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom (doom-modeline-height 15))
-#+END_SRC
-** org-bookmark-heading :navigation:
-
-** yasnippet :content:
-#+begin_src emacs-lisp :results output silent
-(when (string-equal system-type "windows-nt")
-  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
-    (yas-global-mode 1)  
-    (setq yas-snippet-dirs
-      '("C:/org/_config/yasnippets/"))
-  )
-#+end_src
-
-Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
-(add-hook 'yas-minor-mode-hook (lambda ()
-                                                                 (yas-activate-extra-mode 'fundamental-mode)))
-
-** ido-mode :navigation:
-*** Beschreibung
- This is the built-in framework for interactively narrowing down the
- list of matching candidates when performing a relevant search.  Ido
- underpins functions such as those that change buffers, navigate the
- filesystem, query for help…  I used to be an Ivy user, but have found
- that Ido is just as good for my case.  Plus, I prefer its default
- horizontal layout.  Simple and effective.
-
- Here is an overview of my configurations:
-
- + Use =ido-mode= and make sure it runs everywhere it can.
- + Enable "flexible matching".  If there is no matching string of
-   adjacent characters, Ido will instead search for any item containing
-   the characters in their given sequence even if they are not
-   positioned directly next to each other.  Their sequence is all that
-   matters.
- + Also disable regexp and prefix matching by default.  These can be
-   toggled on at any moment with =C-t= or =C-p= respectively (read
-   below for more key bindings).
- + Only consider the current frame.  I seldom use more than one (recall
-   that what Emacs calls "frames" is what window managers call
-   "windows").
- + Create a buffer with completion candidates (manually invoke it with
-   "?" after having typed a search), but do not place all completions
-   there—just the current list of matches.
- + No need to confirm anything when there is a unique match.
- + Create a buffer when there is no match for the given search.  Ask for
-   confirmation.  This is great for producing a scratch-like buffer,
-   whose contents can then be saved with =C-x C-s= or =C-x C-w=.
- + By default open matching buffers and files in the selected window.
-   I use separate commands for doing the same for the "other window".
-   By default, these are always accessed via =C-x 4=.
- + Keep track of selected directories (recall that navigating history
-   is done with =M-n= and =M-p=).
- + Do not try to guess whether the symbol at point is a file name.
-   This gives many false positives and consequently hampers the
-   commands for filesystem navigation.
- + Same for URLs.
- + Use "virtual buffers" (e.g. recent files without a current buffer).
-   I also have a separate key binding for that (see my =use-package=
-   declaration for =recentf=).
- + Allow the theme's styles for Ido.  I have configured those in my
-   Modus themes (defined elsewhere in this document).
- + Keep the prompt to a single line.  I find that a horizontal layout
-   that spans multiple lines is counter-productive.  One line is nice
-   and simple.  We are anyhow going to narrow down the list of
-   candidates by typing a search.  The =:hook= for the minibuffer ensures
-   that this aesthetic is not anyhow interfered with.
- + As for =ido-decorations= it is better you search for its help buffer
-   with =C-h v ido-decorations RET=.  Basically, I tweak it to have
-   less visual noise.
- + Do not allow Ido to employ its "merge" functionality.  What that does
-   is to automatically switch directory if the file name you type in does
-   not exist in the current directory but is available in some other
-   place you recently visited.  This makes it difficult to just create a
-   new file.  By the by, when using =ido-find-file= you can always just
-   confirm the inserted text with =C-j=.
-
- Then I just bind some common commands to the Super key.  Where you see
- a capital letter, it means Super-Shift-KEY.  For a complete overview
- of some useful key bindings, type =C-h f ido-find-file RET=.  The
- bindings I define in =ido-common-completion-map= are for consistency
- with their equivalents in =isearch=.
-*** code
-#+begin_src emacs-lisp :results output silent
-(use-package ido
-  :custom
-  (ido-everywhere t)
-  (ido-enable-flex-matching t)
-  (ido-enable-regexp nil)
-  (ido-enable-prefix nil)
-  (ido-all-frames nil)
-  (ido-buffer-disable-smart-matches t)
-  (ido-completion-buffer "*Ido Completions*")
-  (ido-completion-buffer-all-completions nil)
-  (ido-confirm-unique-completion nil)
-  (ido-create-new-buffer 'prompt)
-  (ido-default-buffer-method 'selected-window)
-  (ido-default-file-method 'selected-window)
-  (ido-enable-last-directory-history t)
-  (ido-use-filename-at-point nil)
-  (ido-use-url-at-point nil)
-  (ido-use-virtual-buffers t)
-  (ido-use-faces t)
-  (ido-max-window-height 1)
-  (ido-decorations
-   '(" "
-     "   "
-     " | "
-     " | …"
-     "["
-     "]"
-     " [No match]"
-     " [Matched]"
-     " [Not readable]"
-     " [Too big]"
-     " [Confirm]"
-     " "
-     " "))
-  (ido-auto-merge-work-directories-length -1)
-  :config
-  (ido-mode 1)
-)
-
-;;The following ensures that Ido mode is implemented in as many places as possible.  I am not sure what is not covered by it, but so far every relevant interface provides Ido-style matching.
-
-(use-package ido-completing-read+
-  :ensure t
-  :after ido
-  :config
-  (ido-ubiquitous-mode 1))
-#+end_src
-
-** which-key :help:
- #+begin_src elisp
-(use-package which-key
-  :config (which-key-mode))
-#+end_src
-** TODO [#B] COMMENT Smartparens
- - Paket um Klammern etc. zu vervollständigen.
-#+BEGIN_SRC emacs-lisp
-(require 'smartparens)
-(require 'smartparens-config)   
-(define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-unwrap-sexp)
-(define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
-#+END_SRC
-This is bold and that is bolder. 
-** Steam Games list :orga:
-#+BEGIN_SRC emacs-lisp
-(use-package steam)
-(setq steam-username "mec4nic") ;; Replace Username with your steam username
-#+END_SRC
-steam.el can not get a list of your games unless your Steam profile is public. Visit https://steakmcommunity.com/id/username/edit/settings (where username is replaced with your Steam username). Set your profile to Public and make sure that Game details is set to Public.
-Usage
-
-    To launch a game: M-x steam-launch
-    To insert your game list in org-mode format: M-x steam-insert-org-text
-    Download logotypes for your games, and insert them into org-mode: M-x steam-insert-org-images
-    To update your game list (if you’ve installed new games without restarting Emacs): M-x steam-get-games
-
-In org-mode, you can click links in order to run your games. This will bring up a pop-up, asking if it is safe to run the lisp-code. If this annoys you, put this line at the top of your .org-file: #-*- org-confirm-elisp-link-function: nil; -*-
-
-If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
-** Nov-mode :content:
-   - Paket um epub-Dateien in Emacs zu lesen.
-#+begin_src emacs-lisp :results output silent
-(use-package nov)
-(when (string-equal system-type "windows-nt")
-  ;; Set unzip location for nov.el
-  (setq nov-unzip-program "C:\\Software\\Emacs\\_unzip-Package\\bin\\unzip.exe")
-  )
-
-#+end_src
-** TODO Neotree
-** TODO Minimap
-** TODO Fold-this
-** TODO valign 
 * Appearance :appearance:
 ** Modus-Themes
 #+begin_src emacs-lisp :results output silent

@@ -24,7 +24,7 @@
 (setq use-package-always-ensure t)
 
 ;; use Melpa-Org-Version instead of builtin. Vorher habe ich die neueste org-Version aus Melpa installiert.
-;;(assq-delete-all 'org package--builtins)
+(assq-delete-all 'org package--builtins)
 ;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
 
 ;; Lokalisierung
