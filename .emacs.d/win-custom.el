@@ -63,9 +63,10 @@
      (68 :inherit org-priority :family "IBM Plex Mono Light" :weight light))))
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
- '(package-selected-packages
-   (quote
-    (yasnippet org-caldav smartparens nov org-bookmark-heading org-recur which-key org-bullets use-package ryo-modal org spaceline))))
+   ;; '(package-selected-packages
+   ;; (quote
+ ;;  (yasnippet org-caldav smartparens nov org-bookmark-heading org-recur which-key org-bullets use-package ryo-modal org spaceline)))
+ )
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

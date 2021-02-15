@@ -169,10 +169,12 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+begin_src emacs-lisp :results output silent
 (when (string-equal system-type "windows-nt")
   ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
-    (yas-global-mode 1)  
-    (setq yas-snippet-dirs
-      '("C:/org/_config/yasnippets/"))
+  (use-package yasnippet
+   :config
+   (add-to-list 'yas-snippet-dirs "C:/org/_config/yasnippets/")
+   (yas-global-mode 1)
   )
+)
 #+end_src
 
 Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
@@ -307,10 +309,13 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
 #+END_SRC
 This is bold and that is bolder. 
-** Steam Games list :orga:
+** steam :orga:
+   - Importiert die Steam-Spiele als org-mode Liste.
 #+BEGIN_SRC emacs-lisp
-(use-package steam)
-(setq steam-username "mec4nic") ;; Replace Username with your steam username
+(when (string-equal system-type "gnu/linux")
+ (use-package steam)
+ (setq steam-username "mec4nic") ;; Replace Username with your steam username
+)
 #+END_SRC
 steam.el can not get a list of your games unless your Steam profile is public. Visit https://steakmcommunity.com/id/username/edit/settings (where username is replaced with your Steam username). Set your profile to Public and make sure that Game details is set to Public.
 Usage
@@ -756,7 +761,7 @@ the hierarchy, it will be used.
 #+END_SRC
 
 #+RESULTS:
-| recentf-save-list | ido-kill-emacs-hook | desktop-kill | org-clock-save | org-babel-remove-temporary-directory |  |
+| recentf-save-list | ido-kill-emacs-hook | desktop-kill | org-clock-save | org-babel-remove-temporary-directory |   |   |
 
 *** TODO [#C] Erklärung für org-clock-persistence-insinuate
 *** Clock-Report bis auf 3 Level tief
@@ -983,7 +988,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 #+begin_src emacs-lisp :results output silent
 (setq org-todo-keywords
   '(
-    (sequence "PRIOUPD(u)" "DELEG(l)" "SPLIT(x)" "HELP(h)" "PROJ(j)" "|" "CANC(c)")   ;; Plan
+    (sequence "PROJ(j)" "SPLIT(x)" "DELEG(l)" "HELP(h)" "MEET(m)" "|" "CANC(c)")   ;; Plan
     (sequence "IDEE(i)" "SUCHE(s)" "ANGEB(a)" "BAUFT(b)" "VORH(v)" "|" "DONE(d)")   ;; Textstaus
     (sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
    ))
@@ -1171,10 +1176,10 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 (count-tags)
 #+END_SRC
 #+results:
-| 67 |       |   |  |
-|  1 | one   |   |  |
-|  1 | @two  |   |  |
-|  1 | three |   |  |
+| 67 |       |   |   |   |
+|  1 | one   |   |   |   |
+|  1 | @two  |   |   |   |
+|  1 | three |   |   |   |
 * Keys / Tastenkürzel
 ** Allgemein
 #+begin_src emacs-lisp :results output silent
@@ -1333,11 +1338,11 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
      ("}" org-table-toggle-coordinate-overlays)
      ("~" org-table-create-with-table.el)
      ("x"
-       (("a" org-archive-subtree-default))
+       (("a" org-archive-subtree-default)
+        ("e" org-clock-modify-effort-estimate)) ;; neu [2021-02-15 Mo]
       )
      ))
 #+end_src
-
 **** f
 #+begin_src emacs-lisp
     ("f"
