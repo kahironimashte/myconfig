@@ -583,7 +583,7 @@ information."
         (when (memq detail '(tree canonical t)) (org-show-children))))))
 #+END_SRC
 *** Generelle Agenda Einstellungen
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :results output silent
 (setq org-agenda-skip-scheduled-if-done t
       org-agenda-skip-deadline-if-done t
       org-agenda-skip-deadline-prewarning-if-scheduled t
@@ -593,11 +593,12 @@ information."
 	  (lambda()
 	    (local-set-key (kbd "S-<up>") 'org-agenda-date-earlier-hours)
 	    (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
-     ))
-
+	  )
+     )
   ;; Activate plain list cycle
   (setq org-list-use-circular-motion t)
 #+END_SRC
+
 **** Default Org-Agenda Span
  #+BEGIN_SRC emacs-lisp
  ;; Default span
@@ -844,6 +845,8 @@ the hierarchy, it will be used.
       :empty-lines-after 1)
     ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
       "** %^{Title} \n %^t" :time-prompt t)
+    ("m" "Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
+      "** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?")
     ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
       :prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
@@ -1147,6 +1150,30 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
   (org-todo "NEXT")
   (org-clock-in)
 )
+#+end_src
+** TODO Sorting
+   - Weil ich häufig sortiere, lege ich eigene Funktionen auf die häufigsten Sortier-Befehle
+#+begin_src emacs-lisp :results output silent
+(defun kahiro-sort-by-time-reverse (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?T)
+)
+
+(defun kahiro-sort-by-priority (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?p)
+)
+
+(defun kahiro-sort-by-todo (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?o)
+)
+
+(defun kahiro-sort-by-todo-reverse (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?O)
+)
+
 #+end_src
 ** FEHLER COMMENT Count Tags :defun:
    - [2020-04-19 Sun] ggf. gibt es einen Konflikt mit [[*Style Tags based on Regular Expressions][Style Tags based on Regular Expressions]]
@@ -1469,6 +1496,10 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 **** s
 #+begin_src emacs-lisp  
     ("s" (
+     ("p" kahiro-sort-by-priority)
+     ("t" kahiro-sort-by-time-reverse)
+     ("o" kahiro-sort-by-todo)
+     ("n" kahiro-sort-by-todo-reverse)
      ("s" isearch-forward)
      ("r" isearch-backward)
      ))
@@ -1570,7 +1601,6 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 	    ("P" org-agenda-previous-date-line)
 	    ("c"
 	     (("d" org-agenda-deadline)
-	      ("n" org-agenda-next-date-line)
 	      ("o" org-agenda-open-link)
 	      ("p" org-agenda-previous-date-line)
 	      ("q" org-agenda-set-tags)
@@ -1654,7 +1684,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 	    ("m" org-agenda-bulk-mark)
 	    ("o" delete-other-windows)
 	    ("q" org-agenda-quit)
-	    ("r" org-agenda-redo)
+	    ("r" org-agenda-redo :then '(shrink-window-if-larger-than-buffer))
 	    ("s" org-save-all-org-buffers)
 	    ("t" org-agenda-todo)
 	    ("u" universal-argument)
@@ -2101,4 +2131,14 @@ See Emerge, for the Emerge facility, which provides a powerful interface for mer
 ** test
 *** FEHLER test
 **** test
-    
+** OK org-sort
+#+begin_src emacs-lisp :results output silent
+(defun kahiro-sort-by-time (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?T)
+)
+#+end_src
+*** test
+**** <2021-02-17 Mi>
+**** <2021-02-16 Di>
+**** <2021-02-15 Mo>
