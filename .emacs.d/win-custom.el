@@ -12,7 +12,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (whiteboard)))
+ '(custom-enabled-themes '(whiteboard))
  '(font-use-system-font t)
  '(ido-all-frames nil)
  '(ido-auto-merge-work-directories-length -1)
@@ -20,12 +20,11 @@
  '(ido-completion-buffer "*Ido Completions*")
  '(ido-completion-buffer-all-completions nil)
  '(ido-confirm-unique-completion nil)
- '(ido-create-new-buffer (quote prompt))
+ '(ido-create-new-buffer 'prompt)
  '(ido-decorations
-   (quote
-    (" " "   " " | " " | …" "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]" " " " ")))
- '(ido-default-buffer-method (quote selected-window))
- '(ido-default-file-method (quote selected-window))
+   '(" " "   " " | " " | …" "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]" " " " "))
+ '(ido-default-buffer-method 'selected-window)
+ '(ido-default-file-method 'selected-window)
  '(ido-enable-flex-matching t)
  '(ido-enable-last-directory-history t)
  '(ido-enable-prefix nil)
@@ -37,14 +36,12 @@
  '(ido-use-url-at-point nil)
  '(ido-use-virtual-buffers t)
  '(org-agenda-files
-   (quote
-    ("c:/org/arbeit/fokus/2021-Fernwärme-Zukunft.org" "c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org")))
+   '("c:/org/arbeit/fokus/2021-Fernwärme-Zukunft.org" "c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
  '(org-agenda-sorting-strategy
-   (quote
-    ((agenda time-up priority-down category-keep)
+   '((agenda time-up priority-down category-keep)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
-     (search category-keep))))
+     (search category-keep)))
  '(org-default-priority 67)
  '(org-habit-completed-glyph 43)
  '(org-habit-show-done-always-green t)
@@ -53,20 +50,16 @@
  '(org-highest-priority 65)
  '(org-lowest-priority 68)
  '(org-modules
-   (quote
-    (org-docview org-habit org-info org-inlinetask org-mhe org-w3m)))
+   '(org-docview org-habit org-info org-inlinetask org-mhe org-w3m))
  '(org-priority-faces
-   (quote
-    ((65 :inherit org-priority :weight bold)
+   '((65 :inherit org-priority :weight bold)
      (66 :inherit org-priority :family "IBM Plex Mono SemiBold" :weight semibold)
      (67 :inherit org-priority :family "IBM Plex Mono" :weight normal)
-     (68 :inherit org-priority :family "IBM Plex Mono Light" :weight light))))
+     (68 :inherit org-priority :family "IBM Plex Mono Light" :weight light)))
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
-   ;; '(package-selected-packages
-   ;; (quote
- ;;  (yasnippet org-caldav smartparens nov org-bookmark-heading org-recur which-key org-bullets use-package ryo-modal org spaceline)))
- )
+ '(package-selected-packages
+   '(yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov moody ido-completing-read+)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -339,6 +339,11 @@ If you insert the logotype images into org-mode, make sure to turn on org-displa
   )
 
 #+end_src
+** yaml-mode
+   - für espanso config-files.
+#+begin_src emacs-lisp :results output silent
+(use-package yaml-mode)
+#+end_src
 ** TODO Neotree
 ** TODO Minimap
 ** TODO Fold-this
