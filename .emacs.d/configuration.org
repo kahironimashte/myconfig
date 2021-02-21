@@ -52,6 +52,16 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
   ;; Set Sentence end to just one space
   (setq sentence-end-double-space nil)
  #+END_SRC
+** confirm with y
+   #+begin_src emacs-lisp :results output silent
+(fset 'yes-or-no-p 'y-or-n-p)
+   #+end_src
+** makros
+   #+begin_src emacs-lisp :results output silent
+  (fset 'macro-statusnow
+	(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote (" er uuzTns   " 0 "%d")) arg)))
+ (global-set-key (kbd "<f6>")  'macro-statusnow)
+   #+end_src
 
 ** Keyboard-Shortuts
 *** for org-agendas
@@ -1219,7 +1229,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 #+end_src
 
-**  Jump in the document
+**  Jump in the doc1ument
    "Move cursor to last mark position of current buffer.
    Call this repeatedly will cycle all positions in `mark-ring'.
    URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
@@ -1232,6 +1242,9 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    (global-set-key (kbd "<s-f3>") 'xah-pop-local-mark-ring) 
  #+END_SRC 
 ** RYO Key settings
+*** TODOs
+**** TODO Sortierfunktionen auf eine eigene Taste legen.
+
 *** Tastenfunktionen
 #+BEGIN_SRC emacs-lisp
 (defun org-timer-start-with-offset ()
