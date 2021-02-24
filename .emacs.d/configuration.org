@@ -1,7 +1,7 @@
 #+TITLE: Emacs-Konfiguration
 #+STARTUP: overview
 #+TODO: TODO FEHLER  | OK DONE
-##+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p)
+#+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p)
 * Allgemeine Einstellungen
 :PROPERTIES:
 :CATEGORY: allg
@@ -158,7 +158,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  (global-set-key "\C-ca" 'org-agenda)
  (global-set-key "\C-cc" 'org-capture)
 #+end_src
-* Pakete :package:
+* Pakete                                                    :package:
 ** COMMENT doom-modeline :appearance:
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline
