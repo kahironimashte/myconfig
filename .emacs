@@ -46,7 +46,6 @@
 (load custom-file)
 
 ;; Lade configuration.org
-;(use-package org) ; deactivated [2021-02-24 Mi 23:24]
 (setq config-org-file (concat homedir ".emacs.d/configuration.org"))
 (org-babel-load-file config-org-file)
 

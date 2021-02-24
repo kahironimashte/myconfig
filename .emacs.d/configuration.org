@@ -816,13 +816,6 @@ the hierarchy, it will be used.
   #+BEGIN_SRC emacs-lisp
   (setq org-ellipsis "⤵")
    #+END_SRC
-** FEHLER Neuestes Org-Paket aus MELPA verwenden :Paket:
-   - doppelt sich mit Code aus der .emacs-Datei.
-#+BEGIN_SRC emacs-lisp
-;; use Melpa-Org-Version instead of builtin. Vorher habe ich die neueste org-Version aus Melpa installiert.
-(assq-delete-all 'org package--builtins)
-;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
-#+END_SRC
 ** TODO org-capture templates :syncStatus:
 *** TODO sinnvolles Capture für Ziele
 *** TODO ryo für Anmerkungen deaktivieren: :Verbesserung:
@@ -1307,7 +1300,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
     Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
 **** Start
 #+BEGIN_SRC emacs-lisp :results silent
- (require 'org-timer)
+; (require 'org-timer)
  (ryo-modal-keys 
 #+end_src
 
@@ -1600,7 +1593,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 
 *** Keys für den Org-Agenda-Mode
 #+BEGIN_SRC emacs-lisp :results output silent
-(require 'org-habit)
+;(require 'org-habit)
 (add-hook 'org-agenda-mode-hook 'ryo-modal-mode)
     (ryo-modal-major-mode-keys
      'org-agenda-mode

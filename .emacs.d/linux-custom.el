@@ -25,9 +25,6 @@
  '(org-habit-today-glyph 9728)
  '(org-highest-priority 65)
  '(org-lowest-priority 68)
- '(org-modules
-   (quote
-    (org-docview org-habit org-info org-inlinetask org-mhe org-w3m)))
  '(org-priority-default 67)
  '(org-priority-faces
    (quote
@@ -37,9 +34,10 @@
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight))))
  '(org-priority-highest 65)
  '(org-priority-lowest 68)
- '(package-selected-packages
-   (quote
-    (yaml-mode notmuch ztree yankpad yafolding which-key use-package steam smex smartparens ryo-modal org-super-agenda org-recur org-bullets org-bookmark-heading nov moody modus-vivendi-theme modus-operandi-theme json-mode js2-mode ido-completing-read+ hydra german-holidays doom-modeline apache-mode))))
+ ;; '(package-selected-packages
+ ;;   (quote
+ ;;    (yaml-mode notmuch ztree yankpad yafolding which-key use-package steam smex smartparens ryo-modal org-super-agenda org-recur org-bullets org-bookmark-heading nov moody modus-vivendi-theme modus-operandi-theme json-mode js2-mode ido-completing-read+ hydra german-holidays doom-modeline apache-mode)))
+ )
 ;; FONTS
 ;; -----
 (custom-set-faces
