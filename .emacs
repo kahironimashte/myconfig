@@ -24,7 +24,7 @@
 (setq use-package-always-ensure t)
 
 ;; use Melpa-Org-Version instead of builtin. Vorher habe ich die neueste org-Version aus Melpa installiert.
-(assq-delete-all 'org package--builtins)
+;;(assq-delete-all 'org package--builtins);; deactivated [2021-02-24 Mi 23:22]
 ;; Quelle: https://github.com/jwiegley/use-package/issues/319#issuecomment-471274348
 
 ;; Lokalisierung
@@ -46,7 +46,7 @@
 (load custom-file)
 
 ;; Lade configuration.org
-(use-package org)
+;(use-package org) ; deactivated [2021-02-24 Mi 23:24]
 (setq config-org-file (concat homedir ".emacs.d/configuration.org"))
 (org-babel-load-file config-org-file)
 
