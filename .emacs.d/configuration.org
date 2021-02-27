@@ -1,11 +1,13 @@
 #+TITLE: Emacs-Konfiguration
-#+STARTUP: overview
-#+TODO: TODO FEHLER  | OK DONE
-#+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p)
+
 * Allgemeine Einstellungen
 :PROPERTIES:
 :CATEGORY: allg
 :END:
+** file-settings
+#+STARTUP: overview
+#+TODO: TODO FEHLER  | OK DONE
+#+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p)
 ** TODO Sicherung
 *** Ordner für Autosave-Dateien
 Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei.org# oder datei.org~). Diese machen den Ordner unübersichtlich, können aber in einem eigenen Verzeichnis angesiedelt werden. 
@@ -185,11 +187,20 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
    (yas-global-mode 1)
   )
 )
+(when (string-equal system-type "gnu/linux")
+  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
+  (use-package yasnippet
+   :config
+   (add-to-list 'yas-snippet-dirs (concat org-directory "/_config/yasnippets")); 'yas-snippet-dirs "~/ncloud/org/_config/yasnippets/")
+   (yas-global-mode 1)
+  )
+)
 #+end_src
 
 Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
 (add-hook 'yas-minor-mode-hook (lambda ()
                                                                  (yas-activate-extra-mode 'fundamental-mode)))
+
 
 ** ido-mode :navigation:
 *** Beschreibung
