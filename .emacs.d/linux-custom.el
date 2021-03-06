@@ -33,8 +33,6 @@
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight)))
  '(org-priority-highest 65)
  '(org-priority-lowest 68)
- '(package-selected-packages
-   '(yasnippet ztree yankpad yaml-mode yafolding which-key use-package steam smex smartparens ryo-modal org-super-agenda org-recur org-bullets org-bookmark-heading nov moody modus-vivendi-theme modus-operandi-theme json-mode js2-mode ido-completing-read+ hydra german-holidays doom-modeline apache-mode)))
 ;; FONTS
 ;; -----
 (custom-set-faces
