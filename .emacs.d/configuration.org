@@ -1601,7 +1601,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
     ("L" org-metaright)
     ("t" org-todo)
 ;;    ("R" rename-buffer)
-    ("R" flyspell-check-previous-highlighted-word)
+;;    ("R" flyspell-check-previous-highlighted-word)
     ("_" "C-_")
     ("y" "C-y")
     ("w" "M-w")
