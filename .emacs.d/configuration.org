@@ -11,7 +11,14 @@
 *** Ordner für Autosave-Dateien
 Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei.org# oder datei.org~). Diese machen den Ordner unübersichtlich, können aber in einem eigenen Verzeichnis angesiedelt werden. 
 #+BEGIN_SRC emacs-lisp 
-(setq backup-directory-alist '(("." . "~/ncloud/_config/backups/")))
+(setq 
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist `(("." . ,(concat org-directory "/_config/backups/")))
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t       ; use versioned backupsr 
+)
 #+END_SRC
 ** Startup
    - disable splash screen and startup message
@@ -920,7 +927,15 @@ To get the same for a weekly date-tree change the function to
 
 *** Nützliche Links für org-capture
     - [[https://stackoverflow.com/questions/31663932/how-to-add-tags-completion-to-org-mode-capture][SO-Antwort zu Tags, erklärt auch wie man funktionen im Aufruf nutzt.]]
-** TODO org-caldav :WindowsOnly:Paket:
+** FEHLER org-caldav :WindowsOnly:Paket:
+Compiling internal form(s) at Wed Mar  3 23:13:32 2021
+Warning (bytecomp): reference to free variable ‘org-icalendar-timezone’
+Warning (bytecomp): reference to free variable ‘org-export-before-parsing-hook’
+Warning (bytecomp): reference to free variable ‘org-icalendar-timezone’
+Warning (bytecomp): ‘org-set-tags-to’ is an obsolete function (as of Org 9.2); use ‘org-set-tags’ instead.
+Warning (bytecomp): the following functions are not known to be defined:
+oauth2-auth-and-store, oauth2-url-retrieve-synchronously
+
 #+begin_src emacs-lisp :results silent
 (when (string-equal system-type "windows-nt")
 
@@ -928,17 +943,18 @@ To get the same for a weekly date-tree change the function to
       :init
       (setq org-caldav-url "https://cloud.ist.gold/remote.php/dav/calendars/fabian")
       (setq org-caldav-calendars
-      '((:calendar-id "org"
-	 :inbox "c:/org/calinbox.org"
-	 :files ("c:/org/calendar.org")
+      `((:calendar-id "org"
+         :inbox ,(concat org-directory "/calinbox.org")
+         :files (,(concat org-directory "/calendar.org"))
          :skip-conditions ('todo 'done)
 	 ;;    :sync-direction ("org->cal") ; weiß nicht, ob die Synthax passt. [[Link][https://github.com/dengste/org-caldav]]
 	;;     :exclude-tags ("work")
 	;;     :select-tags ("work") 
       )))
       (setq org-icalendar-timezone "Europe/Berlin")
-      (setq org-caldav-backup-file "c:/org/caldav/org-caldav-backup.org")
-      (setq org-caldav-save-directory "c:/org/caldav/")
+      (setq org-caldav-backup-file (concat org-directory "/caldav/org-caldav-backup.org"))
+      (setq org-caldav-save-directory (concat org-directory "/caldav/"))
+
 
       :config
       ;; This enables alarms in entries on export
@@ -1792,10 +1808,8 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 :CATEGORY: textEd
 :END:
 ** TODO Rechtschreibung
+Ich musste noch das deutsche Wörterbuch installieren, bevor es klappt: sudo apt-get install aspell-de
  #+BEGIN_SRC  emacs-lisp
- ;; Rechtschreibung
- ;;----------------
- ;; Ich musste noch das deutsche Wörterbuch installieren, bevor es klappt: sudo apt-get install aspell-de
 (when (string-equal system-type "gnu/linux")
   (setq ispell-dictionary "deutsch8")
   (setq ispell-local-dictionary "deutsch")
