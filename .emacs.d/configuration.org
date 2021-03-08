@@ -190,10 +190,9 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
   ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
   (use-package yasnippet
    :config
-   (add-to-list 'yas-snippet-dirs (concat org-directory "/_config/yasnippets")); 'yas-snippet-dirs "~/ncloud/org/_config/yasnippets/")
+   (add-to-list 'yas-snippet-dirs (concat org-directory "/_config/yasnippets"))
    (yas-global-mode 1)
-  )
-)
+))
 #+end_src
 
 Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
@@ -403,21 +402,25 @@ If you insert the logotype images into org-mode, make sure to turn on org-displa
 	   ((org-agenda-span 1)
 	    (org-agenda-overriding-header "Heute - Aktuelle Ausgabe, Kalender, Inbox")
 	    (org-agenda-category-filter-preset '("+inbox" "+calendar" "+xa" "+reg"))
+	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 	    ))
 	  ("d4" "Alle Arbeits-Tasks" agenda ""
 	   ((org-agenda-span 1)
 	    (org-agenda-overriding-header "Heute - Alle Arbeits-Tasks")
 	    (org-agenda-files `(,(concat org-directory "/atasks.org")))
-	    (org-agenda-category-filter-preset '("+inbox" "+calendar" "+xa" "+reg"))
+	    (org-agenda-category-filter-preset '("-habit"))
+	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 	    ))
 	  ("d7" "alle Tasks ohne Habits" agenda ""
 	   ((org-agenda-span 1)
 	    (org-agenda-overriding-header "Heute ohne Habits")
 	    (org-agenda-category-filter-preset '("-habit"))
+	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 	    ))
 	  ("d8" "Arbeit - Inbox" tags-todo "inbox"
 	   ((org-agenda-overriding-header "Arbeit - Inbox")
 	    (org-agenda-sorting-strategy '(deadline-down scheduled-down priority-down todo-state-down))
+	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 	    ))
 	  ;; ("d5" "Nächste Schritte für Inbox" 
 	  ;;      ((todo "WAITING|NEXT"
@@ -456,17 +459,13 @@ If you insert the logotype images into org-mode, make sure to turn on org-displa
 **** g - eigene Agendas
 #+begin_src emacs-lisp :results output silent
          ("g" . "My Custom Agendas")
-
- ;	("gm" "Ausgaben diesen und nächsten Monat" tags "{20#[3][3-9]}") 
- ;	("gM" "Ausgaben im nächsten Halbjahr" tags "{20#[3][3-9]}") ;; Suche für Ausgaben im April (14-18)
 	 ("gA" "alle Autorentexte" tags "Autor|AUTOR<>\"\""
 	      ((org-agenda-sorting-strategy '(todo-state-down)
 	      )))
 	 ("gb" "Autorentexte via Properties" 
-	    (;;(agenda "")
+	    (
 	    (tags-todo "TODO=\"NEXT\"+AUTOR<>\"\""
 	      ((org-agenda-overriding-header "Texte von Autoren")))
- ;;	      (org-agenda-sorting-strategy '(todo-state-down)))
 	    (tags "TODO=\"WAITING\"+AUTOR<>\"\""
 	      ((org-agenda-overriding-header "\nWarte auf Rückmeldung")))
 	    (tags "TODO=\"TODO\"+AUTOR<>\"\""
@@ -768,7 +767,7 @@ the hierarchy, it will be used.
 (setq calendar-week-start-day 1)
 #+end_src
 ** Clocking / Aufwand
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :results output silent
 ;; CLOCKING: global Effort estimate values
 (setq org-global-properties
       '(("Effort_ALL" .
@@ -783,14 +782,7 @@ the hierarchy, it will be used.
 ;;---------
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate) ;; Erklaerung
-#+END_SRC
-
-#+RESULTS:
-| recentf-save-list | ido-kill-emacs-hook | desktop-kill | org-clock-save | org-babel-remove-temporary-directory |   |   | 
- |
-| 
-                |                     |              |                |                                      |   |   |    |
-
+#+end_src
 *** TODO [#C] Erklärung für org-clock-persistence-insinuate
 *** Clock-Report bis auf 3 Level tief
 #+begin_src emacs-lisp
@@ -866,7 +858,7 @@ the hierarchy, it will be used.
     ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
       "** %^{Title} \n %^t" :time-prompt t)
     ("m" "Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
-      "** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?")
+      "** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?")
     ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
       :prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
@@ -932,9 +924,6 @@ To get the same for a weekly date-tree change the function to
 	 :inbox "c:/org/calinbox.org"
 	 :files ("c:/org/calendar.org")
          :skip-conditions ('todo 'done)
-	 ;;    :sync-direction ("org->cal") ; weiß nicht, ob die Synthax passt. [[Link][https://github.com/dengste/org-caldav]]
-	;;     :exclude-tags ("work")
-	;;     :select-tags ("work") 
       )))
       (setq org-icalendar-timezone "Europe/Berlin")
       (setq org-caldav-backup-file "c:/org/caldav/org-caldav-backup.org")
@@ -1197,7 +1186,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 #+end_src
 ** FEHLER COMMENT Count Tags :defun:
    - [2020-04-19 Sun] ggf. gibt es einen Konflikt mit [[*Style Tags based on Regular Expressions][Style Tags based on Regular Expressions]]
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp :results output silent
 (defun count-tags ()
   (let (tags count)
     (save-excursion
@@ -1216,29 +1205,11 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
                                                   :test #'equal))
                finally return
                (cl-sort result #'> :key #'car)))))
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
 :colnames '(freq tags)
 (count-tags)
-#+END_SRC
-#+results:
-| 67 |       |   |   |   | 
- |
-| 
- |       |   |   |   |    |
-|  1 | one   |   |   |   | 
- |
-| 
- |       |   |   |   |    |
-|  1 | @two  |   |   |   | 
- |
-| 
- |       |   |   |   |    |
-|  1 | three |   |   |   | 
- |
-| 
- |       |   |   |   |    |
+#+end_src
+
 * Keys / Tastenkürzel
 ** Allgemein
 #+begin_src emacs-lisp :results output silent
@@ -1601,12 +1572,12 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
     ("L" org-metaright)
     ("t" org-todo)
 ;;    ("R" rename-buffer)
-    ("R" flyspell-check-previous-highlighted-word)
+;;    ("R" flyspell-check-previous-highlighted-word)
     ("_" "C-_")
     ("y" "C-y")
     ("w" "M-w")
     ("W" "C-w")
-    ("v" "C-v")
+    ("v" "C-v") 
     ("V" "M-v")
     ("i" "M-b")
     ("o" "M-f")
@@ -2105,7 +2076,7 @@ This gives me a truly lovely ribbon-based modeline.
 ** Difference in Files
 18.9 Comparing Files
 
-The command M-x diff prompts for two file names, using the minibuffer, and displays the differences between the two files in a buffer named *diff*. This works by running the diff program, using options taken from the variable diff-switches. The value of diff-switches should be a string; the default is "-u" to specify a unified context diff. See Diff, for more information about the diff program.
+The command M-x diff prompts for two file names, using the minibuffer, and displays the differences between the two files in a buffer named *diff*. This works by running the diff program, using options taken from the variable diff-switches. The value of diff-switches should be a string; the default is ="-u"= to specify a unified context diff. See Diff, for more information about the diff program.
 
 The output of the diff command is shown using a major mode called Diff mode. See Diff Mode.
 
