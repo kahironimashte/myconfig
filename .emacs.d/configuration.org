@@ -183,6 +183,16 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+END_SRC
 ** org-bookmark-heading :navigation:
 
+** dired
+   Standardmäßig alle Details außer Dateinamen ausblenden (toogle mit =(= )
+#+begin_src emacs-lisp :results output silent
+(add-hook 'dired-mode-hook
+	  (lambda()
+	    (dired-hide-details-mode 1)
+	  )
+     )
+(setq ls-lisp-dirs-first t) ;; Ordner in Dired zuerst anzeigen
+#+end_src
 ** yasnippet :content:
 #+begin_src emacs-lisp :results output silent
 (when (string-equal system-type "windows-nt")
@@ -453,11 +463,11 @@ If you insert the logotype images into org-mode, make sure to turn on org-displa
 	      ))
 	   ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
 	  )
-	  ("d6" "Autorentexte bestellt und da" tags-todo "TODO=\"AUFTR\"|TODO=\"VORH\"+Autor"
+	  ("d6" "Autorentexte bestellt und da" tags-todo "TODO=\"PROJ\"+kur"
 	   ((org-agenda-overriding-header "Alle offenen Autorentexte")
 	    (org-agenda-sorting-strategy '(todo-state-down priority-down))
 	    ))
-	  ("d9" "Autorentexte " tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor"
+	  ("d9" "Autorentexte " tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor|kur"
 	   ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
 	    (org-agenda-sorting-strategy '(todo-state-down priority-down))
 	    ))
@@ -835,14 +845,7 @@ the hierarchy, it will be used.
   #+BEGIN_SRC emacs-lisp
   (setq org-ellipsis "⤵")
    #+END_SRC
-** TODO org-capture templates :syncStatus:
-*** TODO sinnvolles Capture für Ziele
-*** TODO ryo für Anmerkungen deaktivieren: :Verbesserung:
-;;(add-hook 'org-capture-mode-hook 'ryo-modal-mode) funktioniert nicht.
-*** TODO capture für Anrufe :Verbesserung:
-*** DONE Schnelle Reaktion auf neue Aufgaben
-    - etwas Ungeplante kommt dazu, das ich sofort erledigen soll
-    - etwas Ungeplantes kommt dazu das ich im Lauf des Tages erledigen soll
+** org-capture templates [0/2] :syncStatus:
 *** Code
     - Hilfe unter :: [[help:org-capture-templates][org-capture-templates]]
 #+BEGIN_SRC emacs-lisp  :results output silent
@@ -889,16 +892,18 @@ the hierarchy, it will be used.
     ("t" "Todo [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
     ("n" "Neuer Text oder neue Textidee")
     ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-      "*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atdetails \n\n  - Anmerkungen :: %?\n\n/atprop" :empty-lines-after 1)
+      "*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
     ("nA" "Template für neuen Autoren-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-      "*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atdetails \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
+      "*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
     ("nE" "Template für neuen Eigenen-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-      "*** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
+      "*** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
     ("ne" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} :21#%^{voraussichtliche Ausgabe}:%^g \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
+      "*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:%^g \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
  ))
 #+END_SRC
 
+*** TODO sinnvolles Capture für Ziele
+*** TODO capture für Anrufe :Verbesserung:
 *** COMMENT Test für Ablage in wöchentlichen oder monatlichen Trees.
 #+begin_src emacs-lisp :results output silent
 (defun org-find-month-in-datetree()
