@@ -802,6 +802,14 @@ the hierarchy, it will be used.
  (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
 ;; (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
  #+END_SRC
+** LateX
+- gesamte Variable:   (setq org-format-latex-options '(:foreground default :background default :scale 1.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+	     ("begin" "$1" "$" "$$" "\\(" "\\[")))
+- aber eigentlich reicht es nur einen Wert zu vernändern:
+#+begin_src emacs-lisp :results output silent
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+#+end_src
+
 ** Make org beautiful
 #+BEGIN_SRC emacs-lisp
 ;; Make Org beautiful
