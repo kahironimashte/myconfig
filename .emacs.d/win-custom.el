@@ -6,7 +6,6 @@
 ;; ##    ## ##     ## ##    ##    ##    ##     ## ##     ##  ##   ##      ##       
 ;;  ######   #######   ######     ##     #######  ##     ## #### ######## ######## 
 ;; Alles, was über das customize-Feature von emas configuriert wurde (M-x customize) - Schriftarten sind Windows-spezifisch.
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -36,7 +35,7 @@
  '(ido-use-url-at-point nil)
  '(ido-use-virtual-buffers t)
  '(org-agenda-files
-   '("c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
+   '("c:/org/arbeit/fokus/2021_zusammen_mit_Robotern_bauen.org" "c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up priority-down category-keep)
      (todo priority-down category-keep)
@@ -59,8 +58,7 @@
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
  '(package-selected-packages
-   '(yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov moody ido-completing-read+)))
-
+   '(imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -112,3 +110,4 @@
  '(secondary-selection ((t (:background "LightPink"))))
  '(shadow ((t (:foreground "honeydew3"))))
  '(variable-pitch ((t (:family "IBM Plex Sans Text" :height 152 :weight normal :antialias subpixel)))))
+

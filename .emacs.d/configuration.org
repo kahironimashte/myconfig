@@ -215,7 +215,24 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
 (add-hook 'yas-minor-mode-hook (lambda ()
                                                                  (yas-activate-extra-mode 'fundamental-mode)))
+** imenu-anywhere :navigation:
+#+begin_src emacs-lisp :results output silent
+  (use-package imenu-anywhere
+    :config
+    (setq org-imenu-depth 2) ;; Wie tiefe Headings ansteuerbar sind.
+)
 
+  ;; (defvar push-mark-before-goto-char nil)
+
+  ;; (defadvice goto-char (before push-mark-first activate)
+  ;;    (when push-mark-before-goto-char
+  ;;       (push-mark)))
+
+  ;; (defun ido-imenu-push-mark ()
+  ;;    (interactive)
+  ;;    (let ((push-mark-before-goto-char t))
+  ;;       (ido-imenu)))
+#+end_src
 ** ido-mode :navigation:
 *** Beschreibung
  This is the built-in framework for interactively narrowing down the
@@ -975,6 +992,12 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 ;; Den Habit-Graph auf Position (von links) bringen.
 (setq org-habit-graph-column 50)
 #+END_SRC
+** org-goto :navigation:
+#+begin_src emacs-lisp :results output silent
+(setq org-goto-interface 'outline-path-completion) ;; alternative 'outline
+(setq org-outline-path-complete-in-steps nil)
+#+end_src
+[[https://emacs.stackexchange.com/questions/32617/how-to-jump-directly-to-an-org-headline][Link:]] Setting org-goto-interface to one of the two recognised values does not mean sacrificing the alternative interface. Calling org-goto with a prefix argument (i.e. C-u C-c C-j or C-u M-x org-goto RET) automatically selects the alternative interface for the current completion. This way, you can set org-goto-interface to the interface you are likely to use most often and use the prefix argument when you wish to temporarily switch behaviour. If even this does not suit your needs, you can always write your own wrapper around org-goto, as per Att Righ's example.
 ** org-Recur :package:
    - Paket für die wiederholte Planung von Überchriften
 #+begin_src emacs-lisp :results silent
@@ -1331,6 +1354,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 #+begin_src emacs-lisp
     ("b"
      (("b" bookmark-jump)
+      ("j" imenu-anywhere)
       ("m" bookmark-set)
       ("l" bookmark-bmenu-list)
       ("s" bookmark-save)
@@ -1424,14 +1448,15 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("f" delete-other-windows)
       ("g" switch-to-buffer)
       ("h" org-backward-heading-same-level)
-      ("j" org-next-visible-heading)
-      ("k" org-previous-visible-heading)
+      ("n" org-next-visible-heading)
+      ("p" org-previous-visible-heading)
       ("l" org-forward-heading-same-level)
-      ("n" clone-indirect-buffer-other-window)
+      ("j" org-goto)
+      ("2" clone-indirect-buffer-other-window)
       ("N" make-frame-command)
       ("o" other-window)
-      ("p" xah-pop-local-mark-ring)
-      ("P" pop-global-mark)
+      ("m" xah-pop-local-mark-ring)
+      ("M" pop-global-mark)
       ("r" split-window-right)      ;; b for split-window-below
       ("s" kahiro-split-and-switch)
 ;      ("S" kahiro-vsplit-and-switch)
