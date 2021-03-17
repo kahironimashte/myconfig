@@ -41,8 +41,6 @@
   (setq custom-file-name "linux-custom.el")
   )
 
-    
-
 ;; Lade Einstellungen, die über das Custom-Interface gemacht wurden. Meistens für die Darstellung und Gestaltung
 ;; - Meistens fuer die Darstellung und Gestaltung
 
