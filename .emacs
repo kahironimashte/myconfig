@@ -34,14 +34,14 @@
 (when (string-equal system-type "windows-nt")
   (setq homedir "C:/Software/Emacs/myconfig/")
   (setq custom-file-name "win-custom.el")
-  (setq org-directory "c:/org")
   )
 
 (when (string-equal system-type "gnu/linux")
   (setq homedir "~/")
   (setq custom-file-name "linux-custom.el")
-  (setq org-directory "~/ncloud/org")
   )
+
+    
 
 ;; Lade Einstellungen, die über das Custom-Interface gemacht wurden. Meistens für die Darstellung und Gestaltung
 ;; - Meistens fuer die Darstellung und Gestaltung

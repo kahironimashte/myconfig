@@ -26,6 +26,14 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (setq inhibit-startup-message t) 
 (setq initial-scratch-message nil)
 #+end_src
+** org-directory
+#+begin_src emacs-lisp :results output silent
+(if (string-equal system-type "windows-nt")
+    (setq org-directory "c:/org")
+    (setq org-directory "~/ncloud/org")
+  )
+#+end_src
+
 ** Default Modes
 #+begin_src emacs-lisp :results output silent
 ;; Default Modes ON
@@ -166,6 +174,12 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  (global-set-key "\C-ca" 'org-agenda)
  (global-set-key "\C-cc" 'org-capture)
 #+end_src
+
+** Archive-Location 
+#+begin_src emacs-lisp :results output silent
+(setq org-archive-location (concat org-directory "/archiv/%s_archive::datetree/"))
+#+end_src
+
 * Pakete                                                    :package:
 ** COMMENT doom-modeline :appearance:
 #+BEGIN_SRC emacs-lisp
@@ -772,7 +786,7 @@ Here are a few examples:
 You may set this option on a per-file basis by adding to the buffer a
 line like
 
-#+ARCHIVE: basement::** Finished Tasks
+#+ARCHIVE: %s_archive::datetree
 
 You may also define it locally for a subtree by setting an ARCHIVE property
 in the entry.  If such a property is found in an entry, or anywhere up
