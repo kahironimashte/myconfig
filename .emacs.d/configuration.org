@@ -116,7 +116,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  (global-set-key (kbd "<kp-6>") 'kahiro-kp-6) 
  (global-set-key (kbd "<kp-9>") 'kahiro-kp-9) 
  (global-set-key (kbd "<kp-0>") 'kahiro-agenda-for-current-subtree) 
+ (global-set-key (kbd "<kp-decimal>") 'kahiro-kp-decimal) 
 
+(defun kahiro-kp-decimal (&optional arg)
+  (interactive "P")
+  (org-agenda arg "t" t))
 
 (defun kahiro-kp-1 (&optional arg)
   (interactive "P")
@@ -584,8 +588,16 @@ If you insert the logotype images into org-mode, make sure to turn on org-displa
                  ((org-agenda-overriding-header "\nUnscheduled TODO")
                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
 	   )))	
-	   nil
-           nil)
+	 )
+#+end_src
+**** p - Planung (Arbeit)
+#+begin_src emacs-lisp :results output silent
+;; (setq org-agenda-custom-commands
+;;       '(
+	 ("p" . "Ansichten für die Planung")
+	 ("pi" "Inbox-Aufgaben nach Priorität" tags-todo "TODO=\"TODO\"+inbox)")
+	 ("pp" "Inbox-Aufgaben zum Terminieren" tags-todo "TODO=\"NEXT\"+inbox")
+;; ))
 #+end_src
 **** Config ENDE
 #+begin_src emacs-lisp :results output silent
