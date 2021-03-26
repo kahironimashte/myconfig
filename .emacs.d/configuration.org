@@ -199,6 +199,15 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
   (+ (frame-char-height) 2))
 (advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
 #+END_SRC
+** anki-editor :learning:
+- Vouraussetzungen:
+  1. =sudo apt install anki curl=
+  3. Anki Addon Code: =2055492159= eintippen unter "Addons" / Get Addons
+  4. Log in bei =ankiweb.net= via E-Mail und Passwort
+#+begin_src emacs-lisp :results output silent
+(use-package anki-editor)
+#+end_src
+
 ** org-bookmark-heading :navigation:
 
 ** dired
