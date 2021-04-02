@@ -172,6 +172,10 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 (define-key key-translation-map (kbd "C-<escape>") (kbd "ESC"))
 #+end_src
+  | Key | function        |
+  |-----+-----------------|
+  | F6  | [[*makros][makro-statusnow]] |
+  |     |                 |
 **** org-mode
 #+begin_src emacs-lisp :results output silent
  (global-set-key "\C-cl" 'org-store-link)
@@ -205,7 +209,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
   3. Anki Addon Code: =2055492159= eintippen unter "Addons" / Get Addons
   4. Log in bei =ankiweb.net= via E-Mail und Passwort
 #+begin_src emacs-lisp :results output silent
-(use-package anki-editor)
+(use-package anki-editor
+  :config
+  (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
+        anki-editor-org-tags-as-anki-tags t)
+)
 #+end_src
 
 ** org-bookmark-heading :navigation:
@@ -422,6 +430,22 @@ If you insert the logotype images into org-mode, make sure to turn on org-displa
    - für espanso config-files.
 #+begin_src emacs-lisp :results output silent
 (use-package yaml-mode)
+#+end_src
+** Use =minions= to hide all minor modes
+
+H. R. S: I never want to see a minor mode, and manually adding =:diminish= to every
+use-package declaration is a hassle. This uses =minions= to hide all the minor
+modes in the modeline. Nice!
+
+By default there's a =;-)= after the major mode; that's an adorable default, but
+I'd rather skip it.
+
+#+begin_src emacs-lisp
+   (use-package minions
+     :config
+     (setq minions-mode-line-lighter ""
+           minions-mode-line-delimiters '("" . ""))
+     (minions-mode 1))
 #+end_src
 ** TODO Neotree
 ** TODO Minimap
@@ -1317,7 +1341,11 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
  #+END_SRC 
 ** RYO Key settings
 *** TODOs
-**** TODO Sortierfunktionen auf eine eigene Taste legen.
+**** TODO ryo-modal-keys snippet um ryo keys testen zu können. 
+ (ryo-modal-keys 
+...
+)
+**** DONE Sortierfunktionen auf eine eigene Taste legen.
 
 *** Tastenfunktionen
 #+BEGIN_SRC emacs-lisp
@@ -1502,7 +1530,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 
 **** n
      - hier kommt alles rein, was mit Fokussierung und Ansichten zu tun hat.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :results output silent
     ("n" 
      (("s" org-narrow-to-subtree)
       ("w" widen)
@@ -1515,6 +1543,24 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
       ("v" org-agenda-set-restriction-lock)
       ("x" org-agenda-remove-restriction-lock)
       ))
+#+end_src
+
+**** m
+#+begin_src emacs-lisp :results output silent
+    ("m"
+     (("a" ;anki-editor-commands
+      (("n" anki-editor-insert-note)
+       ("x" anki-editor-mode)
+       ("u" anki-editor-anki-connect-upgrade)
+       ("p" anki-editor-push-notes) ;; mit Prefix für "tree", doppel Prefix für "file"
+       ("P" anki-editor-retry-failure-notes)
+       ("c" anki-editor-cloze-dwim)
+       ("C" anki-editor-cloze-region)
+       ("h" anki-editor-export-subtree-to-html)
+       ("H" anki-editor-convert-region-to-html))
+      ))
+     )
+
 #+end_src
 
 **** r
@@ -2220,18 +2266,6 @@ See Emerge, for the Emerge facility, which provides a powerful interface for mer
 ** Gestalten
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
-* COMMENT test
-** test
-*** FEHLER test
-**** test
-** OK org-sort
-#+begin_src emacs-lisp :results output silent
-(defun kahiro-sort-by-time (&optional arg)
- (interactive)
- (org-sort-entries nil ?T)
-)
-#+end_src
-*** test
-**** <2021-02-17 Mi>
-**** <2021-02-16 Di>
-**** <2021-02-15 Mo>
+* COMMENT Subtree for tests
+
+     
