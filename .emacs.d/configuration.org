@@ -172,10 +172,10 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 (define-key key-translation-map (kbd "C-<escape>") (kbd "ESC"))
 #+end_src
-  | Key | function        |
-  |-----+-----------------|
-  | F6  | [[*makros][makro-statusnow]] |
-  |     |                 |
+  | Key | function        |  |
+  |-----+-----------------+----|
+  | F6  | [[*makros][makro-statusnow]] |  |
+  |     |                 |  |
 **** org-mode
 #+begin_src emacs-lisp :results output silent
  (global-set-key "\C-cl" 'org-store-link)
@@ -1142,6 +1142,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 
 ;; TODO Hier fehlt noch eine Erklärung
 (setq org-refile-allow-creating-parent-nodes 'confirm)     ;;allow creating nodes. Refile has to end with /newheadingname
+(setq org-refile-use-outline-path 'file)
 
 ;; refile nur in der aktuellen Datei (geklaut von Sacha Chua). Aufruf über c-W.
 (defun my/org-refile-in-file (&optional prefix)
