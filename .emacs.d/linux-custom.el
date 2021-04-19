@@ -11,7 +11,7 @@
    ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
  '(custom-enabled-themes '(whiteboard))
  '(org-agenda-files
-   '("~/ncloud/org/prsn/karriere.org" "~/ncloud/org/htasks.org" "~/ncloud/org/atasks.org" "~/ncloud/org/calendar.org"))
+   '("~/ncloud/org/regularien.org" "~/ncloud/org/prsn/karriere.org" "~/ncloud/org/htasks.org" "~/ncloud/org/atasks.org" "~/ncloud/org/calendar.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up habit-down priority-down category-keep)
      (todo priority-down category-keep)
