@@ -35,7 +35,7 @@
  '(ido-use-url-at-point nil)
  '(ido-use-virtual-buffers t)
  '(org-agenda-files
-   '("c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
+   '("c:/org/arbeit/texte/21#16_Baukultur_digital_retten.org" "c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up priority-down category-keep)
      (todo priority-down category-keep)
