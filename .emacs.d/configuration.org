@@ -172,10 +172,10 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 (define-key key-translation-map (kbd "C-<escape>") (kbd "ESC"))
 #+end_src
-  | Key | function        |  |
+  | Key | function        |  |
   |-----+-----------------+----|
-  | F6  | [[*makros][makro-statusnow]] |  |
-  |     |                 |  |
+  | F6  | [[*makros][makro-statusnow]] |  |
+  |     |                 |  |
 **** org-mode
 #+begin_src emacs-lisp :results output silent
  (global-set-key "\C-cl" 'org-store-link)
@@ -186,6 +186,13 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 ** Archive-Location 
 #+begin_src emacs-lisp :results output silent
 (setq org-archive-location (concat org-directory "/archiv/%s_archive::datetree/"))
+#+end_src
+
+** Inline-Images
+   - Die Breite des Bildes kann gesetzt werden über =#+ATTR_ORG: :width 100= in der Zeile über dem Link.
+ 
+#+begin_src emacs-lisp :results output silent
+(setq org-image-actual-width nil)
 #+end_src
 
 * Pakete                                                    :package:
