@@ -2175,10 +2175,10 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
 (setq org-fontify-done-headline nil)
 #+end_src
 
-** [#C] Tool- Scroll- und Menu-Bar
+** Tool-/Scroll-/Menu-Bar
     I don't usually use the menu or scroll bar, and they take up useful space.
  #+begin_src emacs-lisp
-   (tool-bar-mode 0)
+   (tool-bar-mode -1)
    (menu-bar-mode 1)
    (scroll-bar-mode -1)
  #+end_src
