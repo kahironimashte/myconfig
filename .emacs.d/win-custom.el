@@ -13,27 +13,6 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(whiteboard))
  '(font-use-system-font t)
- '(ido-all-frames nil)
- '(ido-auto-merge-work-directories-length -1)
- '(ido-buffer-disable-smart-matches t)
- '(ido-completion-buffer "*Ido Completions*")
- '(ido-completion-buffer-all-completions nil)
- '(ido-confirm-unique-completion nil)
- '(ido-create-new-buffer 'prompt)
- '(ido-decorations
-   '(" " "   " " | " " | …" "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]" " " " "))
- '(ido-default-buffer-method 'selected-window)
- '(ido-default-file-method 'selected-window)
- '(ido-enable-flex-matching t)
- '(ido-enable-last-directory-history t)
- '(ido-enable-prefix nil)
- '(ido-enable-regexp nil)
- '(ido-everywhere t)
- '(ido-max-window-height 1)
- '(ido-use-faces t)
- '(ido-use-filename-at-point nil)
- '(ido-use-url-at-point nil)
- '(ido-use-virtual-buffers t)
  '(org-agenda-files
    '("c:/org/arbeit/texte/21#16_Baukultur_digital_retten.org" "c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
  '(org-agenda-sorting-strategy
@@ -49,7 +28,7 @@
  '(org-highest-priority 65)
  '(org-lowest-priority 68)
  '(org-modules
-   '(org-docview org-habit org-info org-inlinetask org-mhe org-w3m))
+   '(ol-docview org-habit ol-info org-inlinetask ol-mhe ol-w3m))
  '(org-priority-faces
    '((65 :inherit org-priority :weight bold)
      (66 :inherit org-priority :family "IBM Plex Mono SemiBold" :weight semibold)
@@ -58,7 +37,7 @@
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
  '(package-selected-packages
-   '(anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+)))
+   '(esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

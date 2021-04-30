@@ -7,19 +7,6 @@
 #+STARTUP: overview
 #+TODO: TODO FEHLER  | OK DONE
 #+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p)
-** TODO Sicherung
-*** Ordner für Autosave-Dateien
-Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei.org# oder datei.org~). Diese machen den Ordner unübersichtlich, können aber in einem eigenen Verzeichnis angesiedelt werden. 
-#+BEGIN_SRC emacs-lisp 
-(setq 
-   backup-by-copying t      ; don't clobber symlinks
-   backup-directory-alist `(("." . ,(concat org-directory "/_config/backups/")))
-   delete-old-versions t
-   kept-new-versions 6
-   kept-old-versions 2
-   version-control t       ; use versioned backupsr 
-)
-#+END_SRC
 ** Startup
    - disable splash screen and startup message
 #+begin_src emacs-lisp :results output silent
@@ -34,6 +21,19 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
   )
 #+end_src
 
+** TODO Sicherung
+*** Ordner für Autosave-Dateien
+Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei.org# oder datei.org~). Diese machen den Ordner unübersichtlich, können aber in einem eigenen Verzeichnis angesiedelt werden. 
+#+BEGIN_SRC emacs-lisp 
+(setq 
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist `(("." . ,(concat org-directory "/_config/backups/")))
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t       ; use versioned backupsr 
+)
+#+END_SRC
 ** Default Modes
 #+begin_src emacs-lisp :results output silent
 ;; Default Modes ON
@@ -172,10 +172,10 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 (define-key key-translation-map (kbd "C-<escape>") (kbd "ESC"))
 #+end_src
-  | Key | function        |  |
-  |-----+-----------------+----|
-  | F6  | [[*makros][makro-statusnow]] |  |
-  |     |                 |  |
+  | Key | function        |   |
+  |-----+-----------------+---|
+  | F6  | [[*makros][makro-statusnow]] |   |
+  |     |                 |   |
 **** org-mode
 #+begin_src emacs-lisp :results output silent
  (global-set-key "\C-cl" 'org-store-link)
@@ -196,6 +196,14 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+end_src
 
 * Pakete                                                    :package:
+** COMMENT Emacs Startup Profiler - ESUP
+   #+begin_src emacs-lisp :results output silent
+     (use-package esup
+       :ensure t
+       ;; To use MELPA Stable use ":pin melpa-stable",
+       ;;:pin melpa
+       )   
+#+end_src
 ** COMMENT doom-modeline :appearance:
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline
@@ -216,11 +224,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
   3. Anki Addon Code: =2055492159= eintippen unter "Addons" / Get Addons
   4. Log in bei =ankiweb.net= via E-Mail und Passwort
 #+begin_src emacs-lisp :results output silent
-(use-package anki-editor
-  :config
-  (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
-        anki-editor-org-tags-as-anki-tags t)
-)
+  (use-package anki-editor
+    :config
+    (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
+	  anki-editor-org-tags-as-anki-tags t)
+  )
 #+end_src
 
 ** org-bookmark-heading :navigation:
@@ -1568,7 +1576,6 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
        ("H" anki-editor-convert-region-to-html))
       ))
      )
-
 #+end_src
 
 **** r

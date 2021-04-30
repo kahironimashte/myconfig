@@ -1,3 +1,12 @@
+;; Minimize garbage collection during startup - faster?
+(setq gc-cons-threshold most-positive-fixnum)
+
+;; Lower threshold back to 8 MiB (default is 800kB)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (expt 2 23))))
+
+
 (require 'package) ;; aktiviert package.el, den Paketmanager
 
 ;; Paketquellen MELPA hinzufuegen
@@ -51,6 +60,5 @@
 
 (setq config-org-file (concat homedir ".emacs.d/configuration.org"))
 (org-babel-load-file config-org-file)
-
 
 
