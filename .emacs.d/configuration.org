@@ -2193,21 +2193,6 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
  #+end_src
 
 *** TODO [#D] Make menu toggle-able
-** [#B] COMMENT Use =moody= for a beautiful modeline
-
-This gives me a truly lovely ribbon-based modeline.
-
-#+begin_src emacs-lisp
-(use-package moody
-  :config
-  (setq x-underline-at-descent-line t)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode)
-  (setq moody-mode-line-height 24)
-  )
-
-
-#+end_src
 ** Split-Verhalten
    - legt die Mindestbreite fest, um horizontal zu teilen, also rechts einen neuen Buffer hinzuzufügen. 
 #+begin_src emacs-lisp :results output silent
