@@ -101,6 +101,9 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
   (interactive "P")
   (org-agenda arg "gh" 'subtree))
 
+(defun kahiro-all-tasks-for-buffer (&optional arg) ;; ungenutzt seit [2021-05-07 Fr]
+  (interactive "P")
+  (org-agenda arg "t" t))
 
 #+end_src
 **** Keypad :Funktionen:
@@ -115,40 +118,36 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  (global-set-key (kbd "<kp-3>") 'kahiro-kp-3) 
  (global-set-key (kbd "<kp-6>") 'kahiro-kp-6) 
  (global-set-key (kbd "<kp-9>") 'kahiro-kp-9) 
- (global-set-key (kbd "<kp-0>") 'kahiro-agenda-for-current-subtree) 
- (global-set-key (kbd "<kp-decimal>") 'kahiro-kp-decimal) 
-
-(defun kahiro-kp-decimal (&optional arg)
-  (interactive "P")
-  (org-agenda arg "t" t))
+ (global-set-key (kbd "<kp-0>") 'kahiro-agenda-next-xa-tasks) 
+ (global-set-key (kbd "<kp-decimal>") 'kahiro-agenda-for-current-subtree) 
 
 (defun kahiro-kp-1 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d1" nil))
+  (org-agenda arg "d1" nil)) ;; Arbeits-Tasks + Calendar
 
 (defun kahiro-kp-4 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d4" nil))
+  (org-agenda arg "d4" nil)) ;; Alle aus atasks
 
 (defun kahiro-kp-7 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d7" nil))
+  (org-agenda arg "d7" nil)) ;; Alle ohne habits
 
 (defun kahiro-kp-8 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d8" nil))
+  (org-agenda arg "d8" nil))  ;; Tag "inbox"
 
 (defun kahiro-kp-3 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d3" nil))
+  (org-agenda arg "d3" nil)) ;; Alle Autorentexte
 
 (defun kahiro-kp-6 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d6" nil))
+  (org-agenda arg "d6" nil)) ;; Autorentexte bestellt und da
 
 (defun kahiro-kp-9 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d9" nil))
+  (org-agenda arg "d9" nil)) ;; Autorentexte Idee und Suche
 
 ;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
 (defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
@@ -471,6 +470,7 @@ I'd rather skip it.
 :CATEGORY: org
 :END:
 ** Agenda-Mode
+   - [[*for org-agendas][Link zu Keyboard-Shortcuts]]
 *** TODO [#A] Agenda custom commands
 **** Config Start und Hilfe
   - [[help:org-agenda-custom-commands][Helpfile]]
@@ -497,16 +497,21 @@ I'd rather skip it.
 #+end_src
 **** d - tägliche Übersichten
 #+begin_src emacs-lisp :results output silent
+;;--- DEMO-Setup -- Uncomment for use ---
+;; (setq org-agenda-custom-commands
+;;       '(
+;;------------------------
 	  ("d" . "Tägliche Übersichen und Filter")
 	  ("d1" "Wichtigste Arbeits-Tasks" agenda ""
 	   ((org-agenda-span 1)
 	    (org-agenda-overriding-header "Heute - Aktuelle Ausgabe, Kalender, Inbox")
-	    (org-agenda-category-filter-preset '("+inbox" "+calendar" "+xa" "+reg"))
+	    (org-agenda-category-filter-preset '("-habit" "-htasks"))
+;;	    (org-agenda-category-filter-preset '("+inbox" "+calendar" "+xa" "+reg"))
 	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 	    ))
 	  ("d4" "Alle Arbeits-Tasks" agenda ""
 	   ((org-agenda-span 1)
-	    (org-agenda-overriding-header "Heute - Alle Arbeits-Tasks")
+	    (org-agenda-overriding-header "Heute - Nur Arbeits-Tasks")
 	    (org-agenda-files `(,(concat org-directory "/atasks.org")))
 	    (org-agenda-category-filter-preset '("-habit"))
 	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
@@ -550,10 +555,13 @@ I'd rather skip it.
 	   ((org-agenda-overriding-header "Alle offenen Autorentexte")
 	    (org-agenda-sorting-strategy '(todo-state-down priority-down))
 	    ))
-	  ("d9" "Autorentexte " tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor|kur"
+	  ("d9" "Autorentexte Idee und Suche" tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor|kur"
 	   ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
 	    (org-agenda-sorting-strategy '(todo-state-down priority-down))
 	    ))
+;;--- DEMO-Setup -- Uncomment for use ---
+;;  ))
+;;------------------------
 #+end_src
 
 **** g - eigene Agendas
@@ -602,6 +610,10 @@ I'd rather skip it.
 #+end_src
 **** n - nächste Schritte
 #+begin_src emacs-lisp :results output silent
+;;--- DEMO-Setup -- Uncomment for use ---
+;; (setq org-agenda-custom-commands
+;;       '(
+;;------------------------
 	 ("n" "Nächste Schritte für aktuelle Ausgabe" 
 	      ((todo "WAITING|NEXT"
 	       ((org-agenda-overriding-header "Nächste Schritte für aktuelle Ausgabe")
@@ -610,7 +622,7 @@ I'd rather skip it.
 	       (agenda ""
        		((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
 	       )))
-	      ((org-agenda-category-filter-preset '("+xa"))
+	      ((org-agenda-category-filter-preset '("+xa" "+inbox"))
 	       (org-agenda-span 1)
                (org-deadline-warning-days 0)      
 		))
@@ -625,9 +637,14 @@ I'd rather skip it.
       		(org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
 		(org-show-context-detail 'minimal)))
 	      ))
+;;--- DEMO-Setup -- Uncomment for use ---
+;;  ))
+;;------------------------
 	      ;; [1] die funktion "...skip-entry-if" verbirgt alle Treffer in der Agenda. 
 	      ;;     "'todo '("NEXT")" würde alle Tasks mit dem NEXT keyword ausblenden. 
-	      ;;     "'nottodo '("NEXT") zeigt nur Tasks mit NEXT keyword. 
+	      ;;     "'nottodo '("NEXT")" zeigt nur Tasks mit NEXT keyword. 
+
+
 #+end_src
 **** o - Todos ohne Zeitupunkt (stuck)
 #+begin_src emacs-lisp :results output silent
