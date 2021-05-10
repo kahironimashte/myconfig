@@ -608,6 +608,23 @@ I'd rather skip it.
 	      ((org-agenda-orverriding-header "Offene Themen für Konferenzen")
 	      ))
 #+end_src
+**** k - zu klären
+     #+begin_src emacs-lisp :results output silent
+       ("k" "zu klären"
+	      ((tags-todo "klären"
+		  ((org-agenda-overriding-header "Was zu klären ist:")
+		   (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+		   ))
+	       ;; (agenda ""
+	       ;;    ((org-agenda-span 1)
+	       ;;     (org-agenda-overriding-header "Heute - Nur Arbeits-Tasks")
+	       ;;     (org-agenda-files `(,(concat org-directory "/atasks.org")))
+	       ;;     (org-agenda-category-filter-preset '("-habit"))
+	       ;;     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	       ;;     ))
+	        )
+	       )
+#+end_src
 **** n - nächste Schritte
 #+begin_src emacs-lisp :results output silent
 ;;--- DEMO-Setup -- Uncomment for use ---
@@ -1253,10 +1270,14 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
    "Narrow to a subtree and show only headings with TODO keywords"
    (interactive)
    (org-narrow-to-subtree)
-   (org-show-todo-tree 1)
+   (org-show-todo-tree 13)  ;; Funktion ist abhängig von TODO-Reihenfolge
    (org-ctrl-c-ctrl-c))
 
 #+END_SRC
+
+#+RESULTS:
+: kahiro-show-PLAN-in-subtree
+
 *** TODO Erklärung der Synthax
 ** Split und Switch
      - Gibt eine Schnelle übersicht in einem halben Fenster. 
@@ -1765,8 +1786,8 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 	      ("u" org-agenda-undo)))
 	    ("t" org-agenda-todo)
 	    ("h" backward-char)
-	    ("j" next-line)
-	    ("k" previous-line)
+	    ("j" org-agenda-next-line)
+	    ("k" org-agenda-previous-line)
 	    ("l" forward-char)
 	    ("n" org-agenda-next-item)
 	    ("p" org-agenda-previous-item)
@@ -1824,13 +1845,13 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 	    ("=" org-agenda-filter-by-regexp)
 	    (">" org-agenda-date-prompt)
 	    ("?" org-agenda-show-the-flagging-note)
-	    ("A" org-agenda-append-agenda)
+;;	    ("A" org-agenda-append-agenda) ;; zum Anfang ist praktischer
 	    ("B" org-agenda-bulk-action)
 	    ("C" org-agenda-convert-date)
 	    ("D" org-agenda-toggle-diary)
-	    ("E" org-agenda-entry-text-mode)
+;;	    ("E" org-agenda-entry-text-mode) ;; zum Ende ist praktischer
 	    ("F" org-agenda-follow-mode)
-	    ("G" org-agenda-toggle-time-grid)
+	    ("G" org-agenda-append-agenda) ;; war org-agenda-toggle-time-grid
 	    ("I" org-agenda-clock-in)
 	    ("M" org-agenda-phases-of-moon)
 	    ("O" org-agenda-clock-out)

@@ -14,26 +14,29 @@
  '(custom-enabled-themes '(whiteboard))
  '(font-use-system-font t)
  '(org-agenda-files
-   '("c:/org/arbeit/texte/21#16_Baukultur_digital_retten.org" "c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
+   '("c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up priority-down category-keep)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep)))
- '(org-default-priority 67)
+ '(org-default-priority 67)            ; ersetzt durch org-priority-default
  '(org-habit-completed-glyph 43)
  '(org-habit-show-done-always-green t)
  '(org-habit-today-glyph 9728)
  '(org-hide-leading-stars t)
- '(org-highest-priority 65)
- '(org-lowest-priority 68)
+ '(org-highest-priority 65)            ; ersetzt durch org-priority-highest
+ '(org-lowest-priority 68)             ; ersetzt durch org-priority-lowest
  '(org-modules
    '(ol-docview org-habit ol-info org-inlinetask ol-mhe ol-w3m))
+ '(org-priority-default 67)
  '(org-priority-faces
    '((65 :inherit org-priority :weight bold)
      (66 :inherit org-priority :family "IBM Plex Mono SemiBold" :weight semibold)
      (67 :inherit org-priority :family "IBM Plex Mono" :weight normal)
      (68 :inherit org-priority :family "IBM Plex Mono Light" :weight light)))
+ '(org-priority-highest 65)
+ '(org-priority-lowest 68)
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
  '(package-selected-packages
