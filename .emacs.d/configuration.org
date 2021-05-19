@@ -1001,7 +1001,7 @@ the hierarchy, it will be used.
     ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
       "** %^{Title} \n %^t" :time-prompt t)
     ("m" "Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
-      "** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?")
+      "** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Mitarbeiter-Info][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?")
     ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
       "** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
       :prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
