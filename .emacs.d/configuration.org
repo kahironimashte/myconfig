@@ -1153,6 +1153,8 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 ** Tags
 #+begin_src emacs-lisp :results output silent
 (setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer"))
+;; (setq org-use-tag-inheritance nil)
+
 #+end_src
 
 ** Todo-States und Sequenzen
