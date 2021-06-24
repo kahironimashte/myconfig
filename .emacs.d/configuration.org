@@ -85,16 +85,16 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+begin_src emacs-lisp :results output silent
 ;; Org-Agendas
 ;; -----------
- (global-set-key (kbd "<S-f12>") 'kahiro-agenda-next-xa-tasks) 
- (global-set-key (kbd "<f12>") 'kahiro-agenda-for-current-subtree) 
+ (global-set-key (kbd "<f12>") 'kahiro-agenda-next-xa-tasks) 
+ (global-set-key (kbd "<S-f12>") 'kahiro-agenda-next-buffer-tasks) 
 
-(defun kahiro-agenda-next-xa-tasks (&optional arg) ;; <f12>
+(defun kahiro-agenda-next-xa-tasks (&optional arg) ;; Shift+<f12>
   (interactive "P")
   (org-agenda arg "n" nil))
 
-(defun kahiro-agenda-for-current-subtree (&optional arg) ;; Shift+<f12>
+(defun kahiro-agenda-next-buffer-tasks (&optional arg) ;; <f12>
   (interactive "P")
-  (org-agenda arg "N" 'subtree))
+  (org-agenda arg "n" 'buffer))
 
 ;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
 (defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
@@ -642,15 +642,15 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 ;; (setq org-agenda-custom-commands
 ;;       '(
 ;;------------------------
-	 ("n" "Nächste Schritte für aktuelle Ausgabe" 
+	 ("n" "Nächste Schritt"
 	      ((todo "WAITING|NEXT"
-	       ((org-agenda-overriding-header "Nächste Schritte für aktuelle Ausgabe")
+	       ((org-agenda-overriding-header "Nächste Schritte")
       		(org-agenda-sorting-strategy '(todo-state-down priority-down))
 		(org-show-context-detail 'minimal)))
 	       (agenda ""
        		((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
 	       )))
-	      ((org-agenda-category-filter-preset '("+xa" "+inbox"))
+	      ((org-agenda-category-filter-preset '("-habit" "-htasks"))
 	       (org-agenda-span 1)
                (org-deadline-warning-days 0)      
 		))
