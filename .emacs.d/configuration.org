@@ -195,13 +195,39 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+end_src
 
 * Pakete                                                    :package:
-** COMMENT Emacs Startup Profiler - ESUP
-   #+begin_src emacs-lisp :results output silent
-     (use-package esup
-       :ensure t
-       ;; To use MELPA Stable use ":pin melpa-stable",
-       ;;:pin melpa
-       )   
+** COMMENT org-roam
+download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
+#+begin_src emacs-lisp :results output silent
+    (when (string-equal system-type "windows-nt")
+      (add-to-list 'exec-path "C:/Software/SQLite")
+      (setq org-roam-directory "C:/org/roam")
+;;      (setq org-roam-db-update-method 'immediate)
+;;      (add-hook 'after-init-hook 'org-roam-mode)
+      )
+
+#+end_src
+** anki-editor :learning:
+- Vouraussetzungen:
+  1. =sudo apt install anki curl=
+  3. Anki Addon Code: =2055492159= eintippen unter "Addons" / Get Addons
+  4. Log in bei =ankiweb.net= via E-Mail und Passwort
+#+begin_src emacs-lisp :results output silent
+  (use-package anki-editor
+    :config
+    (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
+	  anki-editor-org-tags-as-anki-tags t)
+  )
+#+end_src
+
+** dired
+   Standardmäßig alle Details außer Dateinamen ausblenden (toogle mit =(= )
+#+begin_src emacs-lisp :results output silent
+(add-hook 'dired-mode-hook
+	  (lambda()
+	    (dired-hide-details-mode 1)
+	  )
+     )
+(setq ls-lisp-dirs-first t) ;; Ordner in Dired zuerst anzeigen
 #+end_src
 ** COMMENT doom-modeline :appearance:
 #+BEGIN_SRC emacs-lisp
@@ -217,71 +243,15 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
   (+ (frame-char-height) 2))
 (advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
 #+END_SRC
-** anki-editor :learning:
-- Vouraussetzungen:
-  1. =sudo apt install anki curl=
-  3. Anki Addon Code: =2055492159= eintippen unter "Addons" / Get Addons
-  4. Log in bei =ankiweb.net= via E-Mail und Passwort
-#+begin_src emacs-lisp :results output silent
-  (use-package anki-editor
-    :config
-    (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
-	  anki-editor-org-tags-as-anki-tags t)
-  )
+** COMMENT Emacs Startup Profiler - ESUP
+   #+begin_src emacs-lisp :results output silent
+     (use-package esup
+       :ensure t
+       ;; To use MELPA Stable use ":pin melpa-stable",
+       ;;:pin melpa
+       )   
 #+end_src
-
-** org-bookmark-heading :navigation:
-
-** dired
-   Standardmäßig alle Details außer Dateinamen ausblenden (toogle mit =(= )
-#+begin_src emacs-lisp :results output silent
-(add-hook 'dired-mode-hook
-	  (lambda()
-	    (dired-hide-details-mode 1)
-	  )
-     )
-(setq ls-lisp-dirs-first t) ;; Ordner in Dired zuerst anzeigen
-#+end_src
-** yasnippet :content:
-#+begin_src emacs-lisp :results output silent
-(when (string-equal system-type "windows-nt")
-  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
-  (use-package yasnippet
-   :config
-   (add-to-list 'yas-snippet-dirs "C:/org/_config/yasnippets/")
-   (yas-global-mode 1)
-  )
-)
-(when (string-equal system-type "gnu/linux")
-  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
-  (use-package yasnippet
-   :config
-   (add-to-list 'yas-snippet-dirs (concat org-directory "/_config/yasnippets"))
-   (yas-global-mode 1)
-))
-#+end_src
-
-Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
-(add-hook 'yas-minor-mode-hook (lambda ()
-                                                                 (yas-activate-extra-mode 'fundamental-mode)))
-** imenu-anywhere :navigation:
-#+begin_src emacs-lisp :results output silent
-  (use-package imenu-anywhere
-    :config
-    (setq org-imenu-depth 2) ;; Wie tiefe Headings ansteuerbar sind.
-)
-
-  ;; (defvar push-mark-before-goto-char nil)
-
-  ;; (defadvice goto-char (before push-mark-first activate)
-  ;;    (when push-mark-before-goto-char
-  ;;       (push-mark)))
-
-  ;; (defun ido-imenu-push-mark ()
-  ;;    (interactive)
-  ;;    (let ((push-mark-before-goto-char t))
-  ;;       (ido-imenu)))
-#+end_src
+** TODO Fold-this
 ** ido-mode :navigation:
 *** Beschreibung
  This is the built-in framework for interactively narrowing down the
@@ -396,11 +366,39 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
   (ido-ubiquitous-mode 1))
 #+end_src
 
-** which-key :help:
- #+begin_src elisp
-(use-package which-key
-  :config (which-key-mode))
+** imenu-anywhere :navigation:
+#+begin_src emacs-lisp :results output silent
+  (use-package imenu-anywhere
+    :config
+    (setq org-imenu-depth 2) ;; Wie tiefe Headings ansteuerbar sind.
+)
+
+  ;; (defvar push-mark-before-goto-char nil)
+
+  ;; (defadvice goto-char (before push-mark-first activate)
+  ;;    (when push-mark-before-goto-char
+  ;;       (push-mark)))
+
+  ;; (defun ido-imenu-push-mark ()
+  ;;    (interactive)
+  ;;    (let ((push-mark-before-goto-char t))
+  ;;       (ido-imenu)))
 #+end_src
+** TODO Minimap
+** TODO Neotree
+** Nov-mode                                                         :content:
+   - Paket um epub-Dateien in Emacs zu lesen.
+#+begin_src emacs-lisp :results output silent
+  (use-package nov
+    :mode ("\\.epub\\'" . nov-mode))
+  (when (string-equal system-type "windows-nt")
+    ;; Set unzip location for nov.el
+    (setq nov-unzip-program "C:\\Software\\Emacs\\_unzip-Package\\bin\\unzip.exe")
+    )
+
+#+end_src
+** org-bookmark-heading :navigation:
+
 ** TODO [#B] COMMENT Smartparens
  - Paket um Klammern etc. zu vervollständigen.
 #+BEGIN_SRC emacs-lisp
@@ -429,22 +427,6 @@ Usage
 In org-mode, you can click links in order to run your games. This will bring up a pop-up, asking if it is safe to run the lisp-code. If this annoys you, put this line at the top of your .org-file: #-*- org-confirm-elisp-link-function: nil; -*-
 
 If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
-** Nov-mode                                                         :content:
-   - Paket um epub-Dateien in Emacs zu lesen.
-#+begin_src emacs-lisp :results output silent
-(use-package nov
-  :mode ("\\.epub\\'" . nov-mode))
-(when (string-equal system-type "windows-nt")
-  ;; Set unzip location for nov.el
-  (setq nov-unzip-program "C:\\Software\\Emacs\\_unzip-Package\\bin\\unzip.exe")
-  )
-
-#+end_src
-** yaml-mode
-   - für espanso config-files.
-#+begin_src emacs-lisp :results output silent
-(use-package yaml-mode)
-#+end_src
 ** Use =minions= to hide all minor modes
 
 H. R. S: I never want to see a minor mode, and manually adding =:diminish= to every
@@ -461,10 +443,39 @@ I'd rather skip it.
            minions-mode-line-delimiters '("" . ""))
      (minions-mode 1))
 #+end_src
-** TODO Neotree
-** TODO Minimap
-** TODO Fold-this
 ** TODO valign 
+** which-key :help:
+ #+begin_src elisp
+(use-package which-key
+  :config (which-key-mode))
+#+end_src
+** yaml-mode
+   - für espanso config-files.
+#+begin_src emacs-lisp :results output silent
+(use-package yaml-mode)
+#+end_src
+** yasnippet :content:
+#+begin_src emacs-lisp :results output silent
+(when (string-equal system-type "windows-nt")
+  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
+  (use-package yasnippet
+   :config
+   (add-to-list 'yas-snippet-dirs "C:/org/_config/yasnippets/")
+   (yas-global-mode 1)
+  )
+)
+(when (string-equal system-type "gnu/linux")
+  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
+  (use-package yasnippet
+   :config
+   (add-to-list 'yas-snippet-dirs (concat org-directory "/_config/yasnippets"))
+   (yas-global-mode 1)
+))
+#+end_src
+
+Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
+(add-hook 'yas-minor-mode-hook (lambda ()
+                                                                 (yas-activate-extra-mode 'fundamental-mode)))
 * Org Mode Settings
 :PROPERTIES:
 :CATEGORY: org

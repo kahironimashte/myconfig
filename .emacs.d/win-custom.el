@@ -20,13 +20,13 @@
      (todo priority-down category-keep)
      (tags priority-down category-keep)
      (search category-keep)))
- '(org-default-priority 67)            ; ersetzt durch org-priority-default
+ '(org-default-priority 67)
  '(org-habit-completed-glyph 43)
  '(org-habit-show-done-always-green t)
  '(org-habit-today-glyph 9728)
  '(org-hide-leading-stars t)
- '(org-highest-priority 65)            ; ersetzt durch org-priority-highest
- '(org-lowest-priority 68)             ; ersetzt durch org-priority-lowest
+ '(org-highest-priority 65)
+ '(org-lowest-priority 68)
  '(org-modules
    '(ol-docview org-habit ol-info org-inlinetask ol-mhe ol-w3m))
  '(org-priority-default 67)
