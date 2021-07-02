@@ -127,11 +127,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 
 (defun kahiro-kp-4 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d4" nil)) ;; Alle aus atasks
+  (org-agenda arg "d4" 'buffer)) ;; Alle aus atasks
 
 (defun kahiro-kp-7 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d7" nil)) ;; Alle ohne habits
+  (org-agenda arg "d7" 'buffer)) ;; Alle ohne habits
 
 (defun kahiro-kp-8 (&optional arg)
   (interactive "P")
@@ -492,7 +492,7 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
  (setq org-agenda-custom-commands
        '(
 #+end_src
-**** f - gefilterte Agendas
+**** COMMENT f - gefilterte Agendas
 #+begin_src emacs-lisp :results output silent
          ("f" . "gefiltere Agendas")
 	 ("f1" "alles ohne Habits" 
@@ -508,71 +508,78 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 #+end_src
 **** d - tägliche Übersichten
 #+begin_src emacs-lisp :results output silent
-;;--- DEMO-Setup -- Uncomment for use ---
-;; (setq org-agenda-custom-commands
-;;       '(
-;;------------------------
-	  ("d" . "Tägliche Übersichen und Filter")
-	  ("d1" "Wichtigste Arbeits-Tasks" agenda ""
-	   ((org-agenda-span 1)
-	    (org-agenda-overriding-header "Heute - Aktuelle Ausgabe, Kalender, Inbox")
-	    (org-agenda-category-filter-preset '("-habit" "-htasks"))
-;;	    (org-agenda-category-filter-preset '("+inbox" "+calendar" "+xa" "+reg"))
-	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	    ))
-	  ("d4" "Alle Arbeits-Tasks" agenda ""
-	   ((org-agenda-span 1)
-	    (org-agenda-overriding-header "Heute - Nur Arbeits-Tasks")
-	    (org-agenda-files `(,(concat org-directory "/atasks.org")))
-	    (org-agenda-category-filter-preset '("-habit"))
-	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	    ))
-	  ("d7" "alle Tasks ohne Habits" agenda ""
-	   ((org-agenda-span 1)
-	    (org-agenda-overriding-header "Heute ohne Habits")
-	    (org-agenda-category-filter-preset '("-habit"))
-	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	    ))
-	  ("d8" "Arbeit - Inbox" tags-todo "inbox"
-	   ((org-agenda-overriding-header "Arbeit - Inbox")
-	    (org-agenda-sorting-strategy '(deadline-down scheduled-down priority-down todo-state-down))
-	    (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	    ))
-	  ;; ("d5" "Nächste Schritte für Inbox" 
-	  ;;      ((todo "WAITING|NEXT"
-	  ;;       ((org-agenda-overriding-header "Nächste Schritte für Inbox")
-	  ;;        (org-agenda-sorting-strategy '(todo-state-down priority-down))
-	  ;;        (org-show-context-detail 'minimal)))
-	  ;;       (agenda ""
-	  ;;        ((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
-	  ;;       )))
-	  ;;      ((org-agenda-category-filter-preset '("+inbox"))
-	  ;;       (org-agenda-span 1)
-	  ;;       (org-deadline-warning-days 0)
-	  ;; ))
-	  ("d3" "Alle Autorentexte" 
-	   ((tags-todo "TODO=\"BAUFT\"|TODO=\"VORH\"+Autor"
-	      ((org-agenda-overriding-header "Alle offenen Autorentexte"))
-	      )
-	    (tags-todo "TODO=\"ANGEB\"|TODO=\"SUCHE\"+Autor"
-	      ((org-agenda-overriding-header "Themenangebote und Redaktionsaufträge"))
-	      )
-	    (tags-todo "TODO=\"IDEE\"+Autor"
-	      ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
+  ;;--- DEMO-Setup -- Uncomment for use ---
+  (setq org-agenda-custom-commands
+	'(
+  ;;------------------------
+	    ("d" . "Tägliche Übersichen und Filter")
+	    ("d1" "Wichtigste Arbeits-Tasks" agenda ""
+	     ((org-agenda-span 1)
+	      (org-agenda-overriding-header "Heute - Aktuelle Ausgabe, Kalender, Inbox")
+	      (org-agenda-category-filter-preset '("-habit" "-htasks"))
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 	      ))
-	   ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
-	  )
-	  ("d6" "Autorentexte bestellt und da" tags-todo "TODO=\"PROJ\"+kur"
-	   ((org-agenda-overriding-header "Alle offenen Autorentexte")
-	    (org-agenda-sorting-strategy '(todo-state-down priority-down))
-	    ))
-	  ("d9" "Autorentexte Idee und Suche" tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor|kur"
-	   ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
-	    (org-agenda-sorting-strategy '(todo-state-down priority-down))
-	    ))
-;;--- DEMO-Setup -- Uncomment for use ---
-;;  ))
-;;------------------------
+	    ("d4" "Alle Projekte des Buffers" todo "PROJ"
+	     ((org-agenda-overriding-header "Alle Projekte des Buffers")
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	      ))
+	    ("d7" "Alle Todos des Buffers" todo "TODO"
+	     ((org-agenda-overriding-header "Alle 1-Schritt Todos des Buffers")
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	      ))
+	    ("d2" "alle Tasks ohne Habits" agenda ""
+	     ((org-agenda-span 1)
+	      (org-agenda-overriding-header "Heute ohne Habits")
+	      (org-agenda-category-filter-preset '("-habit"))
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	      ))
+	    ("d5" "Review" agenda ""
+	     ((org-agenda-span 1)
+	      (org-agenda-overriding-header "Heute ohne Habits")
+	      (org-agenda-category-filter-preset '("-habit"))
+	      (org-agenda-clockreport-mode t)
+	      (org-agenda-show-log 'clockcheck)
+	      ))
+	    ("d8" "Arbeit - Inbox" tags-todo "inbox"
+	     ((org-agenda-overriding-header "Arbeit - Inbox")
+	      (org-agenda-sorting-strategy '(deadline-down scheduled-down priority-down todo-state-down))
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	      ))
+	    ;; ("d5" "Nächste Schritte für Inbox" 
+	    ;;      ((todo "WAITING|NEXT"
+	    ;;       ((org-agenda-overriding-header "Nächste Schritte für Inbox")
+	    ;;        (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	    ;;        (org-show-context-detail 'minimal)))
+	    ;;       (agenda ""
+	    ;;        ((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+	    ;;       )))
+	    ;;      ((org-agenda-category-filter-preset '("+inbox"))
+	    ;;       (org-agenda-span 1)
+	    ;;       (org-deadline-warning-days 0)
+	    ;; ))
+	    ("d3" "Alle Autorentexte" 
+	     ((tags-todo "TODO=\"BAUFT\"|TODO=\"VORH\"+Autor"
+		((org-agenda-overriding-header "Alle offenen Autorentexte"))
+		)
+	      (tags-todo "TODO=\"ANGEB\"|TODO=\"SUCHE\"+Autor"
+		((org-agenda-overriding-header "Themenangebote und Redaktionsaufträge"))
+		)
+	      (tags-todo "TODO=\"IDEE\"+Autor"
+		((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
+		))
+	     ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
+	    )
+	    ("d6" "Autorentexte bestellt und da" tags-todo "TODO=\"PROJ\"+kur"
+	     ((org-agenda-overriding-header "Alle offenen Autorentexte")
+	      (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	      ))
+	    ("d9" "Autorentexte Idee und Suche" tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor|+kur"
+	     ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
+	      (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	      ))
+  ;;--- DEMO-Setup -- Uncomment for use ---
+   ))
+  ;;------------------------
 #+end_src
 
 **** g - eigene Agendas
