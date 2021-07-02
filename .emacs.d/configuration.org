@@ -401,6 +401,22 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
     )
 
 #+end_src
+=======
+#+end_src
+** TODO Minimap
+** TODO Neotree
+** Nov-mode                                                         :content:
+   - Paket um epub-Dateien in Emacs zu lesen.
+#+begin_src emacs-lisp :results output silent
+  (use-package nov
+    :mode ("\\.epub\\'" . nov-mode))
+  (when (string-equal system-type "windows-nt")
+    ;; Set unzip location for nov.el
+    (setq nov-unzip-program "C:\\Software\\Emacs\\_unzip-Package\\bin\\unzip.exe")
+    )
+
+#+end_src
+>>>>>>> Stashed changes
 ** org-bookmark-heading :navigation:
 
 ** TODO [#B] COMMENT Smartparens
@@ -513,8 +529,8 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 **** d - tägliche Übersichten
 #+begin_src emacs-lisp :results output silent
   ;;--- DEMO-Setup -- Uncomment for use ---
-  (setq org-agenda-custom-commands
-	'(
+  ;;(setq org-agenda-custom-commands
+;;	'(
   ;;------------------------
 	    ("d" . "Tägliche Übersichen und Filter")
 	    ("d1" "Wichtigste Arbeits-Tasks" agenda ""
@@ -582,7 +598,7 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 	      (org-agenda-sorting-strategy '(todo-state-down priority-down))
 	      ))
   ;;--- DEMO-Setup -- Uncomment for use ---
-   ))
+  ;; ))
   ;;------------------------
 #+end_src
 
