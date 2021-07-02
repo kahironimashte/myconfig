@@ -530,7 +530,7 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 #+begin_src emacs-lisp :results output silent
   ;;--- DEMO-Setup -- Uncomment for use ---
   ;;(setq org-agenda-custom-commands
-;;	'(
+  ;;	'(
   ;;------------------------
 	    ("d" . "Tägliche Übersichen und Filter")
 	    ("d1" "Wichtigste Arbeits-Tasks" agenda ""
