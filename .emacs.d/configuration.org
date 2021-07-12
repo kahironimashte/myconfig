@@ -1025,21 +1025,20 @@ the hierarchy, it will be used.
 	"** %^{Title} \n %^t" :time-prompt t)
       ("m" "Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
 	"** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Mitarbeiter-Info][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?")
-      ("s" "Störungen wie Anruf/Kollege")
-      ("sa" "Anruf" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
-	"** %^{Anrufer} %U :call:interrupt: \n - Anmerkungen :: %^{Anmerkungen}%?"
+      ("a" "Anruf" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
+	"** %? %U :call:interrupt: \n - Anmerkungen :: "
 	:prepend t :clock-in t :clock-resume t :empty-lines-after 1)
-      ("ss" "Unterbrechung" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
-	"** %?%^{Unterbrecher} %U :interrupt: \n - Anmerkungen :: %^{Anmerkungen}"
+      ("s" "Unterbrechung" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
+	"** %? %U :interrupt: \n - Anmerkungen :: "
 	:clock-in t :clock-resume t :empty-lines-after 1)
       ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
 	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
 	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
       ("h" "home task")
-      ("H" "ungeplantes Todo sofort" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
+      ("hH" "ungeplantes Todo sofort" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
 	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
 	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
-      ("h" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
+      ("hh" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
 	"** %^{Status eintragen|TODO|PLAN} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
 	:empty-lines-after 1)
       ("t" "Todo [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
