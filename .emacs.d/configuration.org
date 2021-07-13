@@ -87,28 +87,32 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 *** for org-agendas
 **** Keyboard :Funktionen:
 #+begin_src emacs-lisp :results output silent
-;; Org-Agendas
-;; -----------
- (global-set-key (kbd "<f12>") 'kahiro-agenda-next-xa-tasks) 
- (global-set-key (kbd "<S-f12>") 'kahiro-agenda-next-buffer-tasks) 
-
-(defun kahiro-agenda-next-xa-tasks (&optional arg) ;; Shift+<f12>
-  (interactive "P")
-  (org-agenda arg "n" nil))
-
-(defun kahiro-agenda-next-buffer-tasks (&optional arg) ;; <f12>
-  (interactive "P")
-  (org-agenda arg "n" 'buffer))
-
-;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
-(defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
-  (interactive "P")
-  (org-agenda arg "gh" 'subtree))
-
-(defun kahiro-all-tasks-for-buffer (&optional arg) ;; ungenutzt seit [2021-05-07 Fr]
-  (interactive "P")
-  (org-agenda arg "t" t))
-
+  ;; Org-Agendas
+  ;; -----------
+   (global-set-key (kbd "<f12>") 'kahiro-agenda-next-work-tasks) 
+   (global-set-key (kbd "<S-f12>") 'kahiro-agenda-home-tasks) 
+  
+  (defun kahiro-agenda-next-work-tasks (&optional arg) ;; Shift+<f12>
+    (interactive "P")
+    (org-agenda arg "n" nil))
+  
+  (defun kahiro-agenda-home-tasks (&optional arg) ;; Shift+<f12>
+    (interactive "P")
+    (org-agenda arg "h" nil))
+  
+  (defun kahiro-agenda-next-buffer-tasks (&optional arg) ;; <f12>
+    (interactive "P")
+    (org-agenda arg "n" 'buffer))
+  
+  ;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
+  (defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
+    (interactive "P")
+    (org-agenda arg "gh" 'subtree))
+  
+  (defun kahiro-all-tasks-for-buffer (&optional arg) ;; ungenutzt seit [2021-05-07 Fr]
+    (interactive "P")
+    (org-agenda arg "t" t))
+  
 #+end_src
 **** Keypad :Funktionen:
 #+begin_src emacs-lisp :results output silent
@@ -602,49 +606,60 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
   ;;------------------------
 #+end_src
 
-**** g - eigene Agendas
+**** g/h - eigene Agendas
 #+begin_src emacs-lisp :results output silent
-         ("g" . "My Custom Agendas")
-	 ("gA" "alle Autorentexte" tags "Autor|AUTOR<>\"\""
-	      ((org-agenda-sorting-strategy '(todo-state-down)
-	      )))
-	 ("gb" "Autorentexte via Properties" 
-	    (
-	    (tags-todo "TODO=\"NEXT\"+AUTOR<>\"\""
-	      ((org-agenda-overriding-header "Texte von Autoren")))
-	    (tags "TODO=\"WAITING\"+AUTOR<>\"\""
-	      ((org-agenda-overriding-header "\nWarte auf Rückmeldung")))
-	    (tags "TODO=\"TODO\"+AUTOR<>\"\""
-	      ((org-agenda-overriding-header "\nBestellt")))
-	    (tags "TODO=\"PLAN\"+AUTOR<>\"\""
-	      ((org-agenda-overriding-header "\nVorschläge"))))
-	      ((org-agenda-compact-blocks t))
-	      )
-         ("g-" "Nur Deadlines" agenda "Diesen Monat" (
-              (org-agenda-span 'month)
-              (org-agenda-time-grid nil)
-              (org-agenda-show-all-dates nil)
-              (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
-              (org-deadline-warning-days 0) ))
-	  ("gp" "PLAN und TODO in Agenda-Files" agenda ""
-	      ((org-agenda-span 1)
-	       (org-agenda-overriding-header "PLAN und TODO in Agenda-Files")
-	       (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PLAN" "TODO"))) ;[1]
-	       (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
- ;	      (org-agenda-time-grid '(nil))
-               (org-deadline-warning-days 0)
-	       ))
-	   ("gh" "Agenda für heute" agenda ""
-	      ((org-agenda-span 1)
-	       (org-agenda-overriding-header "Alle Aufgaben für heute")
-	       (org-deadline-warning-days 0)))
-	   ("gw" "Agenda für diese Woche" agenda ""
-	      ((org-agenda-span 7)
-	       (org-agenda-overriding-header "Alle Aufgaben für die nächsten 7 Tage")
-	       (org-deadline-warning-days 3)))
-	   ("gk" "Themen für Konferenzen" tags "Konferenz"
-	      ((org-agenda-orverriding-header "Offene Themen für Konferenzen")
-	      ))
+("g" . "My Custom Agendas")
+("gA" "alle Autorentexte" tags "Autor|AUTOR<>\"\""
+     ((org-agenda-sorting-strategy '(todo-state-down)
+     )))
+("gb" "Autorentexte via Properties" 
+   (
+   (tags-todo "TODO=\"NEXT\"+AUTOR<>\"\""
+     ((org-agenda-overriding-header "Texte von Autoren")))
+   (tags "TODO=\"WAITING\"+AUTOR<>\"\""
+     ((org-agenda-overriding-header "\nWarte auf Rückmeldung")))
+   (tags "TODO=\"TODO\"+AUTOR<>\"\""
+     ((org-agenda-overriding-header "\nBestellt")))
+   (tags "TODO=\"PLAN\"+AUTOR<>\"\""
+     ((org-agenda-overriding-header "\nVorschläge"))))
+     ((org-agenda-compact-blocks t))
+     )
+("g-" "Nur Deadlines" agenda "Diesen Monat" (
+     (org-agenda-span 'month)
+     (org-agenda-time-grid nil)
+     (org-agenda-show-all-dates nil)
+     (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+     (org-deadline-warning-days 0) ))
+ ("gp" "PLAN und TODO in Agenda-Files" agenda ""
+     ((org-agenda-span 1)
+      (org-agenda-overriding-header "PLAN und TODO in Agenda-Files")
+      (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PLAN" "TODO"))) ;[1]
+      (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+      (org-deadline-warning-days 0)
+      ))
+  ("gh" "Agenda für heute" agenda ""
+     ((org-agenda-span 1)
+      (org-agenda-overriding-header "Alle Aufgaben für heute")
+      (org-deadline-warning-days 0)))
+  ("gw" "Agenda für diese Woche" agenda ""
+     ((org-agenda-span 7)
+      (org-agenda-overriding-header "Alle Aufgaben für die nächsten 7 Tage")
+      (org-deadline-warning-days 3)))
+  ("gk" "Themen für Konferenzen" tags "Konferenz"
+     ((org-agenda-orverriding-header "Offene Themen für Konferenzen")
+     ))
+("h" "home Tasks + Calendar"
+ ((todo "WAITING|NEXT"
+   ((org-agenda-overriding-header "Nächste Schritte")
+	(org-agenda-sorting-strategy '(todo-state-down priority-down))
+	(org-show-context-detail 'minimal)))
+   (agenda ""
+	((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+   )))
+  ((org-agenda-category-filter-preset '("+htasks" "+calendar"))
+   (org-agenda-span 1)
+   (org-deadline-warning-days 1)      
+	))
 #+end_src
 **** k - zu klären
      #+begin_src emacs-lisp :results output silent
