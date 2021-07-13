@@ -1167,6 +1167,29 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
   ;;  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish)
 )
 #+end_src
+** COMMENT org-table :Funktionen:
+   #+begin_src emacs-lisp :results output silent
+(defun calcFunc-dateDiffToHMS (date1 date2 worktime-per-day)
+  "Calculate the difference of DATE1 and DATE2 in HMS form.
+Each day counts with WORKTIME-PER-DAY hours."
+  (cl-labels ((dateTrunc (date)
+             (calcFunc-date (calcFunc-year date)
+                    (calcFunc-month date)
+                    (calcFunc-day date)))
+          (datep (date)
+             (and (listp date)
+              (eq (car date) 'date))))
+    (if (and (datep date1)
+         (datep date2))
+    (let* ((business-days (calcFunc-bsub
+                   (dateTrunc date1)
+                   (dateTrunc date2))))
+      (calcFunc-add
+       (calcFunc-hms (calcFunc-mul business-days worktime-per-day) 0 0)
+       (calcFunc-sub (calcFunc-time date1) (calcFunc-time date2)))
+      )
+      0)))   
+#+end_src
 ** structure template (code)
 #+begin_src emacs-lisp :results output silent
 (setq org-structure-template-alist
