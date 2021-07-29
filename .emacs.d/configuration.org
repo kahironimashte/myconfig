@@ -1183,6 +1183,7 @@ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbrin
 )
 #+end_src
 ** COMMENT org-table :Funktionen:
+[2021-07-28 Mi]- Probleme beim Laden
    #+begin_src emacs-lisp :results output silent
 (defun calcFunc-dateDiffToHMS (date1 date2 worktime-per-day)
   "Calculate the difference of DATE1 and DATE2 in HMS form.
@@ -1229,14 +1230,14 @@ Each day counts with WORKTIME-PER-DAY hours."
      by adding (require 'org-tempo) to your init file or
      by adding org-tempo to the list org-modules. You can do that by customizing org-modules.
 
-** Tags
+** Tag-Vererbung
 #+begin_src emacs-lisp :results output silent
 (setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer" "kur" "gut"))
 ;; (setq org-use-tag-inheritance nil)
 
 #+end_src
 
-** Todo-States und Sequenzen
+** Todo-Status und -Sequenzen
 #+begin_src emacs-lisp :results output silent
 (setq org-todo-keywords
   '(
@@ -1294,108 +1295,141 @@ Each day counts with WORKTIME-PER-DAY hours."
 #+end_src
 *** Inspirationsquellen
     - quasiquote für funktionen in einer liste, wie concat oder buffer-file-name :: [[https://lists.gnu.org/archive/html/emacs-orgmode/2012-07/msg00561.html][Link]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Backquote.html][elisp-Manual]]. 
-* Fokus 
-** Alles einklappen außer aktuellen Subtree
-  - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
-#+BEGIN_SRC emacs-lisp
-(defun ess/org-show-just-me (&rest _)
-  "Fold all other trees, then show direct children of current org-heading."
-  (interactive)
-  (org-overview)
-  (org-reveal)
-  (org-show-children)
-)
-(add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
-
-#+END_SRC
-** Nur Todos direkt unter der Überschrift anzeigen
-#+BEGIN_SRC emacs-lisp
-(defun my-sparse-subtree-todo-search ()
-  (interactive)
-  (org-narrow-to-subtree)
-  (let ((level (org-current-level)))
-    (org-match-sparse-tree  t (format "+LEVEL=%d" (1+ level)))))
-#+END_SRC
-** Zeige nur spezielle TODOs und fokussiere den Ast
-#+BEGIN_SRC emacs-lisp
-
-(defun kahiro-show-todos-in-subtree ()
-   "Narrow to a subtree and show only headings with TODO keywords"
+** [#B] Funktionen zur Fokussierung
+*** Alles einklappen außer aktuellen Subtree
+   - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
+ #+BEGIN_SRC emacs-lisp
+ (defun ess/org-show-just-me (&rest _)
+   "Fold all other trees, then show direct children of current org-heading."
    (interactive)
-   (org-narrow-to-subtree)
-   (org-show-todo-tree nil)
-   (org-ctrl-c-ctrl-c))
-
-(defun kahiro-show-NEXT-in-subtree ()
-   "Narrow to a subtree and show only headings with TODO keywords"
-   (interactive)
-   (org-narrow-to-subtree)
-   (org-occur (concat "^" org-outline-regexp " *" "\\(NEXT\\|WAITING\\)"))
-   (org-ctrl-c-ctrl-c))
-
-(defun kahiro-show-only-NEXT-in-subtree ()
-   "Narrow to a subtree and show only headings with NEXT keyword"
-   (interactive)
-   (org-narrow-to-subtree)
-   (org-show-todo-tree 4)
-   (org-ctrl-c-ctrl-c))
-
-(defun kahiro-show-TODO-in-subtree ()
-   "Narrow to a subtree and show only headings with TODO keywords"
-   (interactive)
-   (org-narrow-to-subtree)
-   (org-occur (concat "^" org-outline-regexp " *" "\\(TODO\\|NEXT\\|WAITING\\)"))
-   (org-ctrl-c-ctrl-c))
-
-(defun kahiro-show-PLAN-in-subtree ()
-   "Narrow to a subtree and show only headings with TODO keywords"
-   (interactive)
-   (org-narrow-to-subtree)
-   (org-show-todo-tree 13)  ;; Funktion ist abhängig von TODO-Reihenfolge
-   (org-ctrl-c-ctrl-c))
-
-#+END_SRC
-
-#+RESULTS:
-: kahiro-show-PLAN-in-subtree
-
-*** TODO Erklärung der Synthax
-** Split und Switch
-     - Gibt eine Schnelle übersicht in einem halben Fenster. 
-#+BEGIN_SRC emacs-lisp
- (defun kahiro-split-and-switch ()
-  "Split the window and switch to the other window in sequence."
-  (interactive)
-  (split-window-right)
-  (org-tree-to-indirect-buffer)
-  (other-window 1))
- (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
-
-#+END_SRC
-** Switch und Close
-     - Kehrt wieder zum Übersichtsbuffer zurück. 
-#+BEGIN_SRC emacs-lisp
- (defun kahiro-switch-and-close ()
-  "Split the window and switch to the other window in sequence."
-  (interactive)
-;;  (kill-buffer)
-  (delete-window)
-;;  (other-window -1)
-;;  (delete-other-windows)
+   (org-overview)
+   (org-reveal)
+   (org-show-children)
  )
+ (add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
 
- (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
-#+END_SRC
-** COMMENT Apply :Archive: Tag to DONE Tasks
-#+BEGIN_SRC emacs-lisp
-(setq org-todo-state-tags-triggers
-  (quote 
-  (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
-   ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
-  )))
-#+END_SRC
-*** TODO Review
-    - aussortiert weil nervig
+ #+END_SRC
+*** Nur Todos direkt unter der Überschrift anzeigen
+ #+BEGIN_SRC emacs-lisp
+ (defun my-sparse-subtree-todo-search ()
+   (interactive)
+   (org-narrow-to-subtree)
+   (let ((level (org-current-level)))
+     (org-match-sparse-tree  t (format "+LEVEL=%d" (1+ level)))))
+ #+END_SRC
+*** Zeige nur spezielle TODOs und fokussiere den Ast
+ #+BEGIN_SRC emacs-lisp
+
+ (defun kahiro-show-todos-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-show-todo-tree nil)
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-NEXT-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-occur (concat "^" org-outline-regexp " *" "\\(NEXT\\|WAITING\\)"))
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-only-NEXT-in-subtree ()
+    "Narrow to a subtree and show only headings with NEXT keyword"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-show-todo-tree 4)
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-TODO-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-occur (concat "^" org-outline-regexp " *" "\\(TODO\\|NEXT\\|WAITING\\)"))
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-PLAN-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-show-todo-tree 13)  ;; Funktion ist abhängig von TODO-Reihenfolge
+    (org-ctrl-c-ctrl-c))
+
+ #+END_SRC
+
+ #+RESULTS:
+ : kahiro-show-PLAN-in-subtree
+
+**** TODO Erklärung der Synthax
+*** Split und Switch
+      - Gibt eine Schnelle übersicht in einem halben Fenster. 
+ #+BEGIN_SRC emacs-lisp
+  (defun kahiro-split-and-switch ()
+   "Split the window and switch to the other window in sequence."
+   (interactive)
+   (split-window-right)
+   (org-tree-to-indirect-buffer)
+   (other-window 1))
+  (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
+
+ #+END_SRC
+*** Switch und Close
+      - Kehrt wieder zum Übersichtsbuffer zurück. 
+ #+BEGIN_SRC emacs-lisp
+  (defun kahiro-switch-and-close ()
+   "Split the window and switch to the other window in sequence."
+   (interactive)
+ ;;  (kill-buffer)
+   (delete-window)
+ ;;  (other-window -1)
+ ;;  (delete-other-windows)
+  )
+
+  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
+ #+END_SRC
+*** Fold current tree up to lvl1 heading
+    - [[https://christiantietze.de/posts/2019/06/org-fold-heading/][Quelle]] [2021-07-28 Mi]
+    #+begin_src emacs-lisp :results output silent
+      (defun ct/org-foldup ()
+	"Hide the entire subtree from root headline at point."
+	(interactive)
+	(while (ignore-errors (outline-up-heading 1)))
+	(org-flag-subtree t))
+      
+      
+      (defun ct/org-shifttab (&optional arg)
+	(interactive "P")
+	(if (or (null (org-current-level))     ; point is before 1st heading, or
+		(and (= 1 (org-current-level)) ; at level-1 heading, or
+		     (org-at-heading-p))
+		(org-at-table-p))              ; in a table (to preserve cell movement)
+		; perform org-shifttab at root level elements and inside tables
+		(org-shifttab arg)
+		; try to fold up elsewhere 
+		(ct/org-foldup)))
+      (org-defkey org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
+#+end_src
+*** Show TODOs in currend lvl 1 heading
+    [2021-07-28 Mi]
+    #+begin_src emacs-lisp :results output silent
+      (defun kahiro/show-todos-lvl1-heading ()
+	"Show all the Todos with TODO, NEXT and WAITING"
+	(interactive)
+	(ct/org-shifttab)
+	(kahiro-show-TODO-in-subtree)
+	)      
+#+end_src
+
+*** COMMENT Apply :Archive: Tag to DONE Tasks
+ #+BEGIN_SRC emacs-lisp
+ (setq org-todo-state-tags-triggers
+   (quote 
+   (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
+    ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
+   )))
+ #+END_SRC
+**** TODO Review
+     - aussortiert weil nervig
 * Custom Functions
 ** Next und Clock in :neu:
 #+begin_src emacs-lisp :results output silent
@@ -1841,6 +1875,7 @@ Each day counts with WORKTIME-PER-DAY hours."
     ("t" org-todo)
 ;;    ("R" rename-buffer)
 ;;    ("R" flyspell-check-previous-highlighted-word)
+    ("ü" kahiro/show-todos-lvl1-heading)
     ("_" "C-_")
     ("y" "C-y")
     ("w" "M-w")
