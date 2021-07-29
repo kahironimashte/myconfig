@@ -1232,8 +1232,8 @@ Each day counts with WORKTIME-PER-DAY hours."
 
 ** Tag-Vererbung
 #+begin_src emacs-lisp :results output silent
-(setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer" "kur" "gut"))
-;; (setq org-use-tag-inheritance nil)
+;;(setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer" "kur" "gut" "2021"))
+ (setq org-use-tag-inheritance nil)
 
 #+end_src
 
