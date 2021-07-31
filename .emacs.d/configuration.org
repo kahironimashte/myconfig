@@ -656,7 +656,7 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
    (agenda ""
 	((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
    )))
-  ((org-agenda-category-filter-preset '("+htasks" "+calendar"))
+  ((org-agenda-category-filter-preset '("-inbox" "-atasks" "-xa" "-reg")) ;;"+htasks|+calendar"
    (org-agenda-span 1)
    (org-deadline-warning-days 1)      
 	))
@@ -1210,7 +1210,9 @@ Each day counts with WORKTIME-PER-DAY hours."
 #+begin_src emacs-lisp :results output silent
 (setq org-structure-template-alist
   '(("s" . "src")
+    ("sc" . "src conf")
     ("se" . "src emacs-lisp")
+    ("sj" . "src javascript")
     ("ss" . "src emacs-lisp :results output silent")
     ("sh" . "src shell")
 ;;    ("h" . "export html")
