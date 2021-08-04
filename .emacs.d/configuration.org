@@ -504,7 +504,142 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 :PROPERTIES:
 :CATEGORY: org
 :END:
-** Agenda-Mode
+** [#B] Funktionen zur Fokussierung
+*** Alles einklappen außer aktuellen Subtree
+   - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
+ #+BEGIN_SRC emacs-lisp
+ (defun ess/org-show-just-me (&rest _)
+   "Fold all other trees, then show direct children of current org-heading."
+   (interactive)
+   (org-overview)
+   (org-reveal)
+   (org-show-children)
+ )
+ (add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
+
+ #+END_SRC
+*** Nur Todos direkt unter der Überschrift anzeigen
+ #+BEGIN_SRC emacs-lisp
+ (defun my-sparse-subtree-todo-search ()
+   (interactive)
+   (org-narrow-to-subtree)
+   (let ((level (org-current-level)))
+     (org-match-sparse-tree  t (format "+LEVEL=%d" (1+ level)))))
+ #+END_SRC
+*** Zeige nur spezielle TODOs und fokussiere den Ast
+ #+BEGIN_SRC emacs-lisp
+
+ (defun kahiro-show-todos-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-show-todo-tree nil)
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-NEXT-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-occur (concat "^" org-outline-regexp " *" "\\(NEXT\\|WAITING\\)"))
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-only-NEXT-in-subtree ()
+    "Narrow to a subtree and show only headings with NEXT keyword"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-show-todo-tree 4)
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-TODO-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-occur (concat "^" org-outline-regexp " *" "\\(TODO\\|NEXT\\|WAITING\\)"))
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-PLAN-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-show-todo-tree 13)  ;; Funktion ist abhängig von TODO-Reihenfolge
+    (org-ctrl-c-ctrl-c))
+
+ #+END_SRC
+
+ #+RESULTS:
+ : kahiro-show-PLAN-in-subtree
+
+**** TODO Erklärung der Synthax
+*** Split und Switch
+      - Gibt eine Schnelle übersicht in einem halben Fenster. 
+ #+BEGIN_SRC emacs-lisp
+  (defun kahiro-split-and-switch ()
+   "Split the window and switch to the other window in sequence."
+   (interactive)
+   (split-window-right)
+   (org-tree-to-indirect-buffer)
+   (other-window 1))
+  (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
+
+ #+END_SRC
+*** Switch und Close
+      - Kehrt wieder zum Übersichtsbuffer zurück. 
+ #+BEGIN_SRC emacs-lisp
+  (defun kahiro-switch-and-close ()
+   "Split the window and switch to the other window in sequence."
+   (interactive)
+ ;;  (kill-buffer)
+   (delete-window)
+ ;;  (other-window -1)
+ ;;  (delete-other-windows)
+  )
+
+  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
+ #+END_SRC
+*** Fold current tree up to lvl1 heading
+    - [[https://christiantietze.de/posts/2019/06/org-fold-heading/][Quelle]] [2021-07-28 Mi]
+    #+begin_src emacs-lisp :results output silent
+      (defun ct/org-foldup ()
+	"Hide the entire subtree from root headline at point."
+	(interactive)
+	(while (ignore-errors (outline-up-heading 1)))
+	(org-flag-subtree t))
+      
+      
+      (defun ct/org-shifttab (&optional arg)
+	(interactive "P")
+	(if (or (null (org-current-level))     ; point is before 1st heading, or
+		(and (= 1 (org-current-level)) ; at level-1 heading, or
+		     (org-at-heading-p))
+		(org-at-table-p))              ; in a table (to preserve cell movement)
+		; perform org-shifttab at root level elements and inside tables
+		(org-shifttab arg)
+		; try to fold up elsewhere 
+		(ct/org-foldup)))
+      (org-defkey org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
+#+end_src
+*** Show TODOs in currend lvl 1 heading
+    [2021-07-28 Mi]
+    #+begin_src emacs-lisp :results output silent
+      (defun kahiro/show-todos-lvl1-heading ()
+	"Show all the Todos with TODO, NEXT and WAITING"
+	(interactive)
+	(ct/org-shifttab)
+	(kahiro-show-TODO-in-subtree)
+	)      
+#+end_src
+
+*** COMMENT Apply :Archive: Tag to DONE Tasks
+ #+BEGIN_SRC emacs-lisp
+ (setq org-todo-state-tags-triggers
+   (quote 
+   (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
+    ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
+   )))
+ #+END_SRC
+**** TODO Review
+     - aussortiert weil nervig
+** [#B] Agenda-Mode
    - [[*for org-agendas][Link zu Keyboard-Shortcuts]]
 *** TODO [#A] Agenda custom commands
 **** Config Start und Hilfe
@@ -890,6 +1025,99 @@ information."
    (org-agenda arg "?" nil)) ;; edit
 
 #+end_src
+** [#B] org-capture templates [0/2] :syncStatus:
+*** Code
+    - Hilfe unter :: [[help:org-capture-templates][org-capture-templates]]
+#+BEGIN_SRC emacs-lisp  :results output silent
+  
+  (setq org-capture-templates
+    '(
+      ("i" "inbox Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
+	"** %^{Status|PLAN|TODO|IDEE|PROJ|NEXT} [#%^{Priorität eintragen|C|B|A|D}] %?%^{Aufgabe} %^g \n  - Anmerkungen :: %^{Anmerkungen}" 
+	:empty-lines-after 1)
+      ("t" "Termin in Inbox Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
+	"** %^{Status|PLAN|TODO|SPLIT|PROJ} [#%^{Priorität eintragen|C|B|A|D}] %?%^{Aufgabe} %^g \n DEADLINE: %^t  \n  - Anmerkungen :: %^{Anmerkungen}" 
+	:empty-lines-after 1)
+      ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
+	"** %^{Title} \n %^t" :time-prompt t)
+      ("m" "Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
+	"** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Mitarbeiter-Info][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?")
+      ("a" "Anruf" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
+	"** %? %U :call:interrupt: \n - Anmerkungen :: "
+	:prepend t :clock-in t :clock-resume t :empty-lines-after 1)
+      ("s" "Unterbrechung" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
+	"** %? %U :interrupt: \n - Anmerkungen :: "
+	:clock-in t :clock-resume t :empty-lines-after 1)
+      ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
+	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
+	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
+      ("h" "home task")
+      ("hH" "ungeplantes Todo sofort" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hInbox")
+	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
+	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
+      ("hh" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hInbox")
+	"** %^{Status eintragen|TODO|PLAN} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
+	:empty-lines-after 1)
+      ("hp" "Project oder Idee Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hProjekte")
+	"** %^{Status eintragen|IDEE|PROJ} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n\n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
+	:empty-lines-after 1)
+      ("t" "Todo [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
+      ("n" "Neuer Text oder neue Textidee")
+      ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
+	"*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
+      ("nA" "Template für neuen Autoren-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
+	"*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
+      ("nE" "Template für neuen Eigenen-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
+	"*** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
+      ("ne" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
+	"*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:%^g \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
+      ("l"                                    ;; Auswahltaste
+      "linkdrop"                              ;; Beschreibungstext
+      entry                                   ;; Typ, kann z.B. auch ein "checkitem" einer liste sein.
+      (file+headline                          ;; Zieltyp, hier eine Überschrift in einer Datei
+	  (lambda () (concat org-directory "/linkdrop.org"))          ;;   entsprechend Zieldatei
+	  "Links")                            ;;   entsprechend Zielüberschrift (so, wenn sie unique ist)
+       "** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgaben-Beschreibung} 
+       %(org-set-tags-command)\n%c \n\n%^{Notizen}%?"            ;; Template für Capture
+       :prepend t :empty-lines 1 :unnarrowed t )                 ;; weitere Eigenschaften -> siehe Hilfe.
+   ))
+#+END_SRC
+
+*** Snippets
+    #+begin_src
+   \nDEADLINE: %^{Faellig bis}t SCHEDULED: %^{Starten am}t\n
+    #+end_src
+
+*** TODO sinnvolles Capture für Ziele
+*** TODO capture für Anrufe :Verbesserung:
+*** COMMENT Test für Ablage in wöchentlichen oder monatlichen Trees.
+#+begin_src emacs-lisp :results output silent
+(defun org-find-month-in-datetree()
+  (org-datetree-find-date-create (calendar-current-date))
+  (kill-line))
+#+end_src
+
+Then use an org-capture template like this:
+
+
+#+begin_src emacs-lisp :results output silent
+(setq org-capture-templates
+  '(
+   ("w" "Weekly review" plain
+    (file+function (lambda () (concat org-directory "/calendar.org")) org-find-month-in-datetree)
+    "**** TODO Weekly review%?"))))
+#+end_src
+
+To get the same for a weekly date-tree change the function to
+
+#+begin_src emacs-lisp :results output silent
+(defun org-find-week-in-datetree()
+  (org-datetree-find-iso-week-create (calendar-current-date))
+  (kill-line))
+#+end_src
+
+*** Nützliche Links für org-capture
+    - [[https://stackoverflow.com/questions/31663932/how-to-add-tags-completion-to-org-mode-capture][SO-Antwort zu Tags, erklärt auch wie man funktionen im Aufruf nutzt.]]
 ** Archiv-Location
  - Link zur Hilfe: [[help:org-archive-location]]
 *** Beispiele
@@ -1023,96 +1251,6 @@ the hierarchy, it will be used.
   #+BEGIN_SRC emacs-lisp
   (setq org-ellipsis "⤵")
    #+END_SRC
-** org-capture templates [0/2] :syncStatus:
-*** Code
-    - Hilfe unter :: [[help:org-capture-templates][org-capture-templates]]
-#+BEGIN_SRC emacs-lisp  :results output silent
-  
-  (setq org-capture-templates
-    '(
-      ("i" "inbox Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
-	"** %^{Status|PLAN|TODO|IDEE|PROJ|NEXT} [#%^{Priorität eintragen|C|B|A|D}] %?%^{Aufgabe} %^g \n  - Anmerkungen :: %^{Anmerkungen}" 
-	:empty-lines-after 1)
-      ("t" "Termin in Inbox Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
-	"** %^{Status|PLAN|TODO|SPLIT|PROJ} [#%^{Priorität eintragen|C|B|A|D}] %?%^{Aufgabe} %^g \n DEADLINE: %^t  \n  - Anmerkungen :: %^{Anmerkungen}" 
-	:empty-lines-after 1)
-      ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
-	"** %^{Title} \n %^t" :time-prompt t)
-      ("m" "Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
-	"** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Mitarbeiter-Info][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?")
-      ("a" "Anruf" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
-	"** %? %U :call:interrupt: \n - Anmerkungen :: "
-	:prepend t :clock-in t :clock-resume t :empty-lines-after 1)
-      ("s" "Unterbrechung" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
-	"** %? %U :interrupt: \n - Anmerkungen :: "
-	:clock-in t :clock-resume t :empty-lines-after 1)
-      ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
-	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
-	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
-      ("h" "home task")
-      ("hH" "ungeplantes Todo sofort" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
-	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
-	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
-      ("hh" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "Inbox")
-	"** %^{Status eintragen|TODO|PLAN} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
-	:empty-lines-after 1)
-      ("t" "Todo [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
-      ("n" "Neuer Text oder neue Textidee")
-      ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
-      ("nA" "Template für neuen Autoren-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
-      ("nE" "Template für neuen Eigenen-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-	"*** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
-      ("ne" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-	"*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:%^g \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
-      ("l"                                    ;; Auswahltaste
-      "linkdrop"                              ;; Beschreibungstext
-      entry                                   ;; Typ, kann z.B. auch ein "checkitem" einer liste sein.
-      (file+headline                          ;; Zieltyp, hier eine Überschrift in einer Datei
-	  (lambda () (concat org-directory "/linkdrop.org"))          ;;   entsprechend Zieldatei
-	  "Links")                            ;;   entsprechend Zielüberschrift (so, wenn sie unique ist)
-       "** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgaben-Beschreibung} 
-       %(org-set-tags-command)\n%c \n\n%^{Notizen}%?"            ;; Template für Capture
-       :prepend t :empty-lines 1 :unnarrowed t )                 ;; weitere Eigenschaften -> siehe Hilfe.
-   ))
-#+END_SRC
-
-*** Snippets
-    #+begin_src
-   \nDEADLINE: %^{Faellig bis}t SCHEDULED: %^{Starten am}t\n
-    #+end_src
-
-*** TODO sinnvolles Capture für Ziele
-*** TODO capture für Anrufe :Verbesserung:
-*** COMMENT Test für Ablage in wöchentlichen oder monatlichen Trees.
-#+begin_src emacs-lisp :results output silent
-(defun org-find-month-in-datetree()
-  (org-datetree-find-date-create (calendar-current-date))
-  (kill-line))
-#+end_src
-
-Then use an org-capture template like this:
-
-
-#+begin_src emacs-lisp :results output silent
-(setq org-capture-templates
-  '(
-   ("w" "Weekly review" plain
-    (file+function (lambda () (concat org-directory "/calendar.org")) org-find-month-in-datetree)
-    "**** TODO Weekly review%?"))))
-#+end_src
-
-To get the same for a weekly date-tree change the function to
-
-#+begin_src emacs-lisp :results output silent
-(defun org-find-week-in-datetree()
-  (org-datetree-find-iso-week-create (calendar-current-date))
-  (kill-line))
-#+end_src
-
-*** Nützliche Links für org-capture
-    - [[https://stackoverflow.com/questions/31663932/how-to-add-tags-completion-to-org-mode-capture][SO-Antwort zu Tags, erklärt auch wie man funktionen im Aufruf nutzt.]]
 ** FEHLER org-caldav :WindowsOnly:Paket:
 Compiling internal form(s) at Wed Mar  3 23:13:32 2021
 Warning (bytecomp): reference to free variable ‘org-icalendar-timezone’
@@ -1239,17 +1377,21 @@ Each day counts with WORKTIME-PER-DAY hours."
 
 #+end_src
 
-** Todo-Status und -Sequenzen
+** Todos
+*** Todo-Status und -Sequenzen
+ #+begin_src emacs-lisp :results output silent
+ (setq org-todo-keywords
+   '(
+     (sequence "PROJ(j)" "SPLIT(x)" "DELEG(l)" "HELP(h)" "MEET(m)" "|" "CANC(c)")   ;; Plan
+     (sequence "IDEE(i)" "SUCHE(s)" "ANGEB(a)" "BAUFT(b)" "VORH(v)" "|" "DONE(d)")   ;; Textstaus
+     (sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
+    ))
+ #+end_src
+  es ginge auch nur:  (sequence "|"  "CANC(c)")
+*** Todo Cookie recursiv
 #+begin_src emacs-lisp :results output silent
-(setq org-todo-keywords
-  '(
-    (sequence "PROJ(j)" "SPLIT(x)" "DELEG(l)" "HELP(h)" "MEET(m)" "|" "CANC(c)")   ;; Plan
-    (sequence "IDEE(i)" "SUCHE(s)" "ANGEB(a)" "BAUFT(b)" "VORH(v)" "|" "DONE(d)")   ;; Textstaus
-    (sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
-   ))
+(setq org-hierarchical-todo-statistics nil)
 #+end_src
- es ginge auch nur:  (sequence "|"  "CANC(c)")
-
 ** Textbearbeitung
 *** TODO [#D] COMMENT unfill paragraph :Funktionen:deaktiviert:
  #+BEGIN_SRC emacs-lisp
@@ -1297,141 +1439,6 @@ Each day counts with WORKTIME-PER-DAY hours."
 #+end_src
 *** Inspirationsquellen
     - quasiquote für funktionen in einer liste, wie concat oder buffer-file-name :: [[https://lists.gnu.org/archive/html/emacs-orgmode/2012-07/msg00561.html][Link]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Backquote.html][elisp-Manual]]. 
-** [#B] Funktionen zur Fokussierung
-*** Alles einklappen außer aktuellen Subtree
-   - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
- #+BEGIN_SRC emacs-lisp
- (defun ess/org-show-just-me (&rest _)
-   "Fold all other trees, then show direct children of current org-heading."
-   (interactive)
-   (org-overview)
-   (org-reveal)
-   (org-show-children)
- )
- (add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
-
- #+END_SRC
-*** Nur Todos direkt unter der Überschrift anzeigen
- #+BEGIN_SRC emacs-lisp
- (defun my-sparse-subtree-todo-search ()
-   (interactive)
-   (org-narrow-to-subtree)
-   (let ((level (org-current-level)))
-     (org-match-sparse-tree  t (format "+LEVEL=%d" (1+ level)))))
- #+END_SRC
-*** Zeige nur spezielle TODOs und fokussiere den Ast
- #+BEGIN_SRC emacs-lisp
-
- (defun kahiro-show-todos-in-subtree ()
-    "Narrow to a subtree and show only headings with TODO keywords"
-    (interactive)
-    (org-narrow-to-subtree)
-    (org-show-todo-tree nil)
-    (org-ctrl-c-ctrl-c))
-
- (defun kahiro-show-NEXT-in-subtree ()
-    "Narrow to a subtree and show only headings with TODO keywords"
-    (interactive)
-    (org-narrow-to-subtree)
-    (org-occur (concat "^" org-outline-regexp " *" "\\(NEXT\\|WAITING\\)"))
-    (org-ctrl-c-ctrl-c))
-
- (defun kahiro-show-only-NEXT-in-subtree ()
-    "Narrow to a subtree and show only headings with NEXT keyword"
-    (interactive)
-    (org-narrow-to-subtree)
-    (org-show-todo-tree 4)
-    (org-ctrl-c-ctrl-c))
-
- (defun kahiro-show-TODO-in-subtree ()
-    "Narrow to a subtree and show only headings with TODO keywords"
-    (interactive)
-    (org-narrow-to-subtree)
-    (org-occur (concat "^" org-outline-regexp " *" "\\(TODO\\|NEXT\\|WAITING\\)"))
-    (org-ctrl-c-ctrl-c))
-
- (defun kahiro-show-PLAN-in-subtree ()
-    "Narrow to a subtree and show only headings with TODO keywords"
-    (interactive)
-    (org-narrow-to-subtree)
-    (org-show-todo-tree 13)  ;; Funktion ist abhängig von TODO-Reihenfolge
-    (org-ctrl-c-ctrl-c))
-
- #+END_SRC
-
- #+RESULTS:
- : kahiro-show-PLAN-in-subtree
-
-**** TODO Erklärung der Synthax
-*** Split und Switch
-      - Gibt eine Schnelle übersicht in einem halben Fenster. 
- #+BEGIN_SRC emacs-lisp
-  (defun kahiro-split-and-switch ()
-   "Split the window and switch to the other window in sequence."
-   (interactive)
-   (split-window-right)
-   (org-tree-to-indirect-buffer)
-   (other-window 1))
-  (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
-
- #+END_SRC
-*** Switch und Close
-      - Kehrt wieder zum Übersichtsbuffer zurück. 
- #+BEGIN_SRC emacs-lisp
-  (defun kahiro-switch-and-close ()
-   "Split the window and switch to the other window in sequence."
-   (interactive)
- ;;  (kill-buffer)
-   (delete-window)
- ;;  (other-window -1)
- ;;  (delete-other-windows)
-  )
-
-  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
- #+END_SRC
-*** Fold current tree up to lvl1 heading
-    - [[https://christiantietze.de/posts/2019/06/org-fold-heading/][Quelle]] [2021-07-28 Mi]
-    #+begin_src emacs-lisp :results output silent
-      (defun ct/org-foldup ()
-	"Hide the entire subtree from root headline at point."
-	(interactive)
-	(while (ignore-errors (outline-up-heading 1)))
-	(org-flag-subtree t))
-      
-      
-      (defun ct/org-shifttab (&optional arg)
-	(interactive "P")
-	(if (or (null (org-current-level))     ; point is before 1st heading, or
-		(and (= 1 (org-current-level)) ; at level-1 heading, or
-		     (org-at-heading-p))
-		(org-at-table-p))              ; in a table (to preserve cell movement)
-		; perform org-shifttab at root level elements and inside tables
-		(org-shifttab arg)
-		; try to fold up elsewhere 
-		(ct/org-foldup)))
-      (org-defkey org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
-#+end_src
-*** Show TODOs in currend lvl 1 heading
-    [2021-07-28 Mi]
-    #+begin_src emacs-lisp :results output silent
-      (defun kahiro/show-todos-lvl1-heading ()
-	"Show all the Todos with TODO, NEXT and WAITING"
-	(interactive)
-	(ct/org-shifttab)
-	(kahiro-show-TODO-in-subtree)
-	)      
-#+end_src
-
-*** COMMENT Apply :Archive: Tag to DONE Tasks
- #+BEGIN_SRC emacs-lisp
- (setq org-todo-state-tags-triggers
-   (quote 
-   (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
-    ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
-   )))
- #+END_SRC
-**** TODO Review
-     - aussortiert weil nervig
 * Custom Functions
 ** Next und Clock in :neu:
 #+begin_src emacs-lisp :results output silent
