@@ -6,7 +6,7 @@
 ** file-settings
 #+STARTUP: overview
 #+TODO: TODO FEHLER  | OK DONE
-#+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p)
+#+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p) obsolet(o)
 ** Startup
    - disable splash screen and startup message
 #+begin_src emacs-lisp :results output silent
@@ -718,23 +718,29 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 	    ;; ))
 	    ("d3" "Alle Autorentexte" 
 	     ((tags-todo "TODO=\"BAUFT\"|TODO=\"VORH\"+Autor"
-		((org-agenda-overriding-header "Alle offenen Autorentexte"))
-		)
-	      (tags-todo "TODO=\"ANGEB\"|TODO=\"SUCHE\"+Autor"
-		((org-agenda-overriding-header "Themenangebote und Redaktionsaufträge"))
-		)
-	      (tags-todo "TODO=\"IDEE\"+Autor"
-		((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
-		))
+	       ((org-agenda-overriding-header "Alle offenen Autorentexte"))
+	      )
+	      (tags-todo "TODO=\"PROJ\"+kur"
+	       ((org-agenda-overriding-header "Geplante eigene Texte"))
+	       )
+	      (tags-todo "TODO=\"PROJ\"+Autor"
+	       ((org-agenda-overriding-header "Eingeplante Autorentexte"))
+	       ))
 	     ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
 	    )
-	    ("d6" "Autorentexte bestellt und da" tags-todo "TODO=\"PROJ\"+kur"
-	     ((org-agenda-overriding-header "Alle offenen Autorentexte")
+	    ("d6" "Autorentexte bestellt und da" 
+	     ((tags-todo "TODO=\"IDEE\"+kur"
+	       ((org-agenda-overriding-header "Ideen für eigene Texte"))
+	       )
+	      (tags-todo "TODO=\"IDEE\"+Autor"
+	       ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
+		))
+	       ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
+	       )
+	    ("d9" "Autorentexte Idee und Suche" tags-todo "TODO=\"SUCHE\"|TODO=\"ANGEB\""
+	     ((org-agenda-overriding-header "Texte die angeboten wurden oder einen Autoren suchen")
 	      (org-agenda-sorting-strategy '(todo-state-down priority-down))
-	      ))
-	    ("d9" "Autorentexte Idee und Suche" tags-todo "TODO=\"IDEE\"|TODO=\"SUCHE\"+Autor|+kur"
-	     ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge")
-	      (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	      (org-agenda-category-filter-preset '("-habit" "-htasks"))
 	      ))
   ;;--- DEMO-Setup -- Uncomment for use ---
   ;; ))
@@ -1025,6 +1031,55 @@ information."
    (org-agenda arg "?" nil)) ;; edit
 
 #+end_src
+*** Calendar-week
+    - Zeigt die Kalenderwiche im Kalender an.
+ #+begin_src elisp
+ (copy-face font-lock-constant-face 'calendar-iso-week-face)
+ (set-face-attribute 'calendar-iso-week-face nil
+                     :height 0.7)
+ (setq calendar-intermonth-text
+       '(propertize
+         (format "%2d"
+                 (car
+                  (calendar-iso-from-absolute
+                   (calendar-absolute-from-gregorian (list month day year)))))
+         'font-lock-face 'calendar-iso-week-face))
+
+ (copy-face 'default 'calendar-iso-week-header-face)
+ (set-face-attribute 'calendar-iso-week-header-face nil
+                     :height 0.7)
+ (setq calendar-intermonth-header
+       (propertize "KW"                  ; or e.g. "KW" in Germany
+                   'font-lock-face 'calendar-iso-week-header-face))
+
+ (setq calendar-week-start-day 1)
+ #+end_src
+*** org-Recur :obsolet:package:
+    - Paket für die wiederholte Planung von Überchriften
+ #+begin_src emacs-lisp :results silent
+ (use-package org-recur
+   :hook ((org-mode . org-recur-mode)
+          (org-agenda-mode . org-recur-agenda-mode))
+   :demand t
+   :bind (:map org-recur-agenda-mode-map
+           ("d" . org-recur-finish)
+	   ("C-c d" . org-recur-finish)
+	   :map org-recur-mode-map
+	    ("C-c d" . org-recur-finish))
+ ;;  :config
+ ;;  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
+
+   ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
+   ;;  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
+   ;;  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish)
+ )
+ #+end_src
+*** org-habit :package:local:
+ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbringen, oder Sport treiben. Man kann es so einstellen, dass die Aufgabe nur alle x Tage auftaucht. 
+ #+BEGIN_SRC emacs-lisp
+ ;; Den Habit-Graph auf Position (von links) bringen.
+ (setq org-habit-graph-column 50)
+ #+END_SRC
 ** [#B] org-capture templates [0/2] :syncStatus:
 *** Code
     - Hilfe unter :: [[help:org-capture-templates][org-capture-templates]]
@@ -1034,9 +1089,6 @@ information."
     '(
       ("i" "inbox Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
 	"** %^{Status|PLAN|TODO|IDEE|PROJ|NEXT} [#%^{Priorität eintragen|C|B|A|D}] %?%^{Aufgabe} %^g \n  - Anmerkungen :: %^{Anmerkungen}" 
-	:empty-lines-after 1)
-      ("t" "Termin in Inbox Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
-	"** %^{Status|PLAN|TODO|SPLIT|PROJ} [#%^{Priorität eintragen|C|B|A|D}] %?%^{Aufgabe} %^g \n DEADLINE: %^t  \n  - Anmerkungen :: %^{Anmerkungen}" 
 	:empty-lines-after 1)
       ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
 	"** %^{Title} \n %^t" :time-prompt t)
@@ -1052,25 +1104,26 @@ information."
 	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
 	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
       ("h" "home task")
-      ("hH" "ungeplantes Todo sofort" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hInbox")
-	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
-	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
-      ("hh" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hInbox")
+      ("hi" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hInbox")
 	"** %^{Status eintragen|TODO|PLAN} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
 	:empty-lines-after 1)
       ("hp" "Project oder Idee Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hProjekte")
 	"** %^{Status eintragen|IDEE|PROJ} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n\n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
 	:empty-lines-after 1)
-      ("t" "Todo [inbox]" entry (file+headline (lambda () (concat org-directory "/inbox.org")) "Tasks") "* TODO %i%?" :prepend t :empty-lines-after 1)
-      ("n" "Neuer Text oder neue Textidee")
-      ("na" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
-      ("nA" "Template für neuen Autoren-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %?\n\n/atstruktur" :empty-lines-after 1)
-      ("nE" "Template für neuen Eigenen-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-	"*** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
-      ("ne" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-	"*** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:%^g \n/etdetails\n\n  - Anmerkungen :: %?\n\n/etstruktur" :empty-lines-after 1)
+      ("hH" "ungeplantes Todo sofort" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hInbox")
+	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
+	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 1)
+      ("t" "Neuer Text oder neue Textidee")
+      ("ta" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
+	"*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/atstruktur" :empty-lines-after 1)
+      ("tA" "Template für neuen Autoren-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
+	"*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/atstruktur" :empty-lines-after 1)
+      ("tE" "Template für neuen Eigenen-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
+	"*** PROJ [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:kur:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
+      ("te" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
+	"*** IDEE [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:kur:%^g \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
+      ("ti" "Template für unkonkrete Textidee" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Incubate") 
+	"*** IDEE [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] %^g \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
       ("l"                                    ;; Auswahltaste
       "linkdrop"                              ;; Beschreibungstext
       entry                                   ;; Typ, kann z.B. auch ein "checkitem" einer liste sein.
@@ -1118,77 +1171,117 @@ To get the same for a weekly date-tree change the function to
 
 *** Nützliche Links für org-capture
     - [[https://stackoverflow.com/questions/31663932/how-to-add-tags-completion-to-org-mode-capture][SO-Antwort zu Tags, erklärt auch wie man funktionen im Aufruf nutzt.]]
-** Archiv-Location
- - Link zur Hilfe: [[help:org-archive-location]]
-*** Beispiele
-    - in der config: (setq org-archive-location "datei::** unterDieserHeadingSortieren")
-    - in der datei: #+ARCHIVE: datei::** unterDieserHeadingSortieren
-      oder: #+ARCHIVE: %s_archive::datetree/
-    - in der subheading
-      :PROPERTIES:
-      :ARCHIVE: datei::** unterdieserheadingsortieren
-      :END:
+** Projektmanagement
+*** recursive statistic cookie for PROJ status
+#+begin_src emacs-lisp :results output silent
+(defun kahiro/org-recursive-statistics-for-proj ()
+  (interactive)
+  (when (equal (org-get-todo-state) "PROJ")
+    (org-set-property "COOKIE_DATA" "todo recursive")))
 
-Here are a few examples:
-"%s_archive::"
-	If the current file is Projects.org, archive in file
-	Projects.org_archive, as top-level trees.  This is the default.
-
-"::* Archived Tasks"
-	Archive in the current file, under the top-level headline
-	"* Archived Tasks".
-
-"~/org/archive.org::"
-	Archive in file ~/org/archive.org (absolute path), as top-level trees.
-
-"~/org/archive.org::* From %s"
-	Archive in file ~/org/archive.org (absolute path), under headlines
-        "From FILENAME" where file name is the current file name.
-
-"~/org/datetree.org::datetree/* Finished Tasks"
-        The "datetree/" string is special, signifying to archive
-        items to the datetree.  Items are placed in either the CLOSED
-        date of the item, or the current date if there is no CLOSED date.
-        The heading will be a subentry to the current date.  There doesn’t
-        need to be a heading, but there always needs to be a slash after
-        datetree.  For example, to store archived items directly in the
-        datetree, use "~/org/datetree.org::datetree/".
-
-"basement::** Finished Tasks"
-	Archive in file ./basement (relative path), as level 3 trees
-	below the level 2 heading "** Finished Tasks".
-
-You may set this option on a per-file basis by adding to the buffer a
-line like
-
-#+ARCHIVE: %s_archive::datetree
-
-You may also define it locally for a subtree by setting an ARCHIVE property
-in the entry.  If such a property is found in an entry, or anywhere up
-the hierarchy, it will be used.
-** Calendar-week
-   - Zeigt die Kalenderwiche im Kalender an.
-#+begin_src elisp
-(copy-face font-lock-constant-face 'calendar-iso-week-face)
-(set-face-attribute 'calendar-iso-week-face nil
-                    :height 0.7)
-(setq calendar-intermonth-text
-      '(propertize
-        (format "%2d"
-                (car
-                 (calendar-iso-from-absolute
-                  (calendar-absolute-from-gregorian (list month day year)))))
-        'font-lock-face 'calendar-iso-week-face))
-
-(copy-face 'default 'calendar-iso-week-header-face)
-(set-face-attribute 'calendar-iso-week-header-face nil
-                    :height 0.7)
-(setq calendar-intermonth-header
-      (propertize "KW"                  ; or e.g. "KW" in Germany
-                  'font-lock-face 'calendar-iso-week-header-face))
-
-(setq calendar-week-start-day 1)
+(add-hook 'org-after-todo-state-change-hook 'kahiro/org-recursive-statistics-for-proj)
 #+end_src
+
+** Allgemein
+*** Archiv-Location
+  - Link zur Hilfe: [[help:org-archive-location]]
+**** Beispiele
+     - in der config: (setq org-archive-location "datei::** unterDieserHeadingSortieren")
+     - in der datei: #+ARCHIVE: datei::** unterDieserHeadingSortieren
+       oder: #+ARCHIVE: %s_archive::datetree/
+     - in der subheading
+       :PROPERTIES:
+       :ARCHIVE: datei::** unterdieserheadingsortieren
+       :END:
+
+ Here are a few examples:
+ "%s_archive::"
+	 If the current file is Projects.org, archive in file
+	 Projects.org_archive, as top-level trees.  This is the default.
+
+ "::* Archived Tasks"
+	 Archive in the current file, under the top-level headline
+	 "* Archived Tasks".
+
+ "~/org/archive.org::"
+	 Archive in file ~/org/archive.org (absolute path), as top-level trees.
+
+ "~/org/archive.org::* From %s"
+	 Archive in file ~/org/archive.org (absolute path), under headlines
+         "From FILENAME" where file name is the current file name.
+
+ "~/org/datetree.org::datetree/* Finished Tasks"
+         The "datetree/" string is special, signifying to archive
+         items to the datetree.  Items are placed in either the CLOSED
+         date of the item, or the current date if there is no CLOSED date.
+         The heading will be a subentry to the current date.  There doesn’t
+         need to be a heading, but there always needs to be a slash after
+         datetree.  For example, to store archived items directly in the
+         datetree, use "~/org/datetree.org::datetree/".
+
+ "basement::** Finished Tasks"
+	 Archive in file ./basement (relative path), as level 3 trees
+	 below the level 2 heading "** Finished Tasks".
+
+ You may set this option on a per-file basis by adding to the buffer a
+ line like
+
+ #+ARCHIVE: %s_archive::datetree
+
+ You may also define it locally for a subtree by setting an ARCHIVE property
+ in the entry.  If such a property is found in an entry, or anywhere up
+ the hierarchy, it will be used.
+*** Dateiendungen
+ #+BEGIN_SRC emacs-lisp :results output silent
+  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+  (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
+ ;; (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+  #+END_SRC
+*** org-goto :navigation:
+ #+begin_src emacs-lisp :results output silent
+ (setq org-goto-interface 'outline-path-completion) ;; alternative 'outline
+ (setq org-outline-path-complete-in-steps nil)
+ #+end_src
+ [[https://emacs.stackexchange.com/questions/32617/how-to-jump-directly-to-an-org-headline][Link:]] Setting org-goto-interface to one of the two recognised values does not mean sacrificing the alternative interface. Calling org-goto with a prefix argument (i.e. C-u C-c C-j or C-u M-x org-goto RET) automatically selects the alternative interface for the current completion. This way, you can set org-goto-interface to the interface you are likely to use most often and use the prefix argument when you wish to temporarily switch behaviour. If even this does not suit your needs, you can always write your own wrapper around org-goto, as per Att Righ's example.
+*** refile" targets :Funktionen:
+ #+BEGIN_SRC emacs-lisp :results output silent
+ ;; setting Refile Target
+ (setq org-refile-targets `(
+   (org-agenda-files :maxlevel . 1)       ;; Für Agenda-Dateien normalerweise nur in * Überschriften
+   (,(concat org-directory "/atasks.org") :maxlevel . 2)))  ;; Für atask.org auch in ** Überschriften
+
+ ;; TODO Hier fehlt noch eine Erklärung
+ (setq org-refile-allow-creating-parent-nodes 'confirm)     ;;allow creating nodes. Refile has to end with /newheadingname
+ (setq org-refile-use-outline-path 'file)
+
+ ;; refile nur in der aktuellen Datei (geklaut von Sacha Chua). Aufruf über c-W.
+ (defun my/org-refile-in-file (&optional prefix)
+   "Refile to a target within the current file."
+   (interactive)
+   (let ((org-refile-targets `(((,(buffer-file-name)) :maxlevel . 3))))   ;; Für aktuelle Datei bis in *** Überschriften.
+     (call-interactively 'org-refile)))
+ #+END_SRC
+**** COMMENT Option: Refile in alle geöffneten Buffer
+     - geklaut von hier :: https://emacs.stackexchange.com/questions/22128/how-to-org-refile-to-a-target-within-the-current-file
+ #+begin_src emacs-lisp :results output silent
+ (defun my-org-files-list ()
+   (delq nil
+     (mapcar (lambda (buffer)
+       (buffer-file-name buffer))
+       (org-buffer-list 'files t))))
+
+ (setq org-refile-targets '((my-org-files-list :maxlevel . 1)))
+ #+end_src
+**** Inspirationsquellen
+     - quasiquote für funktionen in einer liste, wie concat oder buffer-file-name :: [[https://lists.gnu.org/archive/html/emacs-orgmode/2012-07/msg00561.html][Link]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Backquote.html][elisp-Manual]]. 
+** LateX
+- gesamte Variable:   (setq org-format-latex-options '(:foreground default :background default :scale 1.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+	     ("begin" "$1" "$" "$$" "\\(" "\\[")))
+- aber eigentlich reicht es nur einen Wert zu vernändern:
+#+begin_src emacs-lisp :results output silent
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+#+end_src
+
 ** Clocking / Aufwand
 #+begin_src emacs-lisp :results output silent
 ;; CLOCKING: global Effort estimate values
@@ -1212,21 +1305,8 @@ the hierarchy, it will be used.
 ;; Clock-Report-View auf Level 3
 (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 3))
 #+end_src
-** Dateiendungen
-#+BEGIN_SRC emacs-lisp :results output silent
- (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
- (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
-;; (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
- #+END_SRC
-** LateX
-- gesamte Variable:   (setq org-format-latex-options '(:foreground default :background default :scale 1.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-	     ("begin" "$1" "$" "$$" "\\(" "\\[")))
-- aber eigentlich reicht es nur einen Wert zu vernändern:
-#+begin_src emacs-lisp :results output silent
-(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
-#+end_src
-
 ** Make org beautiful
+*** hide emphasis markers
 #+BEGIN_SRC emacs-lisp
 ;; Make Org beautiful
 ;;-------------------
@@ -1288,39 +1368,7 @@ oauth2-auth-and-store, oauth2-url-retrieve-synchronously
      )
 )
 #+end_src
-** org-habit :package:local:
-Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbringen, oder Sport treiben. Man kann es so einstellen, dass die Aufgabe nur alle x Tage auftaucht. 
-#+BEGIN_SRC emacs-lisp
-;; Den Habit-Graph auf Position (von links) bringen.
-(setq org-habit-graph-column 50)
-#+END_SRC
-** org-goto :navigation:
-#+begin_src emacs-lisp :results output silent
-(setq org-goto-interface 'outline-path-completion) ;; alternative 'outline
-(setq org-outline-path-complete-in-steps nil)
-#+end_src
-[[https://emacs.stackexchange.com/questions/32617/how-to-jump-directly-to-an-org-headline][Link:]] Setting org-goto-interface to one of the two recognised values does not mean sacrificing the alternative interface. Calling org-goto with a prefix argument (i.e. C-u C-c C-j or C-u M-x org-goto RET) automatically selects the alternative interface for the current completion. This way, you can set org-goto-interface to the interface you are likely to use most often and use the prefix argument when you wish to temporarily switch behaviour. If even this does not suit your needs, you can always write your own wrapper around org-goto, as per Att Righ's example.
-** org-Recur :package:
-   - Paket für die wiederholte Planung von Überchriften
-#+begin_src emacs-lisp :results silent
-(use-package org-recur
-  :hook ((org-mode . org-recur-mode)
-         (org-agenda-mode . org-recur-agenda-mode))
-  :demand t
-  :bind (:map org-recur-agenda-mode-map
-          ("d" . org-recur-finish)
-	  ("C-c d" . org-recur-finish)
-	  :map org-recur-mode-map
-	   ("C-c d" . org-recur-finish))
-;;  :config
-;;  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
-
-  ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
-  ;;  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
-  ;;  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish)
-)
-#+end_src
-** COMMENT org-table :Funktionen:
+** FEHLER COMMENT org-table :Funktionen:
 [2021-07-28 Mi]- Probleme beim Laden
    #+begin_src emacs-lisp :results output silent
 (defun calcFunc-dateDiffToHMS (date1 date2 worktime-per-day)
@@ -1389,8 +1437,9 @@ Each day counts with WORKTIME-PER-DAY hours."
  #+end_src
   es ginge auch nur:  (sequence "|"  "CANC(c)")
 *** Todo Cookie recursiv
+- deaktivert [2021-08-05 Do], weil besser nur dann gesetzt, wenn TODO=PROJ
 #+begin_src emacs-lisp :results output silent
-(setq org-hierarchical-todo-statistics nil)
+;;(setq org-hierarchical-todo-statistics nil)
 #+end_src
 ** Textbearbeitung
 *** TODO [#D] COMMENT unfill paragraph :Funktionen:deaktiviert:
@@ -1408,37 +1457,6 @@ Each day counts with WORKTIME-PER-DAY hours."
  (define-key global-map "\M-Q" 'unfill-paragraph)
  #+END_SRC
 
-** Ziele für "refile" festlegen :Funktionen:
-#+BEGIN_SRC emacs-lisp :results output silent
-;; setting Refile Target
-(setq org-refile-targets `(
-  (org-agenda-files :maxlevel . 1)       ;; Für Agenda-Dateien normalerweise nur in * Überschriften
-  (,(concat org-directory "/atasks.org") :maxlevel . 2)))  ;; Für atask.org auch in ** Überschriften
-
-;; TODO Hier fehlt noch eine Erklärung
-(setq org-refile-allow-creating-parent-nodes 'confirm)     ;;allow creating nodes. Refile has to end with /newheadingname
-(setq org-refile-use-outline-path 'file)
-
-;; refile nur in der aktuellen Datei (geklaut von Sacha Chua). Aufruf über c-W.
-(defun my/org-refile-in-file (&optional prefix)
-  "Refile to a target within the current file."
-  (interactive)
-  (let ((org-refile-targets `(((,(buffer-file-name)) :maxlevel . 3))))   ;; Für aktuelle Datei bis in *** Überschriften.
-    (call-interactively 'org-refile)))
-#+END_SRC
-*** COMMENT Option: Refile in alle geöffneten Buffer
-    - geklaut von hier :: https://emacs.stackexchange.com/questions/22128/how-to-org-refile-to-a-target-within-the-current-file
-#+begin_src emacs-lisp :results output silent
-(defun my-org-files-list ()
-  (delq nil
-    (mapcar (lambda (buffer)
-      (buffer-file-name buffer))
-      (org-buffer-list 'files t))))
-
-(setq org-refile-targets '((my-org-files-list :maxlevel . 1)))
-#+end_src
-*** Inspirationsquellen
-    - quasiquote für funktionen in einer liste, wie concat oder buffer-file-name :: [[https://lists.gnu.org/archive/html/emacs-orgmode/2012-07/msg00561.html][Link]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Backquote.html][elisp-Manual]]. 
 * Custom Functions
 ** Next und Clock in :neu:
 #+begin_src emacs-lisp :results output silent
@@ -2430,5 +2448,3 @@ See Emerge, for the Emerge facility, which provides a powerful interface for mer
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
 * COMMENT Subtree for tests
-
-     
