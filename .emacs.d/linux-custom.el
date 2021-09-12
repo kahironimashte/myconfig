@@ -12,7 +12,7 @@
  '(custom-enabled-themes (quote (whiteboard)))
  '(org-agenda-files
    (quote
-    ("~/ncloud/org/prsn/karriere.org" "~/ncloud/org/regularien.org" "~/ncloud/org/htasks.org" "~/ncloud/org/atasks.org" "~/ncloud/org/calendar.org")))
+    ("~/org/prsn/karriere.org" "~/org/regularien.org" "~/org/htasks.org" "~/org/atasks.org" "~/org/calendar.org")))
  '(org-agenda-sorting-strategy
    (quote
     ((agenda time-up habit-down priority-down category-keep)

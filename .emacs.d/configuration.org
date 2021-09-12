@@ -17,7 +17,7 @@
 #+begin_src emacs-lisp :results output silent
 (if (string-equal system-type "windows-nt")
     (setq org-directory "c:/org")
-    (setq org-directory "~/ncloud/org")
+    (setq org-directory "~/org")
   )
 #+end_src
 
@@ -1177,7 +1177,10 @@ To get the same for a weekly date-tree change the function to
 (defun kahiro/org-recursive-statistics-for-proj ()
   (interactive)
   (when (equal (org-get-todo-state) "PROJ")
-    (org-set-property "COOKIE_DATA" "todo recursive")))
+    (org-set-property "COOKIE_DATA" "todo recursive"))
+  (when (equal (org-get-todo-state) "TODO")
+    (org-delete-property "COOKIE_DATA"))
+)
 
 (add-hook 'org-after-todo-state-change-hook 'kahiro/org-recursive-statistics-for-proj)
 #+end_src
@@ -1420,9 +1423,8 @@ Each day counts with WORKTIME-PER-DAY hours."
 
 ** Tag-Vererbung
 #+begin_src emacs-lisp :results output silent
-;;(setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer" "kur" "gut" "2021"))
- (setq org-use-tag-inheritance nil)
-
+(setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer" "kur" "gut" "2021"))
+;;(setq org-use-tag-inheritance nil)
 #+end_src
 
 ** Todos
