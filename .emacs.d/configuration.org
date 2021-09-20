@@ -79,10 +79,10 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 ** makros
    #+begin_src emacs-lisp :results output silent
   (fset 'macro-statusnow
-	(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote (" er uuzTns   " 0 "%d")) arg)))
+	(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote (" er uuzTns" 0 "%d")) arg)))
  (global-set-key (kbd "<f6>")  'macro-statusnow)
    #+end_src
-
+   - [2021-09-20 Mo] : war " er uuzTns   " , zwei mal nach unten und expansion.
 ** Keyboard-Shortuts
 *** for org-agendas
 **** Keyboard :Funktionen:
@@ -606,7 +606,7 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 	(org-flag-subtree t))
       
       
-      (defun ct/org-shifttab (&optional arg)
+      (defun ct/org-ctrltab (&optional arg)
 	(interactive "P")
 	(if (or (null (org-current-level))     ; point is before 1st heading, or
 		(and (= 1 (org-current-level)) ; at level-1 heading, or
@@ -616,7 +616,7 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 		(org-shifttab arg)
 		; try to fold up elsewhere 
 		(ct/org-foldup)))
-      (org-defkey org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
+      (org-defkey org-mode-map (kbd "C-<tab>") 'ct/org-ctrltab)
 #+end_src
 *** Show TODOs in currend lvl 1 heading
     [2021-07-28 Mi]
@@ -624,8 +624,9 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
       (defun kahiro/show-todos-lvl1-heading ()
 	"Show all the Todos with TODO, NEXT and WAITING"
 	(interactive)
-	(ct/org-shifttab)
+	(ct/org-ctrltab)
 	(kahiro-show-TODO-in-subtree)
+	(widen)
 	)      
 #+end_src
 
@@ -1347,7 +1348,7 @@ oauth2-auth-and-store, oauth2-url-retrieve-synchronously
 (when (string-equal system-type "windows-nt")
     (use-package org-caldav
       :init
-      (setq org-caldav-url "https://cloud.ist.gold/remote.php/dav/calendars/fabian")
+      (setq org-caldav-url "https://cloud3.linuxfabrik.io/remote.php/dav/calendars/cloud@hailmail.net")
       (setq org-caldav-calendars
       `((:calendar-id "org"
          :inbox ,(concat org-directory "/calinbox.org")

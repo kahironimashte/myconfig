@@ -14,7 +14,7 @@
  '(custom-enabled-themes '(whiteboard))
  '(font-use-system-font t)
  '(org-agenda-files
-   '("c:/org/regularien.org" "c:/org/prsn/karriere.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
+   '("c:/org/regularien.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up priority-down category-keep)
      (todo priority-down category-keep)
@@ -92,4 +92,5 @@
  '(secondary-selection ((t (:background "LightPink"))))
  '(shadow ((t (:foreground "honeydew3"))))
  '(variable-pitch ((t (:family "IBM Plex Sans Text" :height 152 :weight normal :antialias subpixel)))))
+
 
