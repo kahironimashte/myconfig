@@ -31,10 +31,18 @@
    '(ol-docview org-habit ol-info org-inlinetask ol-mhe ol-w3m))
  '(org-priority-default 67)
  '(org-priority-faces
-   '((65 :inherit org-priority :weight bold)
-     (66 :inherit org-priority :family "IBM Plex Mono SemiBold" :weight semibold)
-     (67 :inherit org-priority :family "IBM Plex Mono" :weight normal)
-     (68 :inherit org-priority :family "IBM Plex Mono Light" :weight light)))
+   '((65 :inherit
+	 '(org-priority default)
+	 :weight bold)
+     (66 :inherit
+	 '(org-priority default)
+	 :family "IBM Plex Mono SemiBold" :weight semibold)
+     (67 :inherit
+	 '(org-priority default)
+	 :family "IBM Plex Mono" :weight normal)
+     (68 :inherit
+	 '(org-priority default)
+	 :family "IBM Plex Mono Light" :weight light)))
  '(org-priority-highest 65)
  '(org-priority-lowest 68)
  '(org-startup-align-all-tables t)
@@ -57,6 +65,8 @@
  '(org-agenda-date-weekend ((t (:inherit org-agenda-date :foreground "purple4"))))
  '(org-agenda-structure ((t (:foreground "DeepSkyBlue4"))))
  '(org-block-begin-line ((t (:inherit org-meta-line :foreground "dark gray" :height 0.6))))
+ '(org-checkbox-statistics-done ((t (:inherit org-done :height 0.7))))
+ '(org-checkbox-statistics-todo ((t (:inherit org-todo))))
  '(org-date ((t (:inherit fixed-pitch :foreground "Purple"))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :height 1.3 :underline nil))))
  '(org-done ((t (:inherit org-todo :foreground "honeydew3"))))
@@ -88,9 +98,10 @@
  '(org-scheduled-today ((t (:foreground "SeaGreen4"))))
  '(org-tag ((t (:family "Calibri" :foreground "dark gray" :weight normal :height 0.5 :antialias standard))))
  '(org-time-grid ((t (:foreground "PeachPuff4"))))
- '(org-todo ((t (:foreground "IndianRed4" :weight semibold :family "IBM Plex Sans Condensed SemiBold" :antialias subpixel))))
+ '(org-todo ((t (:inherit default :foreground "IndianRed4" :weight semibold :family "IBM Plex Sans Condensed SemiBold" :antialias subpixel))))
  '(secondary-selection ((t (:background "LightPink"))))
  '(shadow ((t (:foreground "honeydew3"))))
  '(variable-pitch ((t (:family "IBM Plex Sans Text" :height 152 :weight normal :antialias subpixel)))))
+
 
 
