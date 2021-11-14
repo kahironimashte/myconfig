@@ -2378,10 +2378,11 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
 
 *** TODO [#D] Make menu toggle-able
 ** Split-Verhalten
-   - legt die Mindestbreite fest, um horizontal zu teilen, also rechts einen neuen Buffer hinzuzufügen. 
+   - legt die Mindestbreite fest, um horizontal zu teilen, also rechts einen neuen Buffer hinzuzufügen.
+   - Mit breitem Bildschirm funktioniert der Wert 80, mit schmalem/vertikalem Layout
 #+begin_src emacs-lisp :results output silent
 (when (string-equal system-type "windows-nt")
-(setq split-width-threshold 160))
+(setq split-width-threshold 80)) 
 
 (when (string-equal system-type "gnu/linux")
 (setq split-width-threshold 80))
