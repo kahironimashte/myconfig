@@ -31,24 +31,16 @@
    '(ol-docview org-habit ol-info org-inlinetask ol-mhe ol-w3m))
  '(org-priority-default 67)
  '(org-priority-faces
-   '((65 :inherit
-	 '(org-priority default)
-	 :weight bold)
-     (66 :inherit
-	 '(org-priority default)
-	 :family "IBM Plex Mono SemiBold" :weight semibold)
-     (67 :inherit
-	 '(org-priority default)
-	 :family "IBM Plex Mono" :weight normal)
-     (68 :inherit
-	 '(org-priority default)
-	 :family "IBM Plex Mono Light" :weight light)))
+   '((65 :inherit org-priority :weight bold)
+     (66 :inherit org-priority :family "IBM Plex Mono SemiBold" :weight semibold)
+     (67 :inherit org-priority :family "IBM Plex Mono" :weight normal)
+     (68 :inherit org-priority :family "IBM Plex Mono Light" :weight light)))
  '(org-priority-highest 65)
  '(org-priority-lowest 68)
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
  '(package-selected-packages
-   '(esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+)))
+   '(modus-themes esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -90,7 +82,7 @@
  '(org-level-8 ((t (:inherit org-level-4))))
  '(org-link ((t (:inherit monospace :underline t))))
  '(org-list-dt ((t (:foreground "gray25" :slant italic))))
- '(org-priority ((t (:inherit font-lock-keyword-face :foreground "gray34" :family "IBM Plex Mono" :weight normal))))
+ '(org-priority ((t (:inherit font-lock-keyword-face :foreground "gray34" :family "IBM Plex Mono" :foundry "outline" :slant normal :weight normal :height 148 :width normal :antialias subpixel))))
  '(org-property-value ((t (:inherit org-special-keyword))) t)
  '(org-recur ((t (:foreground "light slate gray"))))
  '(org-scheduled ((t (:inherit org-scheduled-today))))
@@ -102,6 +94,4 @@
  '(secondary-selection ((t (:background "LightPink"))))
  '(shadow ((t (:foreground "honeydew3"))))
  '(variable-pitch ((t (:family "IBM Plex Sans Text" :height 152 :weight normal :antialias subpixel)))))
-
-
 

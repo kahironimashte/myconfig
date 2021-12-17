@@ -602,10 +602,11 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
       (defun ct/org-foldup ()
 	"Hide the entire subtree from root headline at point."
 	(interactive)
+	(widen)
 	(while (ignore-errors (outline-up-heading 1)))
 	(org-flag-subtree t))
-      
-      
+
+
       (defun ct/org-ctrltab (&optional arg)
 	(interactive "P")
 	(if (or (null (org-current-level))     ; point is before 1st heading, or
@@ -1348,7 +1349,7 @@ oauth2-auth-and-store, oauth2-url-retrieve-synchronously
 (when (string-equal system-type "windows-nt")
     (use-package org-caldav
       :init
-      (setq org-caldav-url "https://cloud3.linuxfabrik.io/remote.php/dav/calendars/cloud@hailmail.net")
+      (setq org-caldav-url "https://cloud.ist.gold/remote.php/dav/calendars/fabian")
       (setq org-caldav-calendars
       `((:calendar-id "org"
          :inbox ,(concat org-directory "/calinbox.org")
@@ -1433,8 +1434,8 @@ Each day counts with WORKTIME-PER-DAY hours."
  #+begin_src emacs-lisp :results output silent
  (setq org-todo-keywords
    '(
-     (sequence "PROJ(j)" "SPLIT(x)" "DELEG(l)" "HELP(h)" "MEET(m)" "|" "CANC(c)")   ;; Plan
-     (sequence "IDEE(i)" "SUCHE(s)" "ANGEB(a)" "BAUFT(b)" "VORH(v)" "|" "DONE(d)")   ;; Textstaus
+     (sequence "PROJ(j!)" "SPLIT(x@)" "DELEG(l@)" "HELP(h@)" "MEET(m)" "|" "CANC(c)")   ;; Plan
+     (sequence "IDEE(i!)" "SUCHE(s)" "ANGEB(a)" "BAUFT(b)" "VORH(v)" "|" "DONE(d)")   ;; Textstaus
      (sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
     ))
  #+end_src
@@ -1476,6 +1477,12 @@ Each day counts with WORKTIME-PER-DAY hours."
  (interactive)
  (org-sort-entries nil ?T)
 )
+
+(defun kahiro-sort-by-time (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?t)
+)
+
 
 (defun kahiro-sort-by-priority (&optional arg)
  (interactive)
@@ -1836,6 +1843,7 @@ Each day counts with WORKTIME-PER-DAY hours."
     ("s" (
      ("p" kahiro-sort-by-priority)
      ("t" kahiro-sort-by-time-reverse)
+     ("T" kahiro-sort-by-time)
      ("o" kahiro-sort-by-todo)
      ("n" kahiro-sort-by-todo-reverse)
      ("s" isearch-forward)
@@ -2382,7 +2390,7 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
    - Mit breitem Bildschirm funktioniert der Wert 80, mit schmalem/vertikalem Layout
 #+begin_src emacs-lisp :results output silent
 (when (string-equal system-type "windows-nt")
-(setq split-width-threshold 80)) 
+(setq split-width-threshold 160)) 
 
 (when (string-equal system-type "gnu/linux")
 (setq split-width-threshold 80))
