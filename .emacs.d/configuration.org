@@ -203,6 +203,19 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+end_src
 
 * Pakete                                                    :package:
+** org-clock-convenience
+#+begin_src emacs-lisp :results output silent
+(use-package org-clock-convenience
+  :ensure t
+  :bind (:map org-agenda-mode-map
+   	   ("<C-up>" . org-clock-convenience-timestamp-up)
+   	   ("<C-down>" . org-clock-convenience-timestamp-down)
+   	   ("<f6>" . org-clock-convenience-fill-gap)
+   	   ("<f7>" . org-clock-convenience-fill-gap-both)))
+#+end_src
+
+
+
 ** COMMENT org-roam
 download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
 #+begin_src emacs-lisp :results output silent
@@ -1117,13 +1130,13 @@ information."
 	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 1)
       ("t" "Neuer Text oder neue Textidee")
       ("ta" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/atstruktur" :empty-lines-after 1)
+	"*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/atstruktur" :empty-lines-after 1)
       ("tA" "Template für neuen Autoren-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/atstruktur" :empty-lines-after 1)
+	"*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/atstruktur" :empty-lines-after 1)
       ("tE" "Template für neuen Eigenen-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-	"*** PROJ [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:kur:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
+	"*** PROJ [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:kur:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
       ("te" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-	"*** IDEE [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :21#%^{voraussichtliche Ausgabe}:kur:%^g \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
+	"*** IDEE [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:kur:%^g \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
       ("ti" "Template für unkonkrete Textidee" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Incubate") 
 	"*** IDEE [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] %^g \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
       ("l"                                    ;; Auswahltaste
@@ -1297,7 +1310,7 @@ To get the same for a weekly date-tree change the function to
 ;; These are the hotkeys
 
 ;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
-(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TODO %TAGS")
+(setq org-columns-default-format "%45ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TODO %TAGS")
 
 ;; Clocking
 ;;---------
@@ -1425,7 +1438,7 @@ Each day counts with WORKTIME-PER-DAY hours."
 
 ** Tag-Vererbung
 #+begin_src emacs-lisp :results output silent
-(setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer" "kur" "gut" "2021" "Reportage" "Portrait" "ContentLeitstand" "CL"))
+(setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer" "kur" "gut" "2022" "Reportage" "Portrait" "ContentLeitstand" "CL"))
 ;;(setq org-use-tag-inheritance nil)
 #+end_src
 
@@ -1434,8 +1447,8 @@ Each day counts with WORKTIME-PER-DAY hours."
  #+begin_src emacs-lisp :results output silent
  (setq org-todo-keywords
    '(
-     (sequence "PROJ(j!)" "SPLIT(x@)" "DELEG(l@)" "HELP(h@)" "MEET(m)" "|" "CANC(c)")   ;; Plan
-     (sequence "IDEE(i!)" "SUCHE(s)" "ANGEB(a)" "BAUFT(b)" "VORH(v)" "|" "DONE(d)")   ;; Textstaus
+     (sequence "PROJ(j!)" "SPLIT(x)" "DELEG(l@)" "HELP(h@)" "MEET(m)" "|" "CANC(c)")   ;; Plan
+     (sequence "IDEE(i!)" "SUCHE(s!)" "ANGEB(a!)" "BAUFT(b!)" "VORH(v!)" "|" "DONE(d)")   ;; Textstaus
      (sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
     ))
  #+end_src
@@ -1622,7 +1635,7 @@ Each day counts with WORKTIME-PER-DAY hours."
 **** b
 #+begin_src emacs-lisp
     ("b"
-     (("b" bookmark-jump)
+     (("b" bookmark-jump :first (org-mark-ring-push)) ;; 
       ("j" imenu-anywhere)
       ("m" bookmark-set)
       ("l" bookmark-bmenu-list)
@@ -1871,7 +1884,7 @@ Each day counts with WORKTIME-PER-DAY hours."
     ("z"
      (("i" org-clock-in)
       ("o" org-clock-out)
-      ("j" org-clock-goto)
+      ("j" org-clock-goto :first (org-mark-ring-push))
       ("x" org-clock-in-last)
       ("q" org-clock-cancel)
       ("d" org-clock-display)
@@ -2041,9 +2054,13 @@ Each day counts with WORKTIME-PER-DAY hours."
 	    ("y" org-agenda-year-view)
 	    ("z" 
 	    (("z" org-agenda-add-note)
+	     ("f" org-clock-convenience-fill-gap)
+	     ("F" org-clock-convenience-fill-gap-both)
 	     ("n" org-agenda-add-note)
 	     ("i" org-agenda-clock-in)
+	     ("j" org-clock-convenience-goto-ts)
 	     ("o" org-agenda-clock-out)
+
 	    ))
 	    ("{" org-agenda-manipulate-query-add-re)
 	    ("|" org-agenda-filter-remove-all)

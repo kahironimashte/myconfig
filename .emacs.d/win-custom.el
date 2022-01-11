@@ -14,7 +14,7 @@
  '(custom-enabled-themes '(whiteboard))
  '(font-use-system-font t)
  '(org-agenda-files
-   '("c:/org/regularien.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
+   '("c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up priority-down category-keep)
      (todo priority-down category-keep)
@@ -40,7 +40,7 @@
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
  '(package-selected-packages
-   '(modus-themes esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+)))
+   '(org-clock-convenience modus-themes esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -59,6 +59,7 @@
  '(org-block-begin-line ((t (:inherit org-meta-line :foreground "dark gray" :height 0.6))))
  '(org-checkbox-statistics-done ((t (:inherit org-done :height 0.7))))
  '(org-checkbox-statistics-todo ((t (:inherit org-todo))))
+ '(org-column ((t (:inherit default :background "grey90" :strike-through nil :underline nil :slant normal :weight normal))))
  '(org-date ((t (:inherit fixed-pitch :foreground "Purple"))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :height 1.3 :underline nil))))
  '(org-done ((t (:inherit org-todo :foreground "honeydew3"))))
