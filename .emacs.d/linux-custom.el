@@ -9,16 +9,14 @@
    [default default default italic underline success warning error])
  '(ansi-color-names-vector
    ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
- '(custom-enabled-themes (quote (whiteboard)))
+ '(custom-enabled-themes '(whiteboard))
  '(org-agenda-files
-   (quote
-    ("~/org/prsn/karriere.org" "~/org/regularien.org" "~/org/htasks.org" "~/org/atasks.org" "~/org/calendar.org")))
+   '("~/org/prsn/karriere.org" "~/org/regularien.org" "~/org/htasks.org" "~/org/atasks.org" "~/org/calendar.org"))
  '(org-agenda-sorting-strategy
-   (quote
-    ((agenda time-up habit-down priority-down category-keep)
+   '((agenda time-up habit-down priority-down category-keep)
      (todo priority-down category-keep)
      (tags priority-down category-keep)
-     (search category-keep))))
+     (search category-keep)))
  '(org-default-priority 67)
  '(org-habit-completed-glyph 43)
  '(org-habit-show-done-always-green t)
@@ -26,20 +24,17 @@
  '(org-highest-priority 65)
  '(org-lowest-priority 68)
  '(org-modules
-   (quote
-    (ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m)))
+   '(ol-bbdb ol-bibtex ol-docview ol-eww ol-gnus org-habit ol-info ol-irc ol-mhe ol-rmail ol-w3m))
  '(org-priority-default 67)
  '(org-priority-faces
-   (quote
-    ((65 :inherit org-priority :family "IBM Plex Mono" :weight semibold)
+   '((65 :inherit org-priority :family "IBM Plex Mono" :weight semibold)
      (66 :inherit org-priority :family "IBM Plex Mono" :weight normal)
      (67 :inherit org-priority :family "IBM Plex Mono" :weight light)
-     (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight))))
+     (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight)))
  '(org-priority-highest 65)
  '(org-priority-lowest 68)
  '(package-selected-packages
-   (quote
-    (which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch))))
+   '(org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch)))
 ;; FONTS
 ;; -----
 (custom-set-faces
