@@ -203,7 +203,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+end_src
 
 * Pakete                                                    :package:
-** org-clock-convenience
+** org-clock-convenience :clocking:
 #+begin_src emacs-lisp :results output silent
 (use-package org-clock-convenience
   :ensure t
@@ -433,7 +433,6 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
     )
 
 #+end_src
->>>>>>> Stashed changes
 ** org-bookmark-heading :navigation:
 
 ** TODO [#B] COMMENT Smartparens
@@ -1447,14 +1446,9 @@ Each day counts with WORKTIME-PER-DAY hours."
  #+begin_src emacs-lisp :results output silent
  (setq org-todo-keywords
    '(
-<<<<<<< Updated upstream
      (sequence "PROJ(j!)" "SPLIT(x)" "DELEG(l@)" "HELP(h@)" "MEET(m)" "|" "CANC(c)")   ;; Plan
      (sequence "IDEE(i!)" "SUCHE(s!)" "ANGEB(a!)" "BAUFT(b!)" "VORH(v!)" "|" "DONE(d)")   ;; Textstaus
-=======
->>>>>>> Stashed changes
      (sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
-     (sequence "IDEE(i)" "SUCHE(s)" "ANGEB(a)" "BAUFT(b)" "VORH(v)" "|" "DONE(d)")   ;; Textstaus
-     (sequence "PROJ(j)" "SPLIT(x)" "DELEG(l)" "HELP(h)" "MEET(m)" "|" "CANC(c)")   ;; Plan
     ))
  #+end_src
   es ginge auch nur:  (sequence "|"  "CANC(c)")
