@@ -1443,12 +1443,16 @@ Each day counts with WORKTIME-PER-DAY hours."
 
 ** Todos
 *** Todo-Status und -Sequenzen
+Options: 
+ - ! :: Timestamp
+ - @ :: Note with timestamp
+ - / :: trigger when leaving the state
  #+begin_src emacs-lisp :results output silent
  (setq org-todo-keywords
    '(
      (sequence "PROJ(j!)" "SPLIT(x)" "DELEG(l@)" "HELP(h@)" "MEET(m)" "|" "CANC(c)")   ;; Plan
      (sequence "IDEE(i!)" "SUCHE(s!)" "ANGEB(a!)" "BAUFT(b!)" "VORH(v!)" "|" "DONE(d)")   ;; Textstaus
-     (sequence "PLAN(p)" "TODO(t)" "WAITING(w)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
+     (sequence "PLAN(p)" "TODO(t)" "DECIS(e!/@)" "WAITING(w!/!)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
     ))
  #+end_src
   es ginge auch nur:  (sequence "|"  "CANC(c)")
@@ -1676,7 +1680,7 @@ Each day counts with WORKTIME-PER-DAY hours."
      ("_" org-down-element)
      ("SPC" org-table-blank-field)
      ("!" org-time-stamp-inactive)
-;     ("#" org-insert-structure-template)  ;; für raspi deaktiviert
+     ("#" org-insert-structure-template)
      ("%" org-mark-ring-push)
      ("&" org-mark-ring-goto)
      ("'" org-edit-special)
@@ -1690,7 +1694,7 @@ Each day counts with WORKTIME-PER-DAY hours."
      (";" org-toggle-comment)
      ("<" org-date-from-calendar)
      ("=" org-table-eval-formula)
-     (">" org-goto-calendar)
+     (">" org-goto-calendar)  
      ("?" org-table-field-info)
      ("@" org-mark-subtree)
      ("\[" org-agenda-file-to-front)
