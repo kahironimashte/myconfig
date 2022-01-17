@@ -2405,6 +2405,15 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
  #+end_src
 
 *** TODO [#D] Make menu toggle-able
+** COMMENT Keyword Faces (TODO etc)
+- [2022-01-17 Mo] - mehr Überlegungen zur sinnvollen Farbcodierung nötig.
+- Liste mit ("KEYWORD" . face) oder ("KEYWORD" . (:property value))
+#+begin_src emacs-lisp :results output silent
+(setq org-todo-keyword-faces
+      '(("PROJ" . (:foreground "blue"))))
+
+#+end_src
+
 ** Split-Verhalten
    - legt die Mindestbreite fest, um horizontal zu teilen, also rechts einen neuen Buffer hinzuzufügen.
    - Mit breitem Bildschirm funktioniert der Wert 80, mit schmalem/vertikalem Layout
