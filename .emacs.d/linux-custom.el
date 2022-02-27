@@ -11,7 +11,7 @@
    ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
  '(custom-enabled-themes '(whiteboard))
  '(org-agenda-files
-   '("~/org/prsn/karriere.org" "~/org/regularien.org" "~/org/htasks.org" "~/org/atasks.org" "~/org/calendar.org"))
+   '("~/org/prsn/karriere.org" "~/org/htasks.org" "~/org/atasks.org" "~/org/calendar.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up habit-down priority-down category-keep)
      (todo priority-down category-keep)
