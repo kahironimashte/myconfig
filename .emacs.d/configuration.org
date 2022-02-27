@@ -204,6 +204,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 
 * Pakete                                                    :package:
 ** org-clock-convenience :clocking:
+ - [[https://github.com/dfeich/org-clock-convenience/blob/master/README.org][Github-Source]]
 #+begin_src emacs-lisp :results output silent
 (use-package org-clock-convenience
   :ensure t
@@ -213,6 +214,37 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
    	   ("<f6>" . org-clock-convenience-fill-gap)
    	   ("<f7>" . org-clock-convenience-fill-gap-both)))
 #+end_src
+*** Interactive functions
+  - =org-clock-convenience-timestamp-up= and =org-clock-convenience-timestamp-down=:
+    When on a /clocked/ line in the agenda buffer, this function will
+    increase/decrease the time according to the position of the
+    cursor. If the cursor is on the hour field, change the hour. If it
+    is on the minutes field, change the minutes. Undo works on the
+    agenda and on the source buffer.
+  - =org-clock-convenience-fill-gap= modifies the timestamp at point to
+    connect to the previous/next logged time range.
+  - =org-clock-convenience-fill-gap-both= connects both timestamps of
+    the current clock log line at point to fill the interval between
+    the previous and the next clock range. The cursor need not be on a
+    timestamp of the line. This is the most efficient way to fill the
+    interval for a forgotten task.
+  - =org-clock-convenience-goto-ts= goto the associated timestamp in the org
+    file. Position the cursor respective to where the cursor was
+    placed in the agenda view (e.g. on the minutes part of the
+    starting time).
+  - =org-clock-convenience-goto-last-clockout=: goto timestamp of the last
+    clockout (this is based on a real search through the buffer and
+    not based on the saved clockout value).
+
+  Note that the agenda clock changing commands work with *undo* in the
+  same way as other org agenda commands. They will undo in the agenda
+  buffer as well as in the org source buffers. But if the agenda
+  buffer is rebuilt after a change (e.g. by =g=), the undo information
+  is lost.
+  
+  The package also contains a number of utility functions to associate
+  a list with field names with the subgroup of a regular expression and
+  position point at a named field or read its value.
 
 
 
