@@ -12,9 +12,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(whiteboard))
+ '(exec-path
+   '("c:/WINDOWS/system32" "C:/WINDOWS" "C:/WINDOWS/System32/Wbem" "C:/WINDOWS/System32/WindowsPowerShell/v1.0/" "C:/WINDOWS/System32/OpenSSH/" "C:/Program Files (x86)/Intel/Intel(R) Management Engine Components/DAL" "C:/Program Files/Intel/Intel(R) Management Engine Components/DAL" "C:/Users/kurm/AppData/Local/Microsoft/WindowsApps" "." "C:/Users/kurm/AppData/Local/Programs/espanso" "c:/Software/Emacs/libexec/emacs/27.1/x86_64-w64-mingw32" "C:/Software/Emacs/zip-package"))
  '(font-use-system-font t)
  '(org-agenda-files
-   '("c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
+   '("c:/org/br/br.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up priority-down category-keep)
      (todo priority-down category-keep)
@@ -60,6 +62,7 @@
  '(org-checkbox-statistics-done ((t (:inherit org-done :height 0.7))))
  '(org-checkbox-statistics-todo ((t (:inherit org-todo))))
  '(org-column ((t (:inherit default :background "grey90" :strike-through nil :underline nil :slant normal :weight normal))))
+ '(org-column-title ((t (:inherit default :background "grey90" :foreground "DeepSkyBlue4" :underline t :weight bold :family "IBM Plex Mono Text"))))
  '(org-date ((t (:inherit fixed-pitch :foreground "Purple"))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :height 1.3 :underline nil))))
  '(org-done ((t (:inherit org-todo :foreground "honeydew3"))))

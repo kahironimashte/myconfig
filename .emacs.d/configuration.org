@@ -83,7 +83,7 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  (global-set-key (kbd "<f6>")  'macro-statusnow)
    #+end_src
    - [2021-09-20 Mo] : war " er uuzTns   " , zwei mal nach unten und expansion.
-** Keyboard-Shortuts
+** Keyboard-Shortuts :keys:
 *** for org-agendas
 **** Keyboard :Funktionen:
 #+begin_src emacs-lisp :results output silent
@@ -126,8 +126,16 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  (global-set-key (kbd "<kp-3>") 'kahiro-kp-3) 
  (global-set-key (kbd "<kp-6>") 'kahiro-kp-6) 
  (global-set-key (kbd "<kp-9>") 'kahiro-kp-9) 
- (global-set-key (kbd "<kp-0>") 'kahiro-agenda-next-xa-tasks) 
+ (global-set-key (kbd "<kp-0>") 'kahiro-kp-0) 
  (global-set-key (kbd "<kp-decimal>") 'kahiro-agenda-for-current-subtree) 
+
+(defun kahiro-kp-0 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "N" 'buffer)) ;; NEXT und WAITING-Tasks
+
+(defun kahiro-kp-1 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d1" nil)) ;; Arbeits-Tasks + Calendar
 
 (defun kahiro-kp-1 (&optional arg)
   (interactive "P")
@@ -135,11 +143,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 
 (defun kahiro-kp-4 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d4" 'buffer)) ;; Alle aus atasks
+  (org-agenda arg "d4" 'buffer)) ;; Alle Projekte des Buffers
 
 (defun kahiro-kp-7 (&optional arg)
   (interactive "P")
-  (org-agenda arg "d7" 'buffer)) ;; Alle ohne habits
+  (org-agenda arg "d7" 'buffer)) ;; Alle des Buffers ohne habits
 
 (defun kahiro-kp-8 (&optional arg)
   (interactive "P")
@@ -1126,20 +1134,25 @@ information."
  ;; Den Habit-Graph auf Position (von links) bringen.
  (setq org-habit-graph-column 50)
  #+END_SRC
-** [#B] org-capture templates [0/2] :syncStatus:
-*** Code
+** [#B] org-capture templates [1/3] :syncStatus:
+*** TODO Code
     - Hilfe unter :: [[help:org-capture-templates][org-capture-templates]]
 #+BEGIN_SRC emacs-lisp  :results output silent
-  
+
   (setq org-capture-templates
     '(
       ("i" "inbox Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
 	"** %^{Status|PLAN|TODO|IDEE|PROJ|NEXT} [#%^{Priorität eintragen|C|B|A|D}] %?%^{Aufgabe} %^g \n  - Anmerkungen :: %^{Anmerkungen}" 
-	:empty-lines-after 1)
+	:empty-lines-after 1 :prepend t)
       ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
 	"** %^{Title} \n %^t" :time-prompt t)
       ("m" "Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
 	"** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Mitarbeiter-Info][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?")
+      ("r" "Ressort-Meetings")
+      ("rr" "Ressort-Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
+	"** MEET [#%^{Priorität?|C|B|A|D}] Ressortmeeting :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Ressortkonferenz][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?" :clock-in t :empty-lines-after 1 :prepend t :jump-to-captured t)
+      ("rR" "Ressort-Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
+	"** MEET [#%^{Priorität?|C|B|A|D}] Ressortmeeting :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Ressortkonferenz][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?")            
       ("a" "Anruf" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
 	"** %? %U :call:interrupt: \n - Anmerkungen :: "
 	:prepend t :clock-in t :clock-resume t :empty-lines-after 1)
@@ -1161,9 +1174,9 @@ information."
 	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 1)
       ("t" "Neuer Text oder neue Textidee")
       ("ta" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/atstruktur" :empty-lines-after 1)
+	"*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/at-o\n/at-p" :empty-lines-after 1)
       ("tA" "Template für neuen Autoren-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/atstruktur" :empty-lines-after 1)
+	"*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/at-o\n/at-p" :empty-lines-after 1)
       ("tE" "Template für neuen Eigenen-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
 	"*** PROJ [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:kur:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
       ("te" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
@@ -1188,7 +1201,7 @@ information."
     #+end_src
 
 *** TODO sinnvolles Capture für Ziele
-*** TODO capture für Anrufe :Verbesserung:
+*** DONE capture für Anrufe :Verbesserung:
 *** COMMENT Test für Ablage in wöchentlichen oder monatlichen Trees.
 #+begin_src emacs-lisp :results output silent
 (defun org-find-month-in-datetree()
@@ -1297,7 +1310,9 @@ To get the same for a weekly date-tree change the function to
  ;; setting Refile Target
  (setq org-refile-targets `(
    (org-agenda-files :maxlevel . 1)       ;; Für Agenda-Dateien normalerweise nur in * Überschriften
-   (,(concat org-directory "/atasks.org") :maxlevel . 2)))  ;; Für atask.org auch in ** Überschriften
+   (,(concat org-directory "/atasks.org") :maxlevel . 2)  ;; Für atask.org auch in ** Überschriften
+   (,(concat org-directory "/br/br.org") :maxlevel . 2)
+))
 
  ;; TODO Hier fehlt noch eine Erklärung
  (setq org-refile-allow-creating-parent-nodes 'confirm)     ;;allow creating nodes. Refile has to end with /newheadingname
@@ -1330,7 +1345,24 @@ To get the same for a weekly date-tree change the function to
 #+begin_src emacs-lisp :results output silent
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 #+end_src
+** Export nach odt bzw. docx :WindowsOnly:
+#+begin_src emacs-lisp :results output silent
+(when (string-equal system-type "windows-nt")
 
+  (setq org-odt-preferred-output-format "docx")
+
+  (defun config-org-export-as-docx-via-odt ()
+    (interactive)
+    (let ((cmd "C:\\Software\\LibreOffice\\LibreOfficePortablePrevious\\App\\libreoffice\\program\\soffice.exe"))
+      (when (and (eq system-type 'windows-nt) (file-exists-p cmd))
+        ;; org v8/v9
+        (setq org-odt-convert-processes '(("LibreOffice" "C:\\Software\\LibreOffice\\LibreOfficePortablePrevious\\App\\libreoffice\\program\\soffice.exe --headless --convert-to %f%x --outdir %d %i"))))
+    ))
+
+  (config-org-export-as-docx-via-odt)
+)
+ 
+#+end_src
 ** Clocking / Aufwand
 #+begin_src emacs-lisp :results output silent
 ;; CLOCKING: global Effort estimate values
@@ -1341,7 +1373,7 @@ To get the same for a weekly date-tree change the function to
 ;; These are the hotkeys
 
 ;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
-(setq org-columns-default-format "%45ITEM(Task) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %TODO %TAGS")
+(setq org-columns-default-format "%45ITEM(Beschreibung) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %7TODO %10TAGS")
 
 ;; Clocking
 ;;---------
@@ -1510,6 +1542,7 @@ Options:
  #+END_SRC
 
 * Custom Functions
+
 ** clone-rename-narrow
 #+begin_src emacs-lisp :results output silent
 (defun kahrio/clone-rename-narrow (&optional arg)   
@@ -1518,6 +1551,26 @@ Options:
  (org-narrow-to-subtree)
 )
 #+end_src
+
+** done and next
+#+begin_src emacs-lisp :results output silent
+(defun kahiro-done-and-next  (&optional arg)
+  (interactive "P")
+  (org-todo "DONE")
+  (org-forward-heading-same-level 1 nil)
+  (recenter-top-bottom 5)
+)
+#+end_src
+** mark region or subtree DONE
+#+begin_src emacs-lisp :results output silent
+(defun org-todo-region ()
+  (interactive)
+  (let ((scope (if mark-active 'region 'tree))
+        (state (org-fast-todo-selection))
+        (org-enforce-todo-dependencies nil))
+    (org-map-entries (lambda () (org-todo state)) nil scope)))
+#+end_src
+
 ** Next und Clock in :neu:
 #+begin_src emacs-lisp :results output silent
 (defun kahiro-next-and-clock-in  (&optional arg)
@@ -1581,14 +1634,32 @@ Options:
 :colnames '(freq tags)
 (count-tags)
 #+end_src
+** Clone buffer rename
+#+begin_src emacs-lisp :results output silent
+  (defun kahiro-clone-rename-narrow (&optional arg)
+   (interactive "P")
+   (clone-indirect-buffer 
+     (replace-regexp-in-string
+     " \\[[[:digit:]]*[/%][[:digit:]]*\\]" "" 
+     (nth 4 (org-heading-components)))
+     t nil)
+   (org-narrow-to-subtree)
+  )
+
+#+end_src
 
 * Keys / Tastenkürzel
 ** Allgemein
 #+begin_src emacs-lisp :results output silent
 ;; use ibuffer as default
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "C-x c") 'kahiro-clone-rename-narrow)
 #+end_src
 
+** Fokus
+#+begin_src emacs-lisp :results output silent
+
+#+end_src
 **  Jump in the doc1ument
    "Move cursor to last mark position of current buffer.
    Call this repeatedly will cycle all positions in `mark-ring'.
@@ -1679,6 +1750,7 @@ Options:
 #+begin_src emacs-lisp
     ("b"
      (("b" bookmark-jump :first (org-mark-ring-push)) ;; 
+      ("i" bookmark-jump :first (org-mark-ring-push) :then (org-clock-in))
       ("j" imenu-anywhere)
       ("m" bookmark-set)
       ("l" bookmark-bmenu-list)
@@ -1749,8 +1821,9 @@ Options:
      ("~" org-table-create-with-table.el)
      ("x"
        (("a" org-archive-subtree-default)
-        ("e" org-clock-modify-effort-estimate)) ;; neu [2021-02-15 Mo]
-      )
+        ("e" org-clock-modify-effort-estimate) ;; neu [2021-02-15 Mo]
+        ("c" org-columns) ;; :then (recenter-top-bottom 3)) 
+      ))
      ))
 #+end_src
 **** f
@@ -1762,7 +1835,11 @@ Options:
      ))
 #+end_src
 
-**** g
+**** TODO g
+ - add xa function:
+clone-indirect-buffer-other-window
+rename-buffer xa
+org-narrow-to-subtree
 #+begin_src emacs-lisp
     ("g"
      (("a" org-agenda)
@@ -1967,6 +2044,8 @@ Options:
     ("K" org-metaup)
     ("L" org-metaright)
     ("t" org-todo)
+    ("T" org-todo-region) ;; set all todos of region or subtree to STATE
+    ("N" kahiro-done-and-next) ;; set current todo DONE and go to next of same level
 ;;    ("R" rename-buffer)
 ;;    ("R" flyspell-check-previous-highlighted-word)
     ("ü" kahiro/show-todos-lvl1-heading)
@@ -2088,7 +2167,7 @@ Options:
 	    ("m" org-agenda-bulk-mark)
 	    ("o" delete-other-windows)
 	    ("q" org-agenda-quit)
-	    ("r" org-agenda-redo :then '(shrink-window-if-larger-than-buffer))
+	    ("r" org-agenda-redo :then '(beginning-of-buffer shrink-window-if-larger-than-buffer))
 	    ("s" org-save-all-org-buffers)
 	    ("t" org-agenda-todo)
 	    ("u" universal-argument)
