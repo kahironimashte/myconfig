@@ -1510,6 +1510,14 @@ Options:
  #+END_SRC
 
 * Custom Functions
+** clone-rename-narrow
+#+begin_src emacs-lisp :results output silent
+(defun kahrio/clone-rename-narrow (&optional arg)   
+ (interactive "P")
+ (clone-indirect-buffer (nth 4 (org-heading-components)) t nil)
+ (org-narrow-to-subtree)
+)
+#+end_src
 ** Next und Clock in :neu:
 #+begin_src emacs-lisp :results output silent
 (defun kahiro-next-and-clock-in  (&optional arg)

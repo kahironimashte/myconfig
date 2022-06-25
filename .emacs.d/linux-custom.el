@@ -34,7 +34,7 @@
  '(org-priority-highest 65)
  '(org-priority-lowest 68)
  '(package-selected-packages
-   '(org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch)))
+   '(ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch)))
 ;; FONTS
 ;; -----
 (custom-set-faces
