@@ -1472,6 +1472,7 @@ Each day counts with WORKTIME-PER-DAY hours."
     ("sc" . "src conf")
     ("se" . "src emacs-lisp")
     ("sj" . "src javascript")
+    ("sr" . "src R")
     ("ss" . "src emacs-lisp :results output silent")
     ("sh" . "src shell")
 ;;    ("h" . "export html")
