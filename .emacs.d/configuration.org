@@ -548,6 +548,10 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 :PROPERTIES:
 :CATEGORY: org
 :END:
+** Coding
+#+begin_src emacs-lisp
+(setq org-src-preserve-indentation t)
+#+end_src
 ** [#B] Funktionen zur Fokussierung
 *** Alles einklappen außer aktuellen Subtree
    - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
@@ -1472,6 +1476,9 @@ Each day counts with WORKTIME-PER-DAY hours."
     ("sc" . "src conf")
     ("se" . "src emacs-lisp")
     ("sj" . "src javascript")
+    ("sv" . "src java")
+    ("svt" . "src java :noweb yes")
+    ("svn" . "src java :tangle no")
     ("sr" . "src R")
     ("ss" . "src emacs-lisp :results output silent")
     ("sh" . "src shell")
@@ -2563,6 +2570,19 @@ With a numeric argument, compare-windows ignores changes in whitespace. If the v
 You can use M-x smerge-mode to turn on Smerge mode, a minor mode for editing output from the diff3 program. This is typically the result of a failed merge from a version control system update outside VC, due to conflicting changes to a file. Smerge mode provides commands to resolve conflicts by selecting specific changes.
 
 See Emerge, for the Emerge facility, which provides a powerful interface for merging files. 
+** Copy / Move files in dired
+
+https://emacs.stackexchange.com/questions/5603/how-to-quickly-copy-move-file-in-emacs-dired
+From the documentation:
+
+    dired-dwim-target is a variable defined in `dired.el'. Its value is nil
+
+    Documentation: If non-nil, Dired tries to guess a default target directory. This means: if there is a Dired buffer displayed in the next window, use its current directory, instead of this Dired buffer's current directory.
+
+    The target is used in the prompt for file copy, rename etc.
+
+Put this in your init file: (setq dired-dwim-target t). Then, go to dired, split your window, split-window-vertically & go to another dired directory. When you will press C to copy, the other dir in the split pane will be default destination.
+
 * COMMENT Weg zur perfekten Config
 ** Look [2/3]
 :PROPERTIES:

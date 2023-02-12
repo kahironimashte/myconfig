@@ -33,8 +33,10 @@
      (68 :inherit org-priority :family "IBM Plex Mono" :weight extralight)))
  '(org-priority-highest 65)
  '(org-priority-lowest 68)
+ '(org-safe-remote-resources
+   '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
  '(package-selected-packages
-   '(unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch)))
+   '(ido-completing-read+ org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch)))
 ;; FONTS
 ;; -----
 (custom-set-faces
@@ -76,7 +78,7 @@
  '(org-level-8 ((t (:inherit org-level-4))))
  '(org-link ((t (:inherit fixed-pitch :foreground "SlateBlue3"))))
  '(org-list-dt ((t (:foreground "gray30" :slant italic))))
- '(org-priority ((t (:height 1.1 :foreground "IndianRed4" :inherit font-lock-keyword-face :weight semi-bold))))
+ '(org-priority ((t (:height 0.8 :foreground "IndianRed4" :inherit font-lock-keyword-face :weight semi-bold))))
  '(org-property-value ((t (:height 0.8))) t)
  '(org-recur ((t (:inherit org-tag :height 1.6))))
  '(org-scheduled ((t (:inherit org-scheduled-today))))
@@ -85,7 +87,7 @@
  '(org-special-keyword ((t (:inherit fixed-pitch :foreground "dim gray" :height 0.8))))
  '(org-tag ((t (:foreground "dark gray" :height 0.8 :family "IBM Plex Serif Light"))))
  '(org-time-grid ((t (:foreground "PeachPuff4"))))
- '(org-todo ((t (:foreground "gray34" :weight semi-bold :family "IBM Plex Sans Condensed"))))
+ '(org-todo ((t (:foreground "gray34" :weight semi-bold :family "IBM Plex Sans Condensed" :height 0.8))))
  '(org-verbatim ((t (:inherit shadow :foreground "honeydew4"))))
  '(secondary-selection ((t (:background "misty rose"))))
  '(shadow ((t (:foreground "honeydew2"))))
