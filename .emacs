@@ -10,13 +10,13 @@
 (require 'package) ;; aktiviert package.el, den Paketmanager
 
 ;; Paketquellen MELPA hinzufuegen
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos)) ;; setting the variables no-ssl and proto
                     (not (gnutls-available-p))))
-       (proto (if no-ssl "http" "https")))
+       (proto (if no-ssl "http" "https")))  ;; if value trueCase falseCase
   (when no-ssl (warn "\
    Your version of Emacs does not support SSL connections."))
   (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://melpa.org/packages/")) t)
-  )
+  ) ;; 'package-archives is a list.
 
 (package-initialize) ;; Mit (package-initialize t) werden die Pakete NICHT geladen. Das kann nützlich sein, wenn man Pakete über use-package laden will. 
 

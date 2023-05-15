@@ -211,6 +211,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+end_src
 
 * Pakete                                                    :package:
+** COMMENT ausprobieren
+*** TODO Consult-Package Suche
+ - need to input a "space" character -> will it work with ido?
+*** TODO orderless-package
+out of order matching
 ** org-clock-convenience :clocking:
  - [[https://github.com/dfeich/org-clock-convenience/blob/master/README.org][Github-Source]]
 #+begin_src emacs-lisp :results output silent
@@ -264,6 +269,7 @@ M-x unfill-region
 M-x unfill-paragraph
 M-x unfill-toggle
 ** COMMENT org-roam
+- alternative form Prot (demo Video): =denote=
 download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
 #+begin_src emacs-lisp :results output silent
     (when (string-equal system-type "windows-nt")
@@ -321,6 +327,8 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
 #+end_src
 ** TODO Fold-this
 ** ido-mode :navigation:
+ - [ ] Prots Empfehlung "icmoplete" ist besser integriert ab emacs 27.1 -> nachfolger von ido.
+ - Wenn man weiß, wohin man will. 
 *** Beschreibung
  This is the built-in framework for interactively narrowing down the
  list of matching candidates when performing a relevant search.  Ido
