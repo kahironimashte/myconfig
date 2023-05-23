@@ -1,0 +1,8 @@
+\#.emacs#
+.emacs.d/configuration.el
+.emacs.d/configuration.org.bak
+.emacs.d/configuration.org~
+.myconfig
+*._sync_*
+.owncloudsync.log
+Desktop.ini

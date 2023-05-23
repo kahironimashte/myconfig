@@ -1,0 +1,2530 @@
+﻿#+TITLE: Emacs-Konfiguration
+* Allgemeine Einstellungen
+:PROPERTIES:
+:CATEGORY: allg
+:END:
+** file-settings
+#+STARTUP: overview
+#+TODO: TODO FEHLER  | OK DONE
+#+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p) obsolet(o)
+** Startup
+   - disable splash screen and startup message
+#+begin_src emacs-lisp :results output silent
+(setq inhibit-startup-message t) 
+(setq initial-scratch-message nil)
+#+end_src
+** org-directory
+#+begin_src emacs-lisp :results output silent
+(if (string-equal system-type "windows-nt")
+    (setq org-directory "c:/org")
+    (setq org-directory "~/org")
+  )
+#+end_src
+
+** TODO Sicherung
+*** Ordner für Autosave-Dateien
+Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei.org# oder datei.org~). Diese machen den Ordner unübersichtlich, können aber in einem eigenen Verzeichnis angesiedelt werden. 
+#+BEGIN_SRC emacs-lisp 
+(setq 
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist `(("." . ,(concat org-directory "/_config/backups/")))
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t       ; use versioned backupsr 
+)
+#+END_SRC
+** Default Modes
+#+begin_src emacs-lisp :results output silent
+;; Default Modes ON
+(global-visual-line-mode t)
+
+;; Fontlock Mode in jedem Buffer automatisch aktivieren.
+(global-font-lock-mode t)
+
+#+end_src
+
+*** Saving Desktop Sessions
+  #+BEGIN_SRC emacs-lisp
+  ;; SAVING DESKTOP SESSIONS
+  ;;------------------------
+ ;;(require 'desktop)
+;; (when (eq system-type 'windows-nt)
+;;     (desktop-change-dir "C:/Software/Emacs/Desktops/")
+;;  )
+ (desktop-save-mode 1)
+ #+END_SRC
+
+ #+RESULTS:
+ : t
+
+*** Start any Windows maximised
+ #+BEGIN_SRC emacs-lisp
+  ;; Start any Windows maximised
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+ #+END_SRC
+*** Sentence end to just one space
+ #+BEGIN_SRC emacs-lisp
+  ;; Set Sentence end to just one space
+  (setq sentence-end-double-space nil)
+ #+END_SRC
+** confirm with y
+   #+begin_src emacs-lisp :results output silent
+(fset 'yes-or-no-p 'y-or-n-p)
+   #+end_src
+** loop over headlines in active regions
+#+begin_src emacs-lisp :results output silent
+(setq org-loop-over-headlines-in-active-region t)
+#+end_src
+** makros
+   #+begin_src emacs-lisp :results output silent
+  (fset 'macro-statusnow
+	(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote (" er uuzTns" 0 "%d")) arg)))
+ (global-set-key (kbd "<f6>")  'macro-statusnow)
+   #+end_src
+   - [2021-09-20 Mo] : war " er uuzTns   " , zwei mal nach unten und expansion.
+** Keyboard-Shortuts :keys:
+*** for org-agendas
+**** Keyboard :Funktionen:
+#+begin_src emacs-lisp :results output silent
+  ;; Org-Agendas
+  ;; -----------
+   (global-set-key (kbd "<f12>") 'kahiro-agenda-next-work-tasks) 
+   (global-set-key (kbd "<S-f12>") 'kahiro-agenda-home-tasks) 
+  
+  (defun kahiro-agenda-next-work-tasks (&optional arg) ;; Shift+<f12>
+    (interactive "P")
+    (org-agenda arg "n" nil))
+  
+  (defun kahiro-agenda-home-tasks (&optional arg) ;; Shift+<f12>
+    (interactive "P")
+    (org-agenda arg "h" nil))
+  
+  (defun kahiro-agenda-next-buffer-tasks (&optional arg) ;; <f12>
+    (interactive "P")
+    (org-agenda arg "n" 'buffer))
+  
+  ;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
+  (defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
+    (interactive "P")
+    (org-agenda arg "gh" 'subtree))
+  
+  (defun kahiro-all-tasks-for-buffer (&optional arg) ;; ungenutzt seit [2021-05-07 Fr]
+    (interactive "P")
+    (org-agenda arg "t" t))
+  
+#+end_src
+**** Keypad :Funktionen:
+#+begin_src emacs-lisp :results output silent
+;; Org-Agendas
+;; -----------
+ (global-set-key (kbd "<kp-1>") 'kahiro-kp-1) 
+ (global-set-key (kbd "<kp-4>") 'kahiro-kp-4) 
+ (global-set-key (kbd "<kp-7>") 'kahiro-kp-7) 
+ (global-set-key (kbd "<kp-2>") 'kahiro-agenda-next-xa-tasks) 
+ (global-set-key (kbd "<kp-8>") 'kahiro-kp-8) 
+ (global-set-key (kbd "<kp-3>") 'kahiro-kp-3) 
+ (global-set-key (kbd "<kp-6>") 'kahiro-kp-6) 
+ (global-set-key (kbd "<kp-9>") 'kahiro-kp-9) 
+ (global-set-key (kbd "<kp-0>") 'kahiro-kp-0) 
+ (global-set-key (kbd "<kp-decimal>") 'kahiro-agenda-for-current-subtree) 
+
+(defun kahiro-kp-0 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "N" 'buffer)) ;; NEXT und WAITING-Tasks
+
+(defun kahiro-kp-1 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d1" nil)) ;; Arbeits-Tasks + Calendar
+
+(defun kahiro-kp-1 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d1" nil)) ;; Arbeits-Tasks + Calendar
+
+(defun kahiro-kp-4 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d4" 'buffer)) ;; Alle Projekte des Buffers
+
+(defun kahiro-kp-7 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d7" 'buffer)) ;; Alle des Buffers ohne habits
+
+(defun kahiro-kp-8 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d8" nil))  ;; Tag "inbox"
+
+(defun kahiro-kp-3 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d3" nil)) ;; Alle Autorentexte
+
+(defun kahiro-kp-6 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d6" nil)) ;; Autorentexte bestellt und da
+
+(defun kahiro-kp-9 (&optional arg)
+  (interactive "P")
+  (org-agenda arg "d9" nil)) ;; Autorentexte Idee und Suche
+
+;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
+(defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
+  (interactive "P")
+  (org-agenda arg "gh" 'subtree))
+#+end_src
+*** for org-columns
+#+begin_src emacs-lisp :results output silent
+(with-eval-after-load "org-colview"
+  (define-key org-columns-map (kbd "a") nil)
+  (define-key org-columns-map (kbd "o") nil)
+  (define-key org-columns-map (kbd "c") nil)
+  (define-key org-columns-map (kbd "n") nil)
+  (define-key org-columns-map (kbd "p") nil)
+  (define-key org-columns-map (kbd "g") nil)
+)
+#+end_src
+*** allgemein
+#+begin_src emacs-lisp :results output silent
+;; Escape-Command - use ESC for Ctrl + g
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+(define-key key-translation-map (kbd "C-<escape>") (kbd "ESC"))
+#+end_src
+  | Key | function        |   |
+  |-----+-----------------+---|
+  | F6  | [[*makros][makro-statusnow]] |   |
+  |     |                 |   |
+**** org-mode
+#+begin_src emacs-lisp :results output silent
+ (global-set-key "\C-cl" 'org-store-link)
+ (global-set-key "\C-ca" 'org-agenda)
+ (global-set-key "\C-cc" 'org-capture)
+#+end_src
+
+** Archive-Location 
+#+begin_src emacs-lisp :results output silent
+(setq org-archive-location (concat org-directory "/archiv/%s_archive::datetree/"))
+#+end_src
+
+** Inline-Images
+   - Die Breite des Bildes kann gesetzt werden über =#+ATTR_ORG: :width 100= in der Zeile über dem Link.
+ 
+#+begin_src emacs-lisp :results output silent
+(setq org-image-actual-width nil)
+#+end_src
+
+* Pakete                                                    :package:
+** org-clock-convenience :clocking:
+ - [[https://github.com/dfeich/org-clock-convenience/blob/master/README.org][Github-Source]]
+#+begin_src emacs-lisp :results output silent
+(use-package org-clock-convenience
+  :ensure t
+  :bind (:map org-agenda-mode-map
+   	   ("<C-up>" . org-clock-convenience-timestamp-up)
+   	   ("<C-down>" . org-clock-convenience-timestamp-down)
+   	   ("<f6>" . org-clock-convenience-fill-gap)
+   	   ("<f7>" . org-clock-convenience-fill-gap-both)))
+#+end_src
+*** Interactive functions
+  - =org-clock-convenience-timestamp-up= and =org-clock-convenience-timestamp-down=:
+    When on a /clocked/ line in the agenda buffer, this function will
+    increase/decrease the time according to the position of the
+    cursor. If the cursor is on the hour field, change the hour. If it
+    is on the minutes field, change the minutes. Undo works on the
+    agenda and on the source buffer.
+  - =org-clock-convenience-fill-gap= modifies the timestamp at point to
+    connect to the previous/next logged time range.
+  - =org-clock-convenience-fill-gap-both= connects both timestamps of
+    the current clock log line at point to fill the interval between
+    the previous and the next clock range. The cursor need not be on a
+    timestamp of the line. This is the most efficient way to fill the
+    interval for a forgotten task.
+  - =org-clock-convenience-goto-ts= goto the associated timestamp in the org
+    file. Position the cursor respective to where the cursor was
+    placed in the agenda view (e.g. on the minutes part of the
+    starting time).
+  - =org-clock-convenience-goto-last-clockout=: goto timestamp of the last
+    clockout (this is based on a real search through the buffer and
+    not based on the saved clockout value).
+
+  Note that the agenda clock changing commands work with *undo* in the
+  same way as other org agenda commands. They will undo in the agenda
+  buffer as well as in the org source buffers. But if the agenda
+  buffer is rebuilt after a change (e.g. by =g=), the undo information
+  is lost.
+  
+  The package also contains a number of utility functions to associate
+  a list with field names with the subgroup of a regular expression and
+  position point at a named field or read its value.
+** unfill (paragraph/region)
+ - Source: https://github.com/purcell/unfill
+ - Install via Melpa
+#+begin_src emacs-lisp
+(use-package unfill)
+#+end_src
+Commands: 
+M-x unfill-region
+M-x unfill-paragraph
+M-x unfill-toggle
+** COMMENT org-roam
+download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
+#+begin_src emacs-lisp :results output silent
+    (when (string-equal system-type "windows-nt")
+      (add-to-list 'exec-path "C:/Software/SQLite")
+      (setq org-roam-directory "C:/org/roam")
+;;      (setq org-roam-db-update-method 'immediate)
+;;      (add-hook 'after-init-hook 'org-roam-mode)
+      )
+
+#+end_src
+** anki-editor :learning:
+- Vouraussetzungen:
+  1. =sudo apt install anki curl=
+  3. Anki Addon Code: =2055492159= eintippen unter "Addons" / Get Addons
+  4. Log in bei =ankiweb.net= via E-Mail und Passwort
+#+begin_src emacs-lisp :results output silent
+  (use-package anki-editor
+    :config
+    (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
+	  anki-editor-org-tags-as-anki-tags t)
+  )
+#+end_src
+
+** dired
+   Standardmäßig alle Details außer Dateinamen ausblenden (toogle mit =(= )
+#+begin_src emacs-lisp :results output silent
+(add-hook 'dired-mode-hook
+	  (lambda()
+	    (dired-hide-details-mode 1)
+	  )
+     )
+(setq ls-lisp-dirs-first t) ;; Ordner in Dired zuerst anzeigen
+#+end_src
+** COMMENT doom-modeline :appearance:
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1)
+    :custom (doom-modeline-height 5))
+  (use-package all-the-icons)
+#+end_src
+*** Fix der Modeline-Höhe von [[https://github.com/seagle0128/doom-modeline/issues/187][hier]]
+#+begin_src emacs-lisp :results output silent
+(defun my-doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (+ (frame-char-height) 2))
+(advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
+#+END_SRC
+** COMMENT Emacs Startup Profiler - ESUP
+   #+begin_src emacs-lisp :results output silent
+     (use-package esup
+       :ensure t
+       ;; To use MELPA Stable use ":pin melpa-stable",
+       ;;:pin melpa
+       )   
+#+end_src
+** TODO Fold-this
+** ido-mode :navigation:
+*** Beschreibung
+ This is the built-in framework for interactively narrowing down the
+ list of matching candidates when performing a relevant search.  Ido
+ underpins functions such as those that change buffers, navigate the
+ filesystem, query for help…  I used to be an Ivy user, but have found
+ that Ido is just as good for my case.  Plus, I prefer its default
+ horizontal layout.  Simple and effective.
+
+ Here is an overview of my configurations:
+
+ + Use =ido-mode= and make sure it runs everywhere it can.
+ + Enable "flexible matching".  If there is no matching string of
+   adjacent characters, Ido will instead search for any item containing
+   the characters in their given sequence even if they are not
+   positioned directly next to each other.  Their sequence is all that
+   matters.
+ + Also disable regexp and prefix matching by default.  These can be
+   toggled on at any moment with =C-t= or =C-p= respectively (read
+   below for more key bindings).
+ + Only consider the current frame.  I seldom use more than one (recall
+   that what Emacs calls "frames" is what window managers call
+   "windows").
+ + Create a buffer with completion candidates (manually invoke it with
+   "?" after having typed a search), but do not place all completions
+   there—just the current list of matches.
+ + No need to confirm anything when there is a unique match.
+ + Create a buffer when there is no match for the given search.  Ask for
+   confirmation.  This is great for producing a scratch-like buffer,
+   whose contents can then be saved with =C-x C-s= or =C-x C-w=.
+ + By default open matching buffers and files in the selected window.
+   I use separate commands for doing the same for the "other window".
+   By default, these are always accessed via =C-x 4=.
+ + Keep track of selected directories (recall that navigating history
+   is done with =M-n= and =M-p=).
+ + Do not try to guess whether the symbol at point is a file name.
+   This gives many false positives and consequently hampers the
+   commands for filesystem navigation.
+ + Same for URLs.
+ + Use "virtual buffers" (e.g. recent files without a current buffer).
+   I also have a separate key binding for that (see my =use-package=
+   declaration for =recentf=).
+ + Allow the theme's styles for Ido.  I have configured those in my
+   Modus themes (defined elsewhere in this document).
+ + Keep the prompt to a single line.  I find that a horizontal layout
+   that spans multiple lines is counter-productive.  One line is nice
+   and simple.  We are anyhow going to narrow down the list of
+   candidates by typing a search.  The =:hook= for the minibuffer ensures
+   that this aesthetic is not anyhow interfered with.
+ + As for =ido-decorations= it is better you search for its help buffer
+   with =C-h v ido-decorations RET=.  Basically, I tweak it to have
+   less visual noise.
+ + Do not allow Ido to employ its "merge" functionality.  What that does
+   is to automatically switch directory if the file name you type in does
+   not exist in the current directory but is available in some other
+   place you recently visited.  This makes it difficult to just create a
+   new file.  By the by, when using =ido-find-file= you can always just
+   confirm the inserted text with =C-j=.
+
+ Then I just bind some common commands to the Super key.  Where you see
+ a capital letter, it means Super-Shift-KEY.  For a complete overview
+ of some useful key bindings, type =C-h f ido-find-file RET=.  The
+ bindings I define in =ido-common-completion-map= are for consistency
+ with their equivalents in =isearch=.
+*** code
+#+begin_src emacs-lisp :results output silent
+(use-package ido
+  :custom
+  (ido-everywhere t)
+  (ido-enable-flex-matching t)
+  (ido-enable-regexp nil)
+  (ido-enable-prefix nil)
+  (ido-all-frames nil)
+  (ido-buffer-disable-smart-matches t)
+  (ido-completion-buffer "*Ido Completions*")
+  (ido-completion-buffer-all-completions nil)
+  (ido-confirm-unique-completion nil)
+  (ido-create-new-buffer 'prompt)
+  (ido-default-buffer-method 'selected-window)
+  (ido-default-file-method 'selected-window)
+  (ido-enable-last-directory-history t)
+  (ido-use-filename-at-point nil)
+  (ido-use-url-at-point nil)
+  (ido-use-virtual-buffers t)
+  (ido-use-faces t)
+  (ido-max-window-height 1)
+  (ido-decorations
+   '(" "
+     "   "
+     " | "
+     " | …"
+     "["
+     "]"
+     " [No match]"
+     " [Matched]"
+     " [Not readable]"
+     " [Too big]"
+     " [Confirm]"
+     " "
+     " "))
+  (ido-auto-merge-work-directories-length -1)
+  :config
+  (ido-mode 1)
+)
+
+;;The following ensures that Ido mode is implemented in as many places as possible.  I am not sure what is not covered by it, but so far every relevant interface provides Ido-style matching.
+
+(use-package ido-completing-read+
+  :ensure t
+  :after ido
+  :config
+  (ido-ubiquitous-mode 1))
+#+end_src
+
+** imenu-anywhere :navigation:
+#+begin_src emacs-lisp :results output silent
+  (use-package imenu-anywhere
+    :config
+    (setq org-imenu-depth 2) ;; Wie tiefe Headings ansteuerbar sind.
+)
+
+  ;; (defvar push-mark-before-goto-char nil)
+
+  ;; (defadvice goto-char (before push-mark-first activate)
+  ;;    (when push-mark-before-goto-char
+  ;;       (push-mark)))
+
+  ;; (defun ido-imenu-push-mark ()
+  ;;    (interactive)
+  ;;    (let ((push-mark-before-goto-char t))
+  ;;       (ido-imenu)))
+#+end_src
+** TODO Minimap
+** TODO Neotree
+** Nov-mode                                                         :content:
+   - Paket um epub-Dateien in Emacs zu lesen.
+#+begin_src emacs-lisp :results output silent
+  (use-package nov
+    :mode ("\\.epub\\'" . nov-mode))
+  (when (string-equal system-type "windows-nt")
+    ;; Set unzip location for nov.el
+    (setq nov-unzip-program "C:\\Software\\Emacs\\_unzip-Package\\bin\\unzip.exe")
+    )
+
+#+end_src
+
+- für Libre Office Export:
+  1. Zip für Libre Office-Export installieren: 
+
+     + unzip.exe und zip.exe müssen im selben Ordner sein. 
+     + Pfad anlegen: M-x customize-variable RET exec-path RET
+     + Pfad Ziel: C:/Software/Emacs/_unzip-Package/zip  
+  2. Libre Office Portable installieren
+** org-bookmark-heading :navigation:
+
+** TODO [#B] COMMENT Smartparens
+ - Paket um Klammern etc. zu vervollständigen.
+#+BEGIN_SRC emacs-lisp
+(require 'smartparens)
+(require 'smartparens-config)   
+(define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-unwrap-sexp)
+(define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
+#+END_SRC
+This is bold and that is bolder. 
+** steam :orga:
+   - Importiert die Steam-Spiele als org-mode Liste.
+#+BEGIN_SRC emacs-lisp
+(when (string-equal system-type "gnu/linux")
+ (use-package steam)
+ (setq steam-username "mec4nic") ;; Replace Username with your steam username
+)
+#+END_SRC
+steam.el can not get a list of your games unless your Steam profile is public. Visit https://steakmcommunity.com/id/username/edit/settings (where username is replaced with your Steam username). Set your profile to Public and make sure that Game details is set to Public.
+Usage
+
+    To launch a game: M-x steam-launch
+    To insert your game list in org-mode format: M-x steam-insert-org-text
+    Download logotypes for your games, and insert them into org-mode: M-x steam-insert-org-images
+    To update your game list (if you’ve installed new games without restarting Emacs): M-x steam-get-games
+
+In org-mode, you can click links in order to run your games. This will bring up a pop-up, asking if it is safe to run the lisp-code. If this annoys you, put this line at the top of your .org-file: #-*- org-confirm-elisp-link-function: nil; -*-
+
+If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
+** Use =minions= to hide all minor modes
+
+H. R. S: I never want to see a minor mode, and manually adding =:diminish= to every
+use-package declaration is a hassle. This uses =minions= to hide all the minor
+modes in the modeline. Nice!
+
+By default there's a =;-)= after the major mode; that's an adorable default, but
+I'd rather skip it.
+
+#+begin_src emacs-lisp
+   (use-package minions
+     :config
+     (setq minions-mode-line-lighter ""
+           minions-mode-line-delimiters '("" . ""))
+     (minions-mode 1))
+#+end_src
+** TODO valign 
+** which-key :help:
+ #+begin_src elisp
+(use-package which-key
+  :config (which-key-mode))
+#+end_src
+** yaml-mode
+   - für espanso config-files.
+#+begin_src emacs-lisp :results output silent
+(use-package yaml-mode)
+#+end_src
+** yasnippet :content:
+#+begin_src emacs-lisp :results output silent
+(when (string-equal system-type "windows-nt")
+  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
+  (use-package yasnippet
+   :config
+   (add-to-list 'yas-snippet-dirs "C:/org/_config/yasnippets/")
+   (yas-global-mode 1)
+  )
+)
+(when (string-equal system-type "gnu/linux")
+  ;; Yasnippet unter Windows global aktivieren und das Verzeichnis für Snippets bestimmen.
+  (use-package yasnippet
+   :config
+   (add-to-list 'yas-snippet-dirs (concat org-directory "/_config/yasnippets"))
+   (yas-global-mode 1)
+))
+#+end_src
+
+Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, um Snippets zwischen verschiedenen Modes zu teilen. 
+(add-hook 'yas-minor-mode-hook (lambda ()
+                                                                 (yas-activate-extra-mode 'fundamental-mode)))
+* Org Mode Settings
+:PROPERTIES:
+:CATEGORY: org
+:END:
+** [#B] Funktionen zur Fokussierung
+*** Alles einklappen außer aktuellen Subtree
+   - inspiriert von [[https://emacs.stackexchange.com/questions/29304/how-to-show-all-contents-of-current-subtree-and-fold-all-the-other-subtrees][hier]]
+ #+BEGIN_SRC emacs-lisp
+ (defun ess/org-show-just-me (&rest _)
+   "Fold all other trees, then show direct children of current org-heading."
+   (interactive)
+   (org-overview)
+   (org-reveal)
+   (org-show-children)
+ )
+ (add-hook 'org-after-sorting-entries-or-items-hook 'ess/org-show-just-me)
+
+ #+END_SRC
+*** Nur Todos direkt unter der Überschrift anzeigen
+ #+BEGIN_SRC emacs-lisp
+ (defun my-sparse-subtree-todo-search ()
+   (interactive)
+   (org-narrow-to-subtree)
+   (let ((level (org-current-level)))
+     (org-match-sparse-tree  t (format "+LEVEL=%d" (1+ level)))))
+ #+END_SRC
+*** Zeige nur spezielle TODOs und fokussiere den Ast
+ #+BEGIN_SRC emacs-lisp
+
+ (defun kahiro-show-todos-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-show-todo-tree nil)
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-NEXT-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-occur (concat "^" org-outline-regexp " *" "\\(NEXT\\|WAITING\\)"))
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-only-NEXT-in-subtree ()
+    "Narrow to a subtree and show only headings with NEXT keyword"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-show-todo-tree 4)
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-TODO-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-occur (concat "^" org-outline-regexp " *" "\\(TODO\\|NEXT\\|WAITING\\)"))
+    (org-ctrl-c-ctrl-c))
+
+ (defun kahiro-show-PLAN-in-subtree ()
+    "Narrow to a subtree and show only headings with TODO keywords"
+    (interactive)
+    (org-narrow-to-subtree)
+    (org-show-todo-tree 13)  ;; Funktion ist abhängig von TODO-Reihenfolge
+    (org-ctrl-c-ctrl-c))
+
+ #+END_SRC
+
+ #+RESULTS:
+ : kahiro-show-PLAN-in-subtree
+
+**** TODO Erklärung der Synthax
+*** Split und Switch
+      - Gibt eine Schnelle übersicht in einem halben Fenster. 
+ #+BEGIN_SRC emacs-lisp
+  (defun kahiro-split-and-switch ()
+   "Split the window and switch to the other window in sequence."
+   (interactive)
+   (split-window-right)
+   (org-tree-to-indirect-buffer)
+   (other-window 1))
+  (global-set-key (kbd "C-c v") 'kahiro-split-and-switch)
+
+ #+END_SRC
+*** Switch und Close
+      - Kehrt wieder zum Übersichtsbuffer zurück. 
+ #+BEGIN_SRC emacs-lisp
+  (defun kahiro-switch-and-close ()
+   "Split the window and switch to the other window in sequence."
+   (interactive)
+ ;;  (kill-buffer)
+   (delete-window)
+ ;;  (other-window -1)
+ ;;  (delete-other-windows)
+  )
+
+  (global-set-key (kbd "C-c V") 'kahiro-switch-and-close)
+ #+END_SRC
+*** Fold current tree up to lvl1 heading
+    - [[https://christiantietze.de/posts/2019/06/org-fold-heading/][Quelle]] [2021-07-28 Mi]
+    #+begin_src emacs-lisp :results output silent
+      (defun ct/org-foldup ()
+	"Hide the entire subtree from root headline at point."
+	(interactive)
+	(widen)
+	(while (ignore-errors (outline-up-heading 1)))
+	(org-flag-subtree t))
+
+
+      (defun ct/org-ctrltab (&optional arg)
+	(interactive "P")
+	(if (or (null (org-current-level))     ; point is before 1st heading, or
+		(and (= 1 (org-current-level)) ; at level-1 heading, or
+		     (org-at-heading-p))
+		(org-at-table-p))              ; in a table (to preserve cell movement)
+		; perform org-shifttab at root level elements and inside tables
+		(org-shifttab arg)
+		; try to fold up elsewhere 
+		(ct/org-foldup)))
+      (org-defkey org-mode-map (kbd "C-<tab>") 'ct/org-ctrltab)
+#+end_src
+*** Show TODOs in currend lvl 1 heading
+    [2021-07-28 Mi]
+    #+begin_src emacs-lisp :results output silent
+      (defun kahiro/show-todos-lvl1-heading ()
+	"Show all the Todos with TODO, NEXT and WAITING"
+	(interactive)
+	(ct/org-ctrltab)
+	(kahiro-show-TODO-in-subtree)
+	(widen)
+	)      
+#+end_src
+
+*** COMMENT Apply :Archive: Tag to DONE Tasks
+ #+BEGIN_SRC emacs-lisp
+ (setq org-todo-state-tags-triggers
+   (quote 
+   (("DONE" ("ARCHIVE" . t)) ;; Set ARCHIVE tag when state changes to DONE
+    ("" ("ARCHIVE"))         ;; Unset ARCHIVE tag when state changes to "" (no state)
+   )))
+ #+END_SRC
+**** TODO Review
+     - aussortiert weil nervig
+** [#B] Agenda-Mode
+   - [[*for org-agendas][Link zu Keyboard-Shortcuts]]
+*** TODO [#A] Agenda custom commands
+**** Config Start und Hilfe
+  - [[help:org-agenda-custom-commands][Helpfile]]
+  - [[*for org-agendas][Key-Definitionen]]
+ #+BEGIN_SRC emacs-lisp :results output silent
+ ;; AGENDA MODES
+ ;;--------------
+ (setq org-agenda-custom-commands
+       '(
+#+end_src
+**** COMMENT f - gefilterte Agendas
+#+begin_src emacs-lisp :results output silent
+         ("f" . "gefiltere Agendas")
+	 ("f1" "alles ohne Habits" 
+	      ((agenda ""
+	      (
+	       (org-agenda-category-filter-preset '("-habit"))
+               (org-agenda-sorting-strategy '(priority-down))
+	       (org-agenda-overriding-header "No Habits")
+	       (org-agenda-span 1)
+               (org-deadline-warning-days 0)      
+	      )))
+	 )
+#+end_src
+**** d - tägliche Übersichten
+#+begin_src emacs-lisp :results output silent
+  ;;--- DEMO-Setup -- Uncomment for use ---
+  ;;(setq org-agenda-custom-commands
+  ;;	'(
+  ;;------------------------
+	    ("d" . "Tägliche Übersichen und Filter")
+	    ("d1" "Wichtigste Arbeits-Tasks" agenda ""
+	     ((org-agenda-span 1)
+	      (org-agenda-overriding-header "Heute - Aktuelle Ausgabe, Kalender, Inbox")
+	      (org-agenda-category-filter-preset '("-habit" "-htasks"))
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	      ))
+	    ("d4" "Alle Projekte des Buffers" todo "PROJ"
+	     ((org-agenda-overriding-header "Alle Projekte des Buffers")
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	      ))
+	    ("d7" "Alle Todos des Buffers" todo "TODO"
+	     ((org-agenda-overriding-header "Alle 1-Schritt Todos des Buffers")
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	      ))
+	    ("d2" "alle Tasks ohne Habits" agenda ""
+	     ((org-agenda-span 1)
+	      (org-agenda-overriding-header "Heute ohne Habits")
+	      (org-agenda-category-filter-preset '("-habit"))
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	      ))
+	    ("d5" "Review" agenda ""
+	     ((org-agenda-span 1)
+	      (org-agenda-overriding-header "Heute ohne Habits")
+	      (org-agenda-category-filter-preset '("-habit"))
+	      (org-agenda-clockreport-mode t)
+	      (org-agenda-show-log 'clockcheck)
+	      ))
+	    ("d8" "Arbeit - Inbox" tags-todo "inbox"
+	     ((org-agenda-overriding-header "Arbeit - Inbox")
+	      (org-agenda-sorting-strategy '(deadline-down scheduled-down priority-down todo-state-down))
+	      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	      ))
+	    ;; ("d5" "Nächste Schritte für Inbox" 
+	    ;;      ((todo "WAITING|NEXT"
+	    ;;       ((org-agenda-overriding-header "Nächste Schritte für Inbox")
+	    ;;        (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	    ;;        (org-show-context-detail 'minimal)))
+	    ;;       (agenda ""
+	    ;;        ((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+	    ;;       )))
+	    ;;      ((org-agenda-category-filter-preset '("+inbox"))
+	    ;;       (org-agenda-span 1)
+	    ;;       (org-deadline-warning-days 0)
+	    ;; ))
+	    ("d3" "Alle Autorentexte" 
+	     ((tags-todo "TODO=\"BAUFT\"|TODO=\"VORH\"+Autor"
+	       ((org-agenda-overriding-header "Alle offenen Autorentexte"))
+	      )
+	      (tags-todo "TODO=\"PROJ\"+kur"
+	       ((org-agenda-overriding-header "Geplante eigene Texte"))
+	       )
+	      (tags-todo "TODO=\"PROJ\"+Autor"
+	       ((org-agenda-overriding-header "Eingeplante Autorentexte"))
+	       ))
+	     ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
+	    )
+	    ("d6" "Autorentexte bestellt und da" 
+	     ((tags-todo "TODO=\"IDEE\"+kur"
+	       ((org-agenda-overriding-header "Ideen für eigene Texte"))
+	       )
+	      (tags-todo "TODO=\"IDEE\"+Autor"
+	       ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
+		))
+	       ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
+	       )
+	    ("d9" "Autorentexte Idee und Suche" tags-todo "TODO=\"SUCHE\"|TODO=\"ANGEB\""
+	     ((org-agenda-overriding-header "Texte die angeboten wurden oder einen Autoren suchen")
+	      (org-agenda-sorting-strategy '(todo-state-down priority-down))
+	      (org-agenda-category-filter-preset '("-habit" "-htasks"))
+	      ))
+  ;;--- DEMO-Setup -- Uncomment for use ---
+  ;; ))
+  ;;------------------------
+#+end_src
+
+**** g/h - eigene Agendas
+#+begin_src emacs-lisp :results output silent
+("g" . "My Custom Agendas")
+("gA" "alle Autorentexte" tags "Autor|AUTOR<>\"\""
+     ((org-agenda-sorting-strategy '(todo-state-down)
+     )))
+("gb" "Autorentexte via Properties" 
+   (
+   (tags-todo "TODO=\"NEXT\"+AUTOR<>\"\""
+     ((org-agenda-overriding-header "Texte von Autoren")))
+   (tags "TODO=\"WAITING\"+AUTOR<>\"\""
+     ((org-agenda-overriding-header "\nWarte auf Rückmeldung")))
+   (tags "TODO=\"TODO\"+AUTOR<>\"\""
+     ((org-agenda-overriding-header "\nBestellt")))
+   (tags "TODO=\"PLAN\"+AUTOR<>\"\""
+     ((org-agenda-overriding-header "\nVorschläge"))))
+     ((org-agenda-compact-blocks t))
+     )
+("g-" "Nur Deadlines" agenda "Diesen Monat" (
+     (org-agenda-span 'month)
+     (org-agenda-time-grid nil)
+     (org-agenda-show-all-dates nil)
+     (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
+     (org-deadline-warning-days 0) ))
+ ("gp" "PLAN und TODO in Agenda-Files" agenda ""
+     ((org-agenda-span 1)
+      (org-agenda-overriding-header "PLAN und TODO in Agenda-Files")
+      (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PLAN" "TODO"))) ;[1]
+      (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+      (org-deadline-warning-days 0)
+      ))
+  ("gh" "Agenda für heute" agenda ""
+     ((org-agenda-span 1)
+      (org-agenda-overriding-header "Alle Aufgaben für heute")
+      (org-deadline-warning-days 0)))
+  ("gw" "Agenda für diese Woche" agenda ""
+     ((org-agenda-span 7)
+      (org-agenda-overriding-header "Alle Aufgaben für die nächsten 7 Tage")
+      (org-deadline-warning-days 3)))
+  ("gk" "Themen für Konferenzen" tags "Konferenz"
+     ((org-agenda-orverriding-header "Offene Themen für Konferenzen")
+     ))
+("h" "home Tasks + Calendar"
+ ((todo "WAITING|NEXT"
+   ((org-agenda-overriding-header "Nächste Schritte")
+	(org-agenda-sorting-strategy '(todo-state-down priority-down))
+	(org-show-context-detail 'minimal)))
+   (agenda ""
+	((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+   )))
+  ((org-agenda-category-filter-preset '("-inbox" "-atasks" "-xa" "-reg")) ;;"+htasks|+calendar"
+   (org-agenda-span 1)
+   (org-deadline-warning-days 1)      
+	))
+#+end_src
+**** k - zu klären
+     #+begin_src emacs-lisp :results output silent
+       ("k" "zu klären"
+	      ((tags-todo "klären"
+		  ((org-agenda-overriding-header "Was zu klären ist:")
+		   (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+		   ))
+	       ;; (agenda ""
+	       ;;    ((org-agenda-span 1)
+	       ;;     (org-agenda-overriding-header "Heute - Nur Arbeits-Tasks")
+	       ;;     (org-agenda-files `(,(concat org-directory "/atasks.org")))
+	       ;;     (org-agenda-category-filter-preset '("-habit"))
+	       ;;     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+	       ;;     ))
+	        )
+	       )
+#+end_src
+**** n - nächste Schritte
+#+begin_src emacs-lisp :results output silent
+  ;;--- DEMO-Setup -- Uncomment for use ---
+  ;; (setq org-agenda-custom-commands
+  ;; 	'(
+  ;;------------------------
+	  ("n" "Nächste Schritt"
+	   ( ;; BEGINN  Definition der einzelnen Agenda-Blöcke
+	    (todo "NEXT" ;; [2023-01-05 Do] - was "WAITING|NEXT"
+		  ((org-agenda-overriding-header "Nächste Schritte")
+		   (org-agenda-sorting-strategy '(todo-state-down priority-down))
+		   (org-show-context-detail 'minimal)))
+	    (agenda ""
+		    (    ;; BEGINN Regeln für einzelnen Agenda-Block
+		     (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+		     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT" "WAITING")))
+		     ))  ;; ENDE Regeln für einzelnen Agenda-Block 
+	    (todo "WAITING"
+		  ((org-agenda-overriding-header "Warte auf Rückmeldung")
+		   (org-agenda-sorting-strategy '(todo-state-down priority-down))
+		   (org-show-context-detail 'minimal)))
+	    ) ;; ENDE   Definition der einzelnen Agenda-Blöcke
+	   (  ;; BEGINN Regeln für alle Blöcke
+	    (org-agenda-category-filter-preset '("-habit" "-htasks"))
+	    (org-agenda-span 1)
+	    (org-deadline-warning-days 0)      
+	    ) ;; ENDE   Regeln für alle Blöcke
+	   )
+
+	  ("N" "alle nächsten Schritte" 
+		((agenda ""
+		((org-agenda-span 1)
+		 (org-agenda-overriding-header "Alle nächsten Schritte heute für diese Datei")
+		 (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("NEXT" "WAITING"))) ;;[1]
+		 (org-agenda-sorting-strategy '(time-up todo-state-down))))
+		(todo "WAITING|NEXT"
+		 ((org-agenda-overriding-header "Nächste Schritte für aktuelle Datei")
+		  (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+		  (org-show-context-detail 'minimal)))
+		))
+  ;;--- DEMO-Setup -- Uncomment for use ---
+  ;;    ))
+  ;;------------------------
+#+end_src
+  - [1] die Funktion "...skip-entry-if" verbirgt alle Treffer in der Agenda. 
+     ='todo '("NEXT")= würde alle Tasks mit dem NEXT keyword ausblenden. 
+     ='nottodo '("NEXT")= zeigt nur Tasks mit NEXT keyword. 
+
+**** o - Todos ohne Zeitupunkt (stuck)
+#+begin_src emacs-lisp :results output silent
+	 ("o" "TODO ohne Zeitpunkt"
+          ((todo ""
+                 ((org-agenda-overriding-header "\nUnscheduled TODO")
+                  (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+	   )))	
+	 )
+#+end_src
+**** p - Planung (Arbeit)
+#+begin_src emacs-lisp :results output silent
+;; (setq org-agenda-custom-commands
+;;       '(
+	 ("p" . "Ansichten für die Planung")
+	 ("pi" "Inbox-Aufgaben nach Priorität" tags-todo "TODO=\"TODO\"+inbox)")
+	 ("pp" "Inbox-Aufgaben zum Terminieren" tags-todo "TODO=\"NEXT\"+inbox")
+;; ))
+#+end_src
+**** Config ENDE
+#+begin_src emacs-lisp :results output silent
+	
+	 ))
+ #+END_SRC
+**** TODO COMMENT Erläuterungen
+  - Hilfe unter :: [[help:org-agenda-custom-commands][org-agenda-custom-commands]]
+  - Beipiele :: [[https://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][worg]], 
+ #+BEGIN_SRC emacs-lisp :results output silent
+ ;; default agenda commands
+ (setq org-agenda-custom-commands
+    '(
+      ("o"                                        ;; Key
+       "heutige Tasks im aktuellen Buffer"        ;; Beschreibung
+       agenda                                     ;; Typ
+       ""                                         ;; Suche, muss ggf. leer sein ""
+       (
+     ;; (org-agenda-overriding-restriction (current-buffer)) ;; für aktuellen Buffer
+	(org-agenda-span 1))
+      )
+      ("g" tags-tree "g" ((org-show-context-detail 'ancestors)))
+      ("w" tags-tree "w" ((org-show-context-detail 'ancestors)))
+     )
+ )
+  #+END_SRC
+**** Agenda Bauprozess
+- [ ] Custom Agenda anlegen
+- [ ] Custom Agenda einer Taste zuweisen
+**** COMMENT Patch for Ancestors-View
+     - Erweitert die Headlines beim Sparse-Tree oder in custom Agendas. Nützlich für Reviews, aber nervig für die Übersicht. 
+#+BEGIN_SRC emacs-lisp
+(el-patch-defun org-show-set-visibility (detail)
+  "Set visibility around point according to DETAIL.
+DETAIL is either nil, `minimal', `local', `ancestors', `lineage',
+`tree', `canonical' or t.  See `org-show-context-detail' for more
+information."
+  ;; Show current heading and possibly its entry, following headline
+  ;; or all children.
+  (if (and (org-at-heading-p) (not (eq detail (el-patch-swap
+                                                'local
+                                                'ancestors))))
+      (org-flag-heading nil)
+    (org-show-entry)
+    ;; If point is hidden within a drawer or a block, make sure to
+    ;; expose it.
+    (dolist (o (overlays-at (point)))
+      (when (memq (overlay-get o 'invisible) '(org-hide-block outline))
+        (delete-overlay o)))
+    (unless (org-before-first-heading-p)
+      (org-with-limited-levels
+       (cl-case detail
+         ((tree canonical t) (org-show-children))
+         ((nil minimal ancestors))
+         (t (save-excursion
+              (outline-next-heading)
+              (org-flag-heading nil)))))))
+  ;; Show all siblings.
+  (when (eq detail 'lineage) (org-show-siblings))
+  ;; Show ancestors, possibly with their children.
+  (when (memq detail '(ancestors lineage tree canonical t))
+    (save-excursion
+      (while (org-up-heading-safe)
+        (org-flag-heading nil)
+        (when (memq detail '(canonical t)) (org-show-entry))
+        (when (memq detail '(tree canonical t)) (org-show-children))))))
+#+END_SRC
+*** Generelle Agenda Einstellungen
+#+begin_src emacs-lisp :results output silent
+(setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-skip-deadline-prewarning-if-scheduled t
+      org-deadline-warning-days 2)
+
+(add-hook 'org-agenda-mode-hook
+	  (lambda()
+	    (local-set-key (kbd "S-<up>") 'org-agenda-date-earlier-hours)
+	    (local-set-key (kbd "S-<down>") 'org-agenda-date-later-hours)
+	  )
+     )
+  ;; Activate plain list cycle
+  (setq org-list-use-circular-motion t)
+#+END_SRC
+
+**** Default Org-Agenda Span
+ #+BEGIN_SRC emacs-lisp
+ ;; Default span
+ (setq org-agenda-span 2)
+ #+END_SRC
+**** Zeilen in der Agenda nicht umbrechen
+ #+begin_src emacs-lisp
+ ;; Kein visual-line-mode in Agendas - Lange Zeilen werden nicht umbebrochen
+ (add-hook 'org-agenda-mode-hook
+           (lambda ()
+             (visual-line-mode -1)
+             (toggle-truncate-lines 1)))
+ #+end_src
+**** Sticky Agenda
+     - Agenda wird nicht gekillt, sondern bleibt als Buffer im Hintergrund. 
+  #+begin_src emacs-lisp
+  (setq org-agenda-sticky t)
+  #+end_src
+*** Eigene Agenda-Funktionen :defun:
+**** Start Agenda with current buffer :Funktionen:
+#+begin_src emacs-lisp :results output silent
+(defun kahiro-agenda-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "a" t))
+
+(defun kahiro-todo-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "t" t))
+#+end_src
+**** beschränkte Agendas :new:
+ - [X] alle TODOS aus einem Subtree
+ - [X] TODO-Liste für NEXT aus dem Subtree
+ - [X] TODO-Liste für Waiting aus dem Buffer/Subtree
+ - [X] TODO-Liste für Waiting der Agenda mit Prio A
+ - [X] TODO-Liste für Waiting aus dem Subtree
+ - [ ] TODO-Liste für Waiting mit xa-Kategorie
+ - [ ] DONE-Lise eines Subtrees
+ - [ ] TODO-Liste aller Aufgaben eines Buffers/Subtrees mit Prio A
+ - [ ] TODO-Liste aller PLAN Aufgaben eines Subtrees
+ - [ ] Tasks mit dem Tag Heute
+ - [ ] 
+#+begin_src emacs-lisp :results output silent
+;; alle TODOs eines Subtrees
+(defun kahiro-todo-of-current-subtree (&optional arg)
+   (interactive "P")
+   (org-agenda arg "t" 'subtree))
+
+;; alle NEXT aus dem Subtree
+(defun kahiro-NEXT-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" 'subtree)) ;; edit
+
+;; alle WAITING aus dem Subtree
+(defun kahiro-WAITING-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" 'subtree)) ;; edit
+
+;; alle WAITING aus dem Buffer
+(defun kahiro-NEXT-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" 'buffer)) ;; edit
+
+;; alle WAITING der Agenda-Files mit Prio A aus dem Buffer
+(defun kahiro-NEXT-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" nil)) ;; edit
+
+;; alle WAITING mit Kategorie "xa"
+(defun kahiro-WAITING-of-current-buffer (&optional arg)
+   (interactive "P")
+   (org-agenda arg "?" nil)) ;; edit
+
+#+end_src
+*** Calendar-week
+    - Zeigt die Kalenderwiche im Kalender an.
+ #+begin_src elisp
+ (copy-face font-lock-constant-face 'calendar-iso-week-face)
+ (set-face-attribute 'calendar-iso-week-face nil
+                     :height 0.7)
+ (setq calendar-intermonth-text
+       '(propertize
+         (format "%2d"
+                 (car
+                  (calendar-iso-from-absolute
+                   (calendar-absolute-from-gregorian (list month day year)))))
+         'font-lock-face 'calendar-iso-week-face))
+
+ (copy-face 'default 'calendar-iso-week-header-face)
+ (set-face-attribute 'calendar-iso-week-header-face nil
+                     :height 0.7)
+ (setq calendar-intermonth-header
+       (propertize "KW"                  ; or e.g. "KW" in Germany
+                   'font-lock-face 'calendar-iso-week-header-face))
+
+ (setq calendar-week-start-day 1)
+ #+end_src
+*** org-Recur :obsolet:package:
+    - Paket für die wiederholte Planung von Überchriften
+ #+begin_src emacs-lisp :results silent
+ (use-package org-recur
+   :hook ((org-mode . org-recur-mode)
+          (org-agenda-mode . org-recur-agenda-mode))
+   :demand t
+   :bind (:map org-recur-agenda-mode-map
+           ("d" . org-recur-finish)
+	   ("C-c d" . org-recur-finish)
+	   :map org-recur-mode-map
+	    ("C-c d" . org-recur-finish))
+ ;;  :config
+ ;;  (define-key org-recur-mode-map (kbd "C-c d") 'org-recur-finish)
+
+   ;; Rebind the 'd' key in org-agenda (default: `org-agenda-day-view').
+   ;;  (define-key org-recur-agenda-mode-map (kbd "d") 'org-recur-finish)
+   ;;  (define-key org-recur-agenda-mode-map (kbd "C-c d") 'org-recur-finish)
+ )
+ #+end_src
+*** org-habit :package:local:
+ Mit org-habit kann man regelmäßige Aufgaben verfolgen, etwa den Müll rausbringen, oder Sport treiben. Man kann es so einstellen, dass die Aufgabe nur alle x Tage auftaucht. 
+ #+BEGIN_SRC emacs-lisp
+ ;; Den Habit-Graph auf Position (von links) bringen.
+ (setq org-habit-graph-column 50)
+ #+END_SRC
+** [#B] org-capture templates :extern:
+ - moved to separate file: [[file:c:/org/_config/emacs/capture.org::*Code][Code]]
+** Projektmanagement
+*** recursive statistic cookie for PROJ status
+#+begin_src emacs-lisp :results output silent
+(defun kahiro/org-recursive-statistics-for-proj ()
+  (interactive)
+  (when (equal (org-get-todo-state) "PROJ")
+    (org-set-property "COOKIE_DATA" "todo recursive"))
+  (when (equal (org-get-todo-state) "TODO")
+    (org-delete-property "COOKIE_DATA"))
+)
+
+(add-hook 'org-after-todo-state-change-hook 'kahiro/org-recursive-statistics-for-proj)
+#+end_src
+
+** Allgemein
+*** Archiv-Location
+  - Link zur Hilfe: [[help:org-archive-location]]
+**** Beispiele
+     - in der config: (setq org-archive-location "datei::** unterDieserHeadingSortieren")
+     - in der datei: #+ARCHIVE: datei::** unterDieserHeadingSortieren
+       oder: #+ARCHIVE: %s_archive::datetree/
+     - in der subheading
+       :PROPERTIES:
+       :ARCHIVE: datei::** unterdieserheadingsortieren
+       :END:
+
+ Here are a few examples:
+ "%s_archive::"
+	 If the current file is Projects.org, archive in file
+	 Projects.org_archive, as top-level trees.  This is the default.
+
+ "::* Archived Tasks"
+	 Archive in the current file, under the top-level headline
+	 "* Archived Tasks".
+
+ "~/org/archive.org::"
+	 Archive in file ~/org/archive.org (absolute path), as top-level trees.
+
+ "~/org/archive.org::* From %s"
+	 Archive in file ~/org/archive.org (absolute path), under headlines
+         "From FILENAME" where file name is the current file name.
+
+ "~/org/datetree.org::datetree/* Finished Tasks"
+         The "datetree/" string is special, signifying to archive
+         items to the datetree.  Items are placed in either the CLOSED
+         date of the item, or the current date if there is no CLOSED date.
+         The heading will be a subentry to the current date.  There doesn’t
+         need to be a heading, but there always needs to be a slash after
+         datetree.  For example, to store archived items directly in the
+         datetree, use "~/org/datetree.org::datetree/".
+
+ "basement::** Finished Tasks"
+	 Archive in file ./basement (relative path), as level 3 trees
+	 below the level 2 heading "** Finished Tasks".
+
+ You may set this option on a per-file basis by adding to the buffer a
+ line like
+
+ #+ARCHIVE: %s_archive::datetree
+
+ You may also define it locally for a subtree by setting an ARCHIVE property
+ in the entry.  If such a property is found in an entry, or anywhere up
+ the hierarchy, it will be used.
+*** Dateiendungen
+ #+BEGIN_SRC emacs-lisp :results output silent
+  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+  (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
+ ;; (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+  #+END_SRC
+*** org-goto :navigation:
+ #+begin_src emacs-lisp :results output silent
+ (setq org-goto-interface 'outline-path-completion) ;; alternative 'outline
+ (setq org-outline-path-complete-in-steps nil)
+ #+end_src
+ [[https://emacs.stackexchange.com/questions/32617/how-to-jump-directly-to-an-org-headline][Link:]] Setting org-goto-interface to one of the two recognised values does not mean sacrificing the alternative interface. Calling org-goto with a prefix argument (i.e. C-u C-c C-j or C-u M-x org-goto RET) automatically selects the alternative interface for the current completion. This way, you can set org-goto-interface to the interface you are likely to use most often and use the prefix argument when you wish to temporarily switch behaviour. If even this does not suit your needs, you can always write your own wrapper around org-goto, as per Att Righ's example.
+*** refile" targets :Funktionen:
+ #+BEGIN_SRC emacs-lisp :results output silent
+ ;; setting Refile Target
+ (setq org-refile-targets `(
+   (org-agenda-files :maxlevel . 1)       ;; Für Agenda-Dateien normalerweise nur in * Überschriften
+   (,(concat org-directory "/atasks.org") :maxlevel . 2)  ;; Für atask.org auch in ** Überschriften
+   (,(concat org-directory "/br/br.org") :maxlevel . 2)
+))
+
+ ;; TODO Hier fehlt noch eine Erklärung
+ (setq org-refile-allow-creating-parent-nodes 'confirm)     ;;allow creating nodes. Refile has to end with /newheadingname
+ (setq org-refile-use-outline-path 'file)
+
+ ;; refile nur in der aktuellen Datei (geklaut von Sacha Chua). Aufruf über c-W.
+ (defun my/org-refile-in-file (&optional prefix)
+   "Refile to a target within the current file."
+   (interactive)
+   (let ((org-refile-targets `(((,(buffer-file-name)) :maxlevel . 3))))   ;; Für aktuelle Datei bis in *** Überschriften.
+     (call-interactively 'org-refile)))
+ #+END_SRC
+**** COMMENT Option: Refile in alle geöffneten Buffer
+     - geklaut von hier :: https://emacs.stackexchange.com/questions/22128/how-to-org-refile-to-a-target-within-the-current-file
+ #+begin_src emacs-lisp :results output silent
+ (defun my-org-files-list ()
+   (delq nil
+     (mapcar (lambda (buffer)
+       (buffer-file-name buffer))
+       (org-buffer-list 'files t))))
+
+ (setq org-refile-targets '((my-org-files-list :maxlevel . 1)))
+ #+end_src
+**** Inspirationsquellen
+     - quasiquote für funktionen in einer liste, wie concat oder buffer-file-name :: [[https://lists.gnu.org/archive/html/emacs-orgmode/2012-07/msg00561.html][Link]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Backquote.html][elisp-Manual]]. 
+** LateX
+- gesamte Variable:   (setq org-format-latex-options '(:foreground default :background default :scale 1.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+	     ("begin" "$1" "$" "$$" "\\(" "\\[")))
+- aber eigentlich reicht es nur einen Wert zu vernändern:
+#+begin_src emacs-lisp :results output silent
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+#+end_src
+** Export nach odt bzw. docx :WindowsOnly:
+#+begin_src emacs-lisp :results output silent
+(when (string-equal system-type "windows-nt")
+
+  (setq org-odt-preferred-output-format "docx")
+
+  (defun config-org-export-as-docx-via-odt ()
+    (interactive)
+    (let ((cmd "C:\\Software\\LibreOffice\\App\\libreoffice\\program\\soffice.exe"))
+      (when (and (eq system-type 'windows-nt) (file-exists-p cmd))
+        ;; org v8/v9
+        (setq org-odt-convert-processes '(("LibreOffice" "C:\\Software\\LibreOffice\\App\\libreoffice\\program\\soffice.exe --headless --convert-to %f%x --outdir %d %i"))))
+    ))
+
+  (config-org-export-as-docx-via-odt)
+)
+ 
+#+end_src
+** Clocking / Aufwand
+#+begin_src emacs-lisp :results output silent
+;; CLOCKING: global Effort estimate values
+(setq org-global-properties
+      '(("Effort_ALL" .
+         "1:00 2:00 3:00 4:00 5:00 0:10 0:20 0:30 0:45 0:00 6:00 7:20 8:00 9:00 10:00")))
+;;        1    2    3    4    5    6    7    8    9    0
+;; These are the hotkeys
+
+;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
+(setq org-columns-default-format "%45ITEM(Beschreibung) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM_T(Today) %7TODO %14SCHEDULED")
+
+;; Set default format in Agenda to global default format
+(setq org-columns-default-format-for-agenta org-columns-default-format)
+;; Clocking
+;;---------
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate) ;; Erklaerung
+#+end_src
+*** TODO [#C] Erklärung für org-clock-persistence-insinuate
+*** Clock-Report bis auf 3 Level tief
+#+begin_src emacs-lisp
+;; Clock-Report-View auf Level 3
+(setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 3))
+#+end_src
+** Make org beautiful
+*** hide emphasis markers
+#+BEGIN_SRC emacs-lisp
+;; Make Org beautiful
+;;-------------------
+(setq org-hide-emphasis-markers t) ;; hide Markers like *this* for bold
+#+END_SRC
+*** Use Org-Bullets :package:appearance:
+    Schönere Auflist-Zeichen (in UTF8) für Org-Überschriften
+   #+BEGIN_SRC emacs-lisp
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+)
+  (when (string-equal system-type "windows-nt")
+   (setq org-bullets-bullet-list '("✥" "✤" "❖" "✿" "❄" "❋" "★" "✚")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
+  )
+  (when (string-equal system-type "gnu/linux")
+    (setq org-bullets-bullet-list '("⚜" "⚙" "❖" "✿" "❄" "❋" "★" "⚛")) ;; "✠" "✚" "✜" "✛" "✢" "✣" "✤" "✥"
+  )
+  #+END_SRC
+
+*** Set custom ellipsis (...)
+  #+BEGIN_SRC emacs-lisp
+  (setq org-ellipsis "⤵")
+   #+END_SRC
+** FEHLER org-caldav :WindowsOnly:Paket:
+Compiling internal form(s) at Wed Mar  3 23:13:32 2021
+Warning (bytecomp): reference to free variable ‘org-icalendar-timezone’
+Warning (bytecomp): reference to free variable ‘org-export-before-parsing-hook’
+Warning (bytecomp): reference to free variable ‘org-icalendar-timezone’
+Warning (bytecomp): ‘org-set-tags-to’ is an obsolete function (as of Org 9.2); use ‘org-set-tags’ instead.
+Warning (bytecomp): the following functions are not known to be defined:
+oauth2-auth-and-store, oauth2-url-retrieve-synchronously
+
+#+begin_src emacs-lisp :results silent
+(when (string-equal system-type "windows-nt")
+    (use-package org-caldav
+      :init
+      (setq org-caldav-url "https://cloud.ist.gold/remote.php/dav/calendars/fabian")
+      (setq org-caldav-calendars
+      `((:calendar-id "org"
+         :inbox ,(concat org-directory "/calinbox.org")
+         :files (,(concat org-directory "/calendar.org"))
+         :skip-conditions ('todo 'done)
+      )))
+      (setq org-icalendar-timezone "Europe/Berlin")
+      (setq org-caldav-backup-file (concat org-directory "/caldav/org-caldav-backup.org"))
+      (setq org-caldav-save-directory (concat org-directory "/caldav/"))
+
+
+      :config
+      ;; This enables alarms in entries on export
+      (setq org-icalendar-alarm-time 1)
+      ;; This makes sure to-do items as a category can show up on the calendar
+      (setq org-icalendar-include-todo t)
+      ;; This ensures all org "deadlines" show up, and show up as due dates
+      (setq org-icalendar-use-deadline '(event-if-todo-not-done event-if-not-todo todo-due))
+      ;; This ensures "scheduled" org items show up, and show up as start times
+      (setq org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
+     )
+)
+#+end_src
+** FEHLER COMMENT org-table :Funktionen:
+[2021-07-28 Mi]- Probleme beim Laden
+   #+begin_src emacs-lisp :results output silent
+(defun calcFunc-dateDiffToHMS (date1 date2 worktime-per-day)
+  "Calculate the difference of DATE1 and DATE2 in HMS form.
+Each day counts with WORKTIME-PER-DAY hours."
+  (cl-labels ((dateTrunc (date)
+             (calcFunc-date (calcFunc-year date)
+                    (calcFunc-month date)
+                    (calcFunc-day date)))
+          (datep (date)
+             (and (listp date)
+              (eq (car date) 'date))))
+    (if (and (datep date1)
+         (datep date2))
+    (let* ((business-days (calcFunc-bsub
+                   (dateTrunc date1)
+                   (dateTrunc date2))))
+      (calcFunc-add
+       (calcFunc-hms (calcFunc-mul business-days worktime-per-day) 0 0)
+       (calcFunc-sub (calcFunc-time date1) (calcFunc-time date2)))
+      )
+      0)))   
+#+end_src
+** structure template (code)
+#+begin_src emacs-lisp :results output silent
+(setq org-structure-template-alist
+  '(("s" . "src")
+    ("sc" . "src conf")
+    ("se" . "src emacs-lisp")
+    ("sj" . "src javascript")
+    ("ss" . "src emacs-lisp :results output silent")
+    ("sh" . "src shell")
+;;    ("h" . "export html")
+;;    ("l" . "export latex")
+;;    ("q" . "quote")
+;;    ("c" . "comment")
+    ))
+#+end_src
+*** OK [#B] Org Tempo oder yasnippet einrichten
+*** Info zu Source Blocks
+ They changed the template system in orgmode 9.2.
+
+ The new mechanism is called structured template. The command org-insert-structure-template bound to *C-c C-,* gives you a list of #+begin_-#+end_ pairs that narrows down while you type and you can use completion.
+
+ But, you can also get the old easy template system back, either
+
+     by adding (require 'org-tempo) to your init file or
+     by adding org-tempo to the list org-modules. You can do that by customizing org-modules.
+
+** Tag-Vererbung
+#+begin_src emacs-lisp :results output silent
+(setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer" "kur" "gut" "2022" "Reportage" "Portrait" "ContentLeitstand" "CL"))
+;;(setq org-use-tag-inheritance nil)
+#+end_src
+
+** Todos
+*** Todo-Status und -Sequenzen
+Options: 
+ - ! :: Timestamp
+ - @ :: Note with timestamp
+ - / :: trigger when leaving the state
+ #+begin_src emacs-lisp :results output silent
+ (setq org-todo-keywords
+   '(
+     (sequence "PROJ(j!)" "SPLIT(x)" "DELEG(l@)" "HELP(h@)" "MEET(m)" "|" "CANC(c)")   ;; Plan
+     (sequence "IDEE(i!)" "SUCHE(s!)" "ANGEB(a!)" "BAUFT(b!)" "VORH(v!)" "|" "DONE(d)")   ;; Textstaus
+     (sequence "PLAN(p)" "TODO(t)" "DECIS(e!/@)" "WAITING(w!/!)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
+    ))
+ #+end_src
+  es ginge auch nur:  (sequence "|"  "CANC(c)")
+*** Todo Cookie recursiv
+- deaktivert [2021-08-05 Do], weil besser nur dann gesetzt, wenn TODO=PROJ
+#+begin_src emacs-lisp :results output silent
+;;(setq org-hierarchical-todo-statistics nil)
+#+end_src
+** Textbearbeitung
+*** TODO [#D] COMMENT unfill paragraph :Funktionen:deaktiviert:
+ #+BEGIN_SRC emacs-lisp
+ ;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph    
+ (defun unfill-paragraph (&optional region)
+   "Takes a multi-line paragraph and makes it into a single line of text."
+   (interactive (progn (barf-if-buffer-read-only) '(t)))
+   (let ((fill-column (point-max))
+	 ;; This would override `fill-column' if it's an integer.
+	 (emacs-lisp-docstring-fill-column t))
+     (fill-paragraph nil region)))
+
+ ;; Handy key definition
+ (define-key global-map "\M-Q" 'unfill-paragraph)
+ #+END_SRC
+
+* Custom Functions
+
+** clone-rename-narrow
+#+begin_src emacs-lisp :results output silent
+(defun kahrio/clone-rename-narrow (&optional arg)   
+ (interactive "P")
+ (clone-indirect-buffer (nth 4 (org-heading-components)) t nil)
+ (org-narrow-to-subtree)
+)
+#+end_src
+
+** done and next
+#+begin_src emacs-lisp :results output silent
+(defun kahiro-done-and-next  (&optional arg)
+  (interactive "P")
+  (org-todo "DONE")
+  (org-forward-heading-same-level 1 nil)
+  (recenter-top-bottom 5)
+)
+#+end_src
+** mark region or subtree DONE
+#+begin_src emacs-lisp :results output silent
+(defun org-todo-region ()
+  (interactive)
+  (let ((scope (if mark-active 'region 'tree))
+        (state (org-fast-todo-selection))
+        (org-enforce-todo-dependencies nil))
+    (org-map-entries (lambda () (org-todo state)) nil scope)))
+#+end_src
+
+** Next und Clock in :neu:
+#+begin_src emacs-lisp :results output silent
+(defun kahiro-next-and-clock-in  (&optional arg)
+  (interactive "P")
+  (org-todo "NEXT")
+  (org-clock-in)
+)
+#+end_src
+** TODO Sorting
+   - Weil ich häufig sortiere, lege ich eigene Funktionen auf die häufigsten Sortier-Befehle
+#+begin_src emacs-lisp :results output silent
+(defun kahiro-sort-by-time-reverse (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?T)
+)
+
+(defun kahiro-sort-by-time (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?t)
+)
+
+
+(defun kahiro-sort-by-priority (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?p)
+)
+
+(defun kahiro-sort-by-todo (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?o)
+)
+
+(defun kahiro-sort-by-todo-reverse (&optional arg)
+ (interactive)
+ (org-sort-entries nil ?O)
+)
+
+#+end_src
+** FEHLER COMMENT Count Tags :defun:
+   - [2020-04-19 Sun] ggf. gibt es einen Konflikt mit [[*Style Tags based on Regular Expressions][Style Tags based on Regular Expressions]]
+#+begin_src emacs-lisp :results output silent
+(defun count-tags ()
+  (let (tags count)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward org-complex-heading-regexp nil t)
+        (dolist (tag (org-get-tags))
+          (push tag tags)))
+      (cl-loop with result
+               for tag in tags
+               do (push (list (cl-count tag tags
+                                        :test #'string=)
+                              tag)
+                        count)
+               collect
+               (setq result (cl-remove-duplicates count
+                                                  :test #'equal))
+               finally return
+               (cl-sort result #'> :key #'car)))))
+
+:colnames '(freq tags)
+(count-tags)
+#+end_src
+** Clone buffer rename
+#+begin_src emacs-lisp :results output silent
+  (defun kahiro-clone-rename-narrow (&optional arg)
+   (interactive "P")
+   (clone-indirect-buffer 
+     (replace-regexp-in-string
+     " \\[[[:digit:]]*[/%][[:digit:]]*\\]" "" 
+     (nth 4 (org-heading-components)))
+     t nil)
+   (org-narrow-to-subtree)
+  )
+
+#+end_src
+
+* Keys / Tastenkürzel
+** Allgemein
+#+begin_src emacs-lisp :results output silent
+;; use ibuffer as default
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "C-x c") 'kahiro-clone-rename-narrow)
+#+end_src
+
+** Fokus
+#+begin_src emacs-lisp :results output silent
+
+#+end_src
+**  Jump in the doc1ument
+   "Move cursor to last mark position of current buffer.
+   Call this repeatedly will cycle all positions in `mark-ring'.
+   URL `http://ergoemacs.org/emacs/emacs_jump_to_previous_position.html'
+   Version 2016-04-04"
+ #+BEGIN_SRC emacs-lisp
+   (defun xah-pop-local-mark-ring ()
+     (interactive)
+     (set-mark-command t))
+   (global-set-key (kbd "<S-f3>") 'pop-global-mark)
+   (global-set-key (kbd "<s-f3>") 'xah-pop-local-mark-ring) 
+ #+END_SRC 
+** RYO Key settings
+*** TODOs
+**** TODO ryo-modal-keys snippet um ryo keys testen zu können. 
+ (ryo-modal-keys 
+...
+)
+**** DONE Sortierfunktionen auf eine eigene Taste legen.
+
+*** Tastenfunktionen
+#+BEGIN_SRC emacs-lisp
+(defun org-timer-start-with-offset ()
+  "Start the timer and prompt user to enter a time offset"
+    (interactive)
+    (org-timer-start '(4)))
+#+END_SRC
+*** Colors
+#+BEGIN_SRC emacs-lisp
+(setq ryo-modal-cursor-color "maroon")
+(setq ryo-modal-default-cursor-color "sea green")
+#+END_SRC
+
+#+RESULTS:
+: sea green
+
+*** Basics
+    + [2020-05-12 Di 13:36] Zahlen ausgeklammert, da ich sie kaum als Prefix brauche.
+ #+BEGIN_SRC emacs-lisp
+     (use-package ryo-modal
+       :commands ryo-modal-mode
+       :bind ("S-SPC" . ryo-modal-mode)
+       :bind ("µ" . ryo-modal-mode)
+       :config
+       (ryo-modal-keys
+	("," ryo-modal-repeat)
+	("q" ryo-modal-mode))
+	
+       (ryo-modal-keys
+	;; First argument to ryo-modal-keys may be a list of keywords.
+	;; These keywords will be applied to all keybindings.
+	(:norepeat t)
+        ("u" universal-argument)
+	("h" backward-char)
+	("j" next-line)
+	("k" previous-line)
+	("l" forward-char)
+	("e" "C-e")
+	("a" "C-a")
+	("I" "M-a")
+	("O" "M-e")
+	("A" "M-<")
+	("E" "M->")
+;;	("0" "M-0")
+;;	("1" "M-1")
+;;	("2" "M-2")
+;;	("3" "M-3")
+;;	("4" "M-4")
+;;	("5" "M-5")
+;;	("6" "M-6")
+;;	("7" "M-7")
+;;	("8" "M-8")
+;;	("9" "M-9")
+)
+
+   )
+ #+End_SRC
+
+*** Multiple Keys
+    Hier werden Befehle mit mehr als einem Tastenkürzel ausgeführt. Der erste Buchstabe ist also ein Prefix, auf den noch mindestens ein weiterer folgt.
+**** Start
+#+BEGIN_SRC emacs-lisp :results silent
+; (require 'org-timer)
+ (ryo-modal-keys 
+#+end_src
+
+**** b
+#+begin_src emacs-lisp
+    ("b"
+     (("b" bookmark-jump :first (org-mark-ring-push)) ;; 
+      ("i" bookmark-jump :first (org-mark-ring-push) :then (org-clock-in))
+      ("j" imenu-anywhere)
+      ("m" bookmark-set)
+      ("l" bookmark-bmenu-list)
+      ("s" bookmark-save)
+      ("o" bookmark-jump-other-window)
+      ("v" org-mark-ring-push)
+      ("n" org-mark-ring-goto)
+     ))
+#+end_src
+
+**** c
+#+begin_src emacs-lisp
+    ("c"
+    (("c" org-ctrl-c-ctrl-c) ;; getauscht mit c C weil häufiger genutzt 
+     ("a" org-attach)
+     ("b" org-backward-heading-same-level)
+     ("C" org-capture)       ;; getauscht mit c c
+     ("n" org-capture)     
+     ("d" org-deadline)
+     ("e" org-export-dispatch)
+     ("f" org-forward-heading-same-level)
+     ("j" org-goto)
+     ("k" org-kill-note-or-show-branches)
+     ("l" org-store-link)
+     ("L" org-insert-link)
+     ("o" org-open-at-point)
+     ("q" org-set-tags-command)
+     ("r" org-reveal)
+     ("s" org-schedule)
+     ("t" org-todo)
+     ("w" org-refile)
+     ("W" my/org-refile-in-file)
+     ("*" org-list-make-subtree)
+;     ("TAB" org-ctrl-c-tab)  ;; für raspi deaktiviert
+     ("RET" org-ctrl-c-ret)
+     ("y" org-evaluate-time-range)
+     ("z" org-add-note)
+     ("^" org-up-element)
+     ("_" org-down-element)
+     ("SPC" org-table-blank-field)
+     ("!" org-time-stamp-inactive)
+     ("#" org-insert-structure-template)
+     ("%" org-mark-ring-push)
+     ("&" org-mark-ring-goto)
+     ("'" org-edit-special)
+     ("*" org-ctrl-c-star)
+     ("+" org-table-sum)
+     ("," org-priority)
+     ("-" org-ctrl-c-minus)
+     ("." org-time-stamp)
+     ("/" org-sparse-tree)
+     (":" org-toggle-fixed-width)
+     (";" org-toggle-comment)
+     ("<" org-date-from-calendar)
+     ("=" org-table-eval-formula)
+     (">" org-goto-calendar)  
+     ("?" org-table-field-info)
+     ("@" org-mark-subtree)
+     ("\[" org-agenda-file-to-front)
+     ("\\" org-match-sparse-tree)
+     ("\]" org-remove-file)
+     ("^" org-sort)
+     ("v" org-sort)
+     ("`" org-table-edit-field)
+     ("{" org-table-toggle-formula-debugger)
+     ("|" org-table-create-or-convert-from-region)
+     ("}" org-table-toggle-coordinate-overlays)
+     ("~" org-table-create-with-table.el)
+     ("x"
+       (("a" org-archive-subtree-default)
+        ("e" org-clock-modify-effort-estimate) ;; neu [2021-02-15 Mo]
+        ("c" org-columns) ;; :then (recenter-top-bottom 3)) 
+      ))
+     ))
+#+end_src
+**** f
+#+begin_src emacs-lisp
+  ("f"
+   (("e" org-emphasize)
+    ("j" ess/org-show-just-me)
+    ("f" ess/org-show-just-me)
+    ("u" unfill-paragraph)
+    ("U" unfill-toggle)
+   ))
+#+end_src
+
+**** TODO g
+ - add xa function:
+clone-indirect-buffer-other-window
+rename-buffer xa
+org-narrow-to-subtree
+#+begin_src emacs-lisp
+    ("g"
+     (("a" org-agenda)
+      ("b" split-window-below)     ;; r for split-window-right
+      ("c" kahiro-switch-and-close)
+      ("D" delete-frame)
+      ("d" delete-window)
+      ("f" delete-other-windows)
+      ("g" switch-to-buffer)
+      ("h" org-backward-heading-same-level)
+      ("n" org-next-visible-heading)
+      ("p" org-previous-visible-heading)
+      ("l" org-forward-heading-same-level)
+      ("j" org-goto)
+      ("2" clone-indirect-buffer-other-window)
+      ("N" make-frame-command)
+      ("o" other-window)
+      ("m" xah-pop-local-mark-ring)
+      ("M" pop-global-mark)
+      ("r" split-window-right)      ;; b for split-window-below
+      ("s" kahiro-split-and-switch)
+;      ("S" kahiro-vsplit-and-switch)
+      ("t" org-sparse-tree)
+      ("u" outline-up-heading)
+     ))
+#+end_src
+
+**** n
+     - hier kommt alles rein, was mit Fokussierung und Ansichten zu tun hat.
+#+begin_src emacs-lisp :results output silent
+    ("n" 
+     (("s" org-narrow-to-subtree)
+      ("w" widen)
+      ("t" kahiro-show-TODO-in-subtree)
+      ("a" kahiro-show-todos-in-subtree) 
+      ("n" kahiro-show-NEXT-in-subtree) 
+      ("N" kahiro-show-only-NEXT-in-subtree)
+      ("j" ess/org-show-just-me)
+      ("p" kahiro-show-PLAN-in-subtree)
+      ("v" org-agenda-set-restriction-lock)
+      ("x" org-agenda-remove-restriction-lock)
+      ))
+#+end_src
+
+**** m
+#+begin_src emacs-lisp :results output silent
+    ("m"
+     (("a" ;anki-editor-commands
+      (("n" anki-editor-insert-note)
+       ("x" anki-editor-mode)
+       ("u" anki-editor-anki-connect-upgrade)
+       ("p" anki-editor-push-notes) ;; mit Prefix für "tree", doppel Prefix für "file"
+       ("P" anki-editor-retry-failure-notes)
+       ("c" anki-editor-cloze-dwim)
+       ("C" anki-editor-cloze-region)
+       ("h" anki-editor-export-subtree-to-html)
+       ("H" anki-editor-convert-region-to-html))
+      ))
+     )
+#+end_src
+
+**** r
+#+begin_src emacs-lisp
+    ("r"
+     (
+     ("SPC" org-self-insert-command)
+     ("a" org-self-insert-command)
+     ("b" org-self-insert-command)
+     ("c" org-self-insert-command)
+     ("d" org-self-insert-command)
+     ("e" org-self-insert-command)
+     ("f" org-self-insert-command)
+     ("g" org-self-insert-command)
+     ("h" org-self-insert-command)
+     ("i" org-self-insert-command)
+     ("j" org-self-insert-command)
+     ("k" org-self-insert-command)
+     ("l" org-self-insert-command)
+     ("m" org-self-insert-command)
+     ("n" org-self-insert-command)
+     ("o" org-self-insert-command)
+     ("p" org-self-insert-command)
+     ("q" org-self-insert-command)
+     ("r" org-self-insert-command)
+     ("s" org-self-insert-command)
+     ("t" org-self-insert-command)
+     ("u" org-self-insert-command)
+     ("v" org-self-insert-command)
+     ("w" org-self-insert-command)
+     ("x" org-self-insert-command)
+     ("y" org-self-insert-command)
+     ("z" org-self-insert-command)
+     ("A" org-self-insert-command)
+     ("B" org-self-insert-command)
+     ("C" org-self-insert-command)
+     ("D" org-self-insert-command)
+     ("E" org-self-insert-command)
+     ("F" org-self-insert-command)
+     ("G" org-self-insert-command)
+     ("H" org-self-insert-command)
+     ("I" org-self-insert-command)
+     ("J" org-self-insert-command)
+     ("K" org-self-insert-command)
+     ("L" org-self-insert-command)
+     ("M" org-self-insert-command)
+     ("N" org-self-insert-command)
+     ("O" org-self-insert-command)
+     ("P" org-self-insert-command)
+     ("Q" org-self-insert-command)
+     ("R" org-self-insert-command)
+     ("S" org-self-insert-command)
+     ("T" org-self-insert-command)
+     ("U" org-self-insert-command)
+     ("V" org-self-insert-command)
+     ("W" org-self-insert-command)
+     ("X" org-self-insert-command)
+     ("Y" org-self-insert-command)
+     ("Z" org-self-insert-command)
+     ("Ü" org-self-insert-command)
+     ("Ä" org-self-insert-command)
+     ("Ö" org-self-insert-command)
+     ("ß" org-self-insert-command)
+     ("ü" org-self-insert-command)
+     ("ä" org-self-insert-command)
+     ("ö" org-self-insert-command)
+     (";" org-self-insert-command)
+     ("," org-self-insert-command)
+     (":" org-self-insert-command)
+     ("." org-self-insert-command)
+     ))
+#+end_src
+**** s
+#+begin_src emacs-lisp  
+    ("s" (
+     ("p" kahiro-sort-by-priority)
+     ("t" kahiro-sort-by-time-reverse)
+     ("T" kahiro-sort-by-time)
+     ("o" kahiro-sort-by-todo)
+     ("n" kahiro-sort-by-todo-reverse)
+     ("s" isearch-forward)
+     ("r" isearch-backward)
+     ))
+#+end_src
+
+**** x
+#+begin_src emacs-lisp
+    ("x"
+     (("a" org-archive-subtree-default)
+      ("b" switch-to-buffer)
+      ("c" save-buffers-kill-terminal)
+      ("d" dired)
+      ("f" find-file)
+      ("k" kill-buffer)
+      ("+" text-scale-adjust)
+      ("-" text-scale-adjust)
+      ("s" save-some-buffers)
+     ))
+#+end_src
+
+**** z
+#+begin_src emacs-lisp
+    ("z"
+     (("i" org-clock-in)
+      ("o" org-clock-out)
+      ("j" org-clock-goto :first (org-mark-ring-push))
+      ("x" org-clock-in-last)
+      ("q" org-clock-cancel)
+      ("d" org-clock-display)
+      ("f" kahiro-next-and-clock-in)
+      ("," org-timer-pause-or-continue)
+      ("-" org-timer-item :exit t)
+      ("h" org-timer-item :exit t)
+      ("n" org-timer-start)
+      ("N" org-timer-start-with-offset)
+      ("c" org-timer-set-timer)
+      ("." org-timer :exit t)
+      ("z" org-time-stamp :exit t)
+      ("Z" org-time-stamp)
+      ("t" org-time-stamp-inactive :exit t)
+      ("T" org-time-stamp-inactive)
+      ("s" org-toggle-timestamp-type)
+     ))
+#+end_src
+
+**** End
+#+begin_src emacs-lisp
+   )
+   
+
+(define-key universal-argument-map (kbd "u") 'universal-argument-more)
+#+END_SRC
+
+*** Single Binds
+    Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
+#+BEGIN_SRC emacs-lisp :results output silent
+  (ryo-modal-keys
+    ("ä" org-mark-subtree :then '(next-line count-words))
+    ("d" "C-k")
+    ("C" org-ctrl-c-ctrl-c)
+    ("H" org-metaleft)    
+    ("J" org-metadown)    
+    ("K" org-metaup)
+    ("L" org-metaright)
+    ("t" org-todo)
+    ("T" org-todo-region) ;; set all todos of region or subtree to STATE
+    ("N" kahiro-done-and-next) ;; set current todo DONE and go to next of same level
+;;    ("R" rename-buffer)
+;;    ("R" flyspell-check-previous-highlighted-word)
+    ("ü" kahiro/show-todos-lvl1-heading)
+    ("_" "C-_")
+    ("y" "C-y")
+    ("w" "M-w")
+    ("W" "C-w")
+    ("v" "C-v") 
+    ("V" "M-v")
+    ("i" "M-b")
+    ("o" "M-f")
+    ("SPC" org-cycle)
+    ("ö" set-mark-command)
+    (";" org-toggle-comment)
+  )
+    #+END_SRC
+
+*** Keys für den Org-Agenda-Mode
+#+BEGIN_SRC emacs-lisp :results output silent
+;(require 'org-habit)
+(add-hook 'org-agenda-mode-hook 'ryo-modal-mode)
+    (ryo-modal-major-mode-keys
+     'org-agenda-mode
+	    ("x"
+	     (("s" org-save-all-org-buffers)
+	      ("w" org-agenda-write)
+	      ("u" org-agenda-undo)))
+	    ("t" org-agenda-todo)
+	    ("h" backward-char)
+	    ("j" org-agenda-next-line)
+	    ("k" org-agenda-previous-line)
+	    ("l" forward-char)
+	    ("n" org-agenda-next-item)
+	    ("p" org-agenda-previous-item)
+	    ("N" org-agenda-next-date-line)
+	    ("P" org-agenda-previous-date-line)
+	    ("c"
+	     (("d" org-agenda-deadline)
+	      ("o" org-agenda-open-link)
+	      ("p" org-agenda-previous-date-line)
+	      ("q" org-agenda-set-tags)
+	      ("s" org-agenda-schedule)
+	      ("t" org-agenda-todo)
+	      ("w" org-agenda-refile)
+	      ("z" org-agenda-add-note)
+	      ("$" org-agenda-archive)
+	      ("," org-agenda-priority)
+	      ("c" org-agenda-goto-calendar)
+     	      ("x"
+     	       (("a" org-agenda-archive-default)
+     	        ("c" org-agenda-columns)
+       	   ;;   ("e" org-clock-modify-effort-estimate)
+     	        ("TAB" org-agenda-clock-in)
+     	        ("j" org-clock-goto)
+     	        ("o" org-agenda-clock-out)
+     	        ("s" org-agenda-archive)
+     	        ("x" org-agenda-clock-cancel)
+     	        ("!" org-reload)
+     	        ("<" org-agenda-set-restriction-lock-from-agenda)
+     	        (">" org-agenda-remove-restriction-lock)
+     	        ("A" org-agenda-archive-to-archive-sibling)
+     	        ("a" org-agenda-toggle-archive-tag)
+     	        ("b" org-agenda-tree-to-indirect-buffer)
+     	        ("e" org-agenda-set-effort)
+     	        ("p" org-agenda-set-property)
+     	        ("<down>" org-agenda-priority-down)
+     	        ("<left>" org-agenda-do-date-earlier)
+     	        ("<right>" org-agenda-do-date-later)
+     	        ("<up>" org-agenda-priority-up))
+     	       )))
+	    ("SPC" org-agenda-show-and-scroll-up)
+	    ("<backspace>" org-agenda-quit)
+	    ("!" org-agenda-toggle-deadlines)
+	    ("#" org-agenda-dim-blocked-tasks)
+	    ("$" org-agenda-archive)
+	    ("%" org-agenda-bulk-mark-regexp)
+	    ("*" org-agenda-bulk-mark-all)
+	    ("+" org-agenda-priority-up)
+	    ("," org-agenda-priority)
+	    ("-" org-agenda-priority-down)
+	    ("." org-agenda-goto-today)
+	    ("/" org-agenda-filter-by-tag)
+	    (":" org-agenda-set-tags)
+	    (";" org-timer-set-timer)
+	    ("<" org-agenda-filter-by-category)
+	    ("=" org-agenda-filter-by-regexp)
+	    (">" org-agenda-date-prompt)
+	    ("?" org-agenda-show-the-flagging-note)
+;;	    ("A" org-agenda-append-agenda) ;; zum Anfang ist praktischer
+	    ("B" org-agenda-bulk-action)
+	    ("C" org-agenda-convert-date)
+	    ("D" org-agenda-toggle-diary)
+;;	    ("E" org-agenda-entry-text-mode) ;; zum Ende ist praktischer
+	    ("F" org-agenda-follow-mode)
+	    ("G" org-agenda-append-agenda) ;; war org-agenda-toggle-time-grid
+	    ("I" org-agenda-clock-in)
+	    ("M" org-agenda-phases-of-moon)
+	    ("O" org-agenda-clock-out)
+	    ("Q" org-agenda-Quit)
+	    ("R" org-agenda-clockreport-mode)
+	    ("S" org-agenda-sunrise-sunset)
+	    ("T" org-agenda-show-tags)
+	    ("U" org-agenda-bulk-unmark)
+	    ("X" org-agenda-clock-cancel)
+	    ("[" org-agenda-manipulate-query-add)
+	    ("]" org-agenda-manipulate-query-subtract)
+	    ("^" org-agenda-filter-by-top-headline)
+	    ("_" org-agenda-filter-by-effort)
+;;	    ("a" org-agenda-archive-default-with-confirmation)
+	    ("b" org-agenda-earlier)
+	    ("d" org-recur-finish)
+;;	    ("e" org-agenda-set-effort)
+	    ("f" org-agenda-later)
+;;	    ("g" org-agenda-redo-all) ;; führt zu Konflikten mit switch-buffer
+	    ("H" org-agenda-holidays)
+	    ("J" org-agenda-goto-date)
+	    ("K" org-agenda-capture)
+	    ("L" org-agenda-log-mode)
+	    ("m" org-agenda-bulk-mark)
+	    ("o" delete-other-windows)
+	    ("q" org-agenda-quit)
+	    ("r" org-agenda-redo :then '(beginning-of-buffer shrink-window-if-larger-than-buffer))
+	    ("s" org-save-all-org-buffers)
+	    ("t" org-agenda-todo)
+	    ("u" universal-argument)
+	    ("v" org-agenda-view-mode-dispatch)
+	    ("w" org-agenda-week-view)
+	    ("y" org-agenda-year-view)
+	    ("z" 
+	    (("z" org-agenda-add-note)
+	     ("f" org-clock-convenience-fill-gap)
+	     ("F" org-clock-convenience-fill-gap-both)
+	     ("n" org-agenda-add-note)
+	     ("i" org-agenda-clock-in)
+	     ("j" org-clock-convenience-goto-ts)
+	     ("o" org-agenda-clock-out)
+
+	    ))
+	    ("{" org-agenda-manipulate-query-add-re)
+	    ("|" org-agenda-filter-remove-all)
+	    ("}" org-agenda-manipulate-query-subtract-re)
+	    ("~" org-agenda-limit-interactively)
+	    ("x"
+	     (
+	      ;;("h" org-habit-toggle-display-in-agenda)
+	      ("s" org-save-all-org-buffers)
+	      ("w" org-agenda-write)
+	      ("u" org-agenda-undo)))
+    )
+#+END_SRC
+
+** F1 bis F12 (+ Modifiers)
+   - F12 ist für die Next-Agenda reserviert.
+#+begin_src emacs-lisp :results output silent
+ (global-set-key (kbd "<f2>") 'toggle-window-split)
+ (global-set-key (kbd "<S-f2>") 'enlarge-window-horizontally)
+ (global-set-key (kbd "<s-f2>") 'shrink-window-horizontally)
+ ;; (global-set-key (kbd "<s-f1>") 'pop-global-mark) ;; Jump in the document
+ ;; (global-set-key (kbd "<s-f2>") 'xah-pop-local-mark-ring)
+#+end_src
+*** Switch windows
+#+begin_src emacs-lisp :results output silent
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+#+end_src
+** <escape> auf ESC
+#+begin_src emacs-lisp :results output silent
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+(define-key key-translation-map (kbd "C-<escape>") (kbd "ESC"))
+#+end_src
+* Textbearbeitung
+:PROPERTIES:
+:CATEGORY: textEd
+:END:
+** TODO Rechtschreibung
+Ich musste noch das deutsche Wörterbuch installieren, bevor es klappt: sudo apt-get install aspell-de
+ #+BEGIN_SRC  emacs-lisp
+(when (string-equal system-type "gnu/linux")
+  (setq ispell-dictionary "deutsch8")
+  (setq ispell-local-dictionary "deutsch")
+  (setq flyspell-default-dictionary "deutsch8")
+  (add-hook 'text-mode-hook 'flyspell-mode)
+  (autoload 'flyspell-mode "flyspell" "On-the-fly ispell." t)
+  (setq flyspell-issue-welcome-flag nil)
+  )
+ #+END_SRC
+* Appearance :appearance:
+** Modus-Themes
+#+begin_src emacs-lisp :results output silent
+(use-package emacs
+  :config
+  (setq custom-safe-themes t)           ; Due to my dev needs
+
+  (defmacro contrib/format-sexp (sexp &rest objects)
+    `(eval (read (format ,(format "%S" sexp) ,@objects))))
+
+  ;; This is currently not used in this section.  Search for it in the
+  ;; section about setting fonts, `prot/font-bold-face' in particular.
+  (defvar prot/modus-theme-after-load-hook nil
+    "Hook that runs after loading a Modus theme.
+See `prot/modus-operandi' or `prot/modus-vivendi'.")
+
+  ;; The variables do not reveal my preferences.  Always testing things.
+  (dolist (theme '("operandi" "vivendi"))
+    (contrib/format-sexp
+     (defun prot/modus-%1$s ()
+       (setq modus-%1$s-theme-slanted-constructs t
+             modus-%1$s-theme-bold-constructs t
+             modus-%1$s-theme-fringes 'subtle ; {nil,'subtle,'intense}
+             modus-%1$s-theme-3d-modeline nil
+             modus-%1$s-theme-faint-syntax nil
+             modus-%1$s-theme-intense-hl-line nil
+             modus-%1$s-theme-intense-paren-match nil
+             modus-%1$s-theme-prompts 'subtle ; {nil,'subtle,'intense}
+             modus-%1$s-theme-completions 'moderate ; {nil,'moderate,'opinionated}
+             modus-%1$s-theme-diffs 'desaturated ; {nil,'desaturated,'fg-only}
+             modus-%1$s-theme-org-blocks 'greyscale ; {nil,'greyscale,'rainbow}
+             modus-%1$s-theme-variable-pitch-headings t
+             modus-%1$s-theme-rainbow-headings nil
+             modus-%1$s-theme-section-headings nil
+             modus-%1$s-theme-scale-headings t
+             modus-%1$s-theme-scale-1 1.1
+             modus-%1$s-theme-scale-2 1.15
+             modus-%1$s-theme-scale-3 1.21
+             modus-%1$s-theme-scale-4 1.27
+             modus-%1$s-theme-scale-5 1.33)
+       (load-theme 'modus-%1$s t)
+       (run-hooks 'prot/modus-theme-after-load-hook))
+     theme))
+
+  (define-minor-mode prot/modus-themes-alt-mode
+    "Override specific palette variables with custom values.
+
+This is intended as a proof-of-concept.  It is, nonetheless, a
+perfectly accessible alternative, conforming with the design
+principles of the Modus themes.  It still is not as good as the
+default colours."
+    :init-value nil
+    :global t
+    (if prot/modus-themes-alt-mode
+        (setq modus-operandi-theme-override-colors-alist
+              '(("bg-main" . "#fefcf4")
+                ("bg-dim" . "#faf6ef")
+                ("bg-alt" . "#f7efe5")
+                ("bg-hl-line" . "#f4f0e3")
+                ("bg-active" . "#e8dfd1")
+                ("bg-inactive" . "#f6ece5")
+                ("bg-region" . "#c6bab1")
+                ("bg-header" . "#ede3e0")
+                ("bg-tab-bar" . "#dcd3d3")
+                ("bg-tab-active" . "#fdf6eb")
+                ("bg-tab-inactive" . "#c8bab8")
+                ("fg-unfocused" . "#55556f"))
+              modus-vivendi-theme-override-colors-alist
+              '(("bg-main" . "#100b17")
+                ("bg-dim" . "#161129")
+                ("bg-alt" . "#181732")
+                ("bg-hl-line" . "#191628")
+                ("bg-active" . "#282e46")
+                ("bg-inactive" . "#1a1e39")
+                ("bg-region" . "#393a53")
+                ("bg-header" . "#202037")
+                ("bg-tab-bar" . "#262b41")
+                ("bg-tab-active" . "#120f18")
+                ("bg-tab-inactive" . "#3a3a5a")
+                ("fg-unfocused" . "#9a9aab")))
+      (setq modus-operandi-theme-override-colors-alist nil
+            modus-vivendi-theme-override-colors-alist nil)))
+
+  (defun prot/modus-themes-toggle (&optional arg)
+    "Toggle between `prot/modus-operandi' and `prot/modus-vivendi'."
+    (interactive "P")
+    (if arg
+        (prot/modus-themes-alt-mode 1)
+      (prot/modus-themes-alt-mode -1))
+    (if (eq (car custom-enabled-themes) 'modus-operandi)
+        (progn
+          (disable-theme 'modus-operandi)
+          (prot/modus-vivendi))
+      (disable-theme 'modus-vivendi)
+      (prot/modus-operandi)))
+
+  :hook (after-init-hook . prot/modus-operandi)
+  :bind ("<f5>" . prot/modus-themes-toggle))
+ 
+#+end_src
+** COMMENT Style Tags based on Regular Expressions :one:
+*** Code 
+#+BEGIN_SRC emacs-lisp
+;; (require 'org)
+(set-face-attribute 'org-tag nil :height 0.5 :slant 'normal :weight 'normal :foreground "LavenderBlush3")
+
+(add-to-list 'org-tag-faces '("@.*" . (:foreground "cyan" :height 0.8)))
+
+;; Reset the global variable to nil, just in case org-mode has already beeen used.
+(when org-tags-special-faces-re
+  (setq org-tags-special-faces-re nil))
+
+(defun org-get-tag-face (kwd)
+  "Get the right face for a TODO keyword KWD.
+If KWD is a number, get the corresponding match group."
+  (if (numberp kwd) (setq kwd (match-string kwd)))
+  (let ((special-tag-face (or (cdr (assoc kwd org-tag-faces))
+                              (and (string-match "^@.*" kwd)
+                                   (cdr (assoc "@.*" org-tag-faces))))))
+    (or (org-face-from-face-or-color 'tag 'org-tag special-tag-face)
+        'org-tag)))
+#+END_SRC
+*** Info from [[https://stackoverflow.com/questions/40876294/color-tags-based-on-regex-emacs-org-mode][Stackoverflow]]
+The following answer uses the built-in mechanisms of org-mode. The variable org-tag-faces accepts a regexp for the tag, which is the car of the cons cell. The function org-set-tag-faces sets a global variable org-tags-special-faces-re, which combines the tags of the aforementioned cons cell(s). The global variable org-tags-special-faces-re is used by org-font-lock-add-tag-faces to re-search-forward through the org-mode buffer -- locating the matching tags and applying the appropriate face based on the function org-get-tag-face. The original version of the function org-get-tag-face looked for an exact match of the tag found (i.e., the key argument to the function assoc). The revised version of org-get-tag-face adds an additional key search for @.* and returns the proper face if the key is found -- this is necessary because the tag itself will usually look something like @home or @office, whereas our context regexp is @.*.
+
+Wow, thank's a lot, that's cool even if I don't understand everything (my knowledges about lisp and emacs-lisp are very limited ^^). Now, say that I want to do the same with other regex, can you explain me (in the simpliest way) how do I do ? – boehm_s Dec 1 '16 at 20:43
+
+The car of each cons cell of org-tag-faces is by its very nature a regexp, which gets processed into something that eventually looks like this: ":\\(@.*\\|TOP\\|HIGH\\|MEDIUM\\|LOW\\|NEGATIVE):" So, it is already set up to work with regexp out-of-the-box. The change that needs to be made is how org-get-tag-face locates a match within org-tag-faces. You could add additional entries to org-tag-faces with your regexp, and add additional entries to org-get-tag-face -- e.g., just above (cdr (assoc "@.*" org-tag-faces)). – lawlist Dec 1 '16 at 20:50
+
+For example, (add-to-list 'org-tag-faces '("MYREGEX" . (:foreground "red"))) and just above (cdr (assoc "@.*" org-tag-faces)) in org-get-tag-face, insert (cdr (assoc "MYREGEX" org-tag-faces)) The function assoc is using equal to find an exact key match. – lawlist Dec 1 '16 at 20:55
+
+I changed (cdr (assoc "@.*" org-tag-faces)) to (and (string-match "^@.*" kwd) (cdr (assoc "@.*" org-tag-faces))) to ensure that kwd is indeed a context tag before testing to see if a context tag regexp is a car of one of the cons cells that make up org-tag-faces. This will be important if you decide to add additional regexp to org-get-tag-face; e.g., adding an additional (and (string-match "MYREGEX" kwd) (cdr (assoc "MYREGEX" org-tag-faces))) – lawlist Dec 1 '16 at 23:52
+** Tag Alignment :org:
+Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten mit variablen Breiten ergibt sich allerdings nie ein einheitliches Bild. Daher setze ich den Wert auf 0, so dass die Tags direkt an den Überschriften anschließen. 
+
+#+BEGIN_SRC emacs-lisp
+(setq org-tags-column 0)
+#+END_SRC
+** Fonts and Faces
+*** Font Weight :wissen:
+    - :weight ([[https://www.gnu.org/software/emacs/manual/html_node/elisp/Face-Attributes.html][Quelle]])
+      - Font weight—one of the symbols (from densest to faintest) ultra-bold, extra-bold, bold, semi-bold, normal, semi-light, light, extra-light, or ultra-light. On text terminals which support variable-brightness text, any weight greater than normal is displayed as extra bright, and any weight less than normal is displayed as half-bright. 
+*** [#B] Set variable pitch font
+ #+BEGIN_SRC emacs-lisp
+
+ ;; Set variable-pitch font using customize-face variable-pitch
+ ;; Set the fonts to format correctly for specific modes. Default is set for fixed
+ ;; so we only need to have the exceptions
+ (defun set-buffer-variable-pitch ()
+   (interactive)
+   (variable-pitch-mode t)
+   (setq line-spacing 3)
+   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-link nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
+   (set-face-attribute 'org-special-keyword nil :inherit 'fixed-pitch)
+   )
+
+ (add-hook 'org-mode-hook 'set-buffer-variable-pitch)
+ (add-hook 'Info-mode-hook 'set-buffer-variable-pitch)
+
+ #+END_SRC
+*** [#C] Org Meta Line (#+-Lines)
+ #+BEGIN_SRC emacs-lisp
+ (set-face-attribute 'org-meta-line nil :height 0.5 :slant 'normal :foreground "LavenderBlush3")
+ #+END_SRC
+
+*** [#C] Use fancy lambdas
+ Ersetzt lamba ( ) mit dem Lambda-Symbol
+
+ #+begin_src emacs-lisp
+   (global-prettify-symbols-mode t)
+ #+end_src
+
+*** Encoding
+    - Dieser Teil ist Windows-spezifisch
+#+begin_src emacs-lisp :results output silent
+(when (string-equal system-type "windows-nt")
+;; --- start
+  (add-to-list 'file-coding-system-alist '("\\.org" . utf-8-unix) )
+(add-to-list 'file-coding-system-alist '("\\.tex" . utf-8-unix) )
+(add-to-list 'file-coding-system-alist '("\\.txt" . utf-8-unix) )
+(add-to-list 'file-coding-system-alist '("\\.el" . utf-8-unix) )
+(add-to-list 'file-coding-system-alist '("\\.scratch" . utf-8-unix) )
+(add-to-list 'file-coding-system-alist '("user_prefs" . utf-8-unix) )
+
+(add-to-list 'process-coding-system-alist '("\\.txt" . utf-8-unix) )
+
+(add-to-list 'network-coding-system-alist '("\\.txt" . utf-8-unix) )
+
+(prefer-coding-system 'utf-8-unix)
+(set-default-coding-systems 'utf-8-unix)
+(set-terminal-coding-system 'utf-8-unix)
+(set-keyboard-coding-system 'utf-8-unix)
+(set-selection-coding-system 'utf-16-le)
+(setq-default buffer-file-coding-system 'utf-8-unix)
+
+;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
+;; mnemonic for utf-8 is "U", which is defined in the mule.el
+(setq eol-mnemonic-dos ":CRLF")
+(setq eol-mnemonic-mac ":CR")
+(setq eol-mnemonic-undecided ":?")
+(setq eol-mnemonic-unix ":LF")
+
+(defalias 'read-buffer-file-coding-system 'lawlist-read-buffer-file-coding-system)
+(defun lawlist-read-buffer-file-coding-system ()
+  (let* ((bcss (find-coding-systems-region (point-min) (point-max)))
+         (css-table
+          (unless (equal bcss '(undecided))
+            (append '("dos" "unix" "mac")
+                    (delq nil (mapcar (lambda (cs)
+                                        (if (memq (coding-system-base cs) bcss)
+                                            (symbol-name cs)))
+                                      coding-system-list)))))
+         (combined-table
+          (if css-table
+              (completion-table-in-turn css-table coding-system-alist)
+            coding-system-alist))
+         (auto-cs
+          (unless find-file-literally
+            (save-excursion
+              (save-restriction
+                (widen)
+                (goto-char (point-min))
+                (funcall set-auto-coding-function
+                         (or buffer-file-name "") (buffer-size))))))
+         (preferred 'utf-8-unix)
+         (default 'utf-8-unix)
+         (completion-ignore-case t)
+         (completion-pcm--delim-wild-regex ; Let "u8" complete to "utf-8".
+          (concat completion-pcm--delim-wild-regex
+                  "\\|\\([[:alpha:]]\\)[[:digit:]]"))
+         (cs (completing-read
+              (format "Coding system for saving file (default %s): " default)
+              combined-table
+              nil t nil 'coding-system-history
+              (if default (symbol-name default)))))
+    (unless (zerop (length cs)) (intern cs))))
+;; --- stop
+  ) 
+#+end_src
+
+*** org-fontify-done-headline
+    - wenn =true= dann werden Überschriften anders formatiert, wenn sie in einem =DONE=-Status sind. 
+#+begin_src emacs-lisp :results output silent
+(setq org-fontify-done-headline nil)
+#+end_src
+
+** Tool-/Scroll-/Menu-Bar
+    I don't usually use the menu or scroll bar, and they take up useful space.
+ #+begin_src emacs-lisp
+   (tool-bar-mode -1)
+   (menu-bar-mode 1)
+   (scroll-bar-mode -1)
+ #+end_src
+
+ #+RESULTS:
+
+ There's a tiny scroll bar that appears in the minibuffer window. This disables
+ that:
+
+ #+begin_src emacs-lisp
+   (set-window-scroll-bars (minibuffer-window) nil nil)
+ #+end_src
+
+*** TODO [#D] Make menu toggle-able
+** COMMENT Keyword Faces (TODO etc)
+- [2022-01-17 Mo] - mehr Überlegungen zur sinnvollen Farbcodierung nötig.
+- Liste mit ("KEYWORD" . face) oder ("KEYWORD" . (:property value))
+#+begin_src emacs-lisp :results output silent
+(setq org-todo-keyword-faces
+      '(("PROJ" . (:foreground "blue"))))
+
+#+end_src
+
+** Split-Verhalten
+   - legt die Mindestbreite fest, um horizontal zu teilen, also rechts einen neuen Buffer hinzuzufügen.
+   - Mit breitem Bildschirm funktioniert der Wert 80, mit schmalem/vertikalem Layout
+#+begin_src emacs-lisp :results output silent
+(when (string-equal system-type "windows-nt")
+(setq split-width-threshold 160)) 
+
+(when (string-equal system-type "gnu/linux")
+(setq split-width-threshold 80))
+#+end_src
+
+* COMMENT Notizen
+
+** Difference in Files
+18.9 Comparing Files
+
+The command M-x diff prompts for two file names, using the minibuffer, and displays the differences between the two files in a buffer named *diff*. This works by running the diff program, using options taken from the variable diff-switches. The value of diff-switches should be a string; the default is ="-u"= to specify a unified context diff. See Diff, for more information about the diff program.
+
+The output of the diff command is shown using a major mode called Diff mode. See Diff Mode.
+
+A (much more sophisticated) alternative is M-x ediff (see Ediff).
+
+The command M-x diff-backup compares a specified file with its most recent backup. If you specify the name of a backup file, diff-backup compares it with the source file that it is a backup of. In all other respects, this behaves like M-x diff.
+
+The command M-x diff-buffer-with-file compares a specified buffer with its corresponding file. This shows you what changes you would make to the file if you save the buffer.
+
+The command M-x compare-windows compares the text in the current window with that in the window that was the selected window before you selected the current one. (For more information about windows in Emacs, Windows.) Comparison starts at point in each window, after pushing each initial point value on the mark ring (see Mark Ring) in its respective buffer. Then it moves point forward in each window, one character at a time, until it reaches characters that don't match. Then the command exits.
+
+If point in the two windows is followed by non-matching text when the command starts, M-x compare-windows tries heuristically to advance up to matching text in the two windows, and then exits. So if you use M-x compare-windows repeatedly, each time it either skips one matching range or finds the start of another.
+
+With a numeric argument, compare-windows ignores changes in whitespace. If the variable compare-ignore-case is non-nil, the comparison ignores differences in case as well. If the variable compare-ignore-whitespace is non-nil, compare-windows by default ignores changes in whitespace, but a prefix argument turns that off for that single invocation of the command.
+
+You can use M-x smerge-mode to turn on Smerge mode, a minor mode for editing output from the diff3 program. This is typically the result of a failed merge from a version control system update outside VC, due to conflicting changes to a file. Smerge mode provides commands to resolve conflicts by selecting specific changes.
+
+See Emerge, for the Emerge facility, which provides a powerful interface for merging files. 
+* COMMENT Weg zur perfekten Config
+** Look [2/3]
+:PROPERTIES:
+:CATEGORY: ziel
+:END:
+*** TODO Theme - Farben aussuchen und anpassen
+*** DONE Schrift auf IBM umstellen und Größen anpassen :ARCHIVE:
+*** DONE Bullets verschönern :ARCHIVE:
+** Editing
+*** Cheatsheet für Editing-Befehle
+*** Tastenkürzel anpassen
+** Versionierung (git)
+** Termine Synchronisieren (tickler)
+** File-Struktur überarbeiten (arbeit/home/someday)
+** Erweiterungen
+*** Super Agenda
+*** General.el
+*** Hydra.el /hercules.el
+*** Rechtschreibung
+*** Export-Templates
+*** Suche per Ivy/Helm/ripgrep
+*** RSS-Reader?
+*** Notmuch Emails
+*** Doom-Emacs Lazy load
+** Publemacs - Emacs für Publisher
+*** Hilfsprogramm, das einen Entscheidungsweg über einen Minibuffer liefert
+*** Tastenkürzel optimiert für Redakteure
+*** Wissensmanagement in Emacs
+*** Fragen
+**** Was müssen Coding-Journalisten (CJs) können? 
+     - Auch visuelle möglichkeiten wie 3D.js oder nur Infromationsbeschaffung über Sraping, Datenverarbeitung?
+** Jouraling
+*** Date-Trees
+*** CaptureTemplates
+*** Archivieren
+*** Verschlüsselung
+** Gestalten
+*** Grundlagen Emacs Lisp
+*** JS-Modes und Webdev-Modes
+* COMMENT Subtree for tests
