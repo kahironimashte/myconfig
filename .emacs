@@ -43,11 +43,14 @@
 (when (string-equal system-type "windows-nt")
   (setq homedir "C:/Software/Emacs/myconfig/")
   (setq custom-file-name "win-custom.el")
+  (setq filedir "C:/org/") ;; Prot: try to evlauet ~ if it resolves to C:
+  (add-to-list 'exec-path "C:/Software/Git/git-bash.exe") ;; noch nicht getestet
   )
 
 (when (string-equal system-type "gnu/linux")
   (setq homedir "~/")
   (setq custom-file-name "linux-custom.el")
+  (setq filedir "~/org/")
   )
 
 ;; Lade Einstellungen, die über das Custom-Interface gemacht wurden. Meistens für die Darstellung und Gestaltung
@@ -61,6 +64,9 @@
 (setq config-org-file (concat homedir ".emacs.d/configuration.org"))
 (org-babel-load-file config-org-file)
 
+;; Lade Captures aus eigener Datei
+(setq capture-org-file (concat filedir "_config/emacs/capture.org"))
+(org-babel-load-file capture-org-file)
 
 ;; Benchmark Startup
 (add-hook 'emacs-startup-hook

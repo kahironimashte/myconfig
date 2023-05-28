@@ -13,7 +13,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(whiteboard))
  '(exec-path
-   '("c:/WINDOWS/system32" "C:/WINDOWS" "C:/WINDOWS/System32/Wbem" "C:/WINDOWS/System32/WindowsPowerShell/v1.0/" "C:/WINDOWS/System32/OpenSSH/" "C:/Program Files (x86)/Intel/Intel(R) Management Engine Components/DAL" "C:/Program Files/Intel/Intel(R) Management Engine Components/DAL" "C:/Users/kurm/AppData/Local/Microsoft/WindowsApps" "." "C:/Users/kurm/AppData/Local/Programs/espanso" "c:/Software/Emacs/libexec/emacs/27.1/x86_64-w64-mingw32" "C:/Software/Emacs/zip-package"))
+   '("c:/WINDOWS/system32" "C:/WINDOWS" "C:/WINDOWS/System32/Wbem" "C:/WINDOWS/System32/WindowsPowerShell/v1.0/" "C:/WINDOWS/System32/OpenSSH/" "C:/Program Files (x86)/Intel/Intel(R) Management Engine Components/DAL" "C:/Program Files/Intel/Intel(R) Management Engine Components/DAL" "C:/Users/kurm/AppData/Local/Microsoft/WindowsApps" "." "C:/Users/kurm/AppData/Local/Programs/espanso" "c:/Software/Emacs/libexec/emacs/27.1/x86_64-w64-mingw32" "C:/Software/Emacs/zip-package" "C:/Software/Emacs/_unzip-Package/zip" "C:/Software/Emacs/_unzip-Package/"))
  '(font-use-system-font t)
  '(org-agenda-files
    '("c:/org/br/br.org" "c:/org/htasks.org" "c:/org/calendar.org" "c:/org/atasks.org"))
@@ -42,7 +42,8 @@
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
  '(package-selected-packages
-   '(unfill org-clock-convenience modus-themes esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+)))
+   '(unfill org-clock-convenience modus-themes esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+))
+ '(reb-re-syntax 'string))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -76,7 +77,7 @@
  '(org-habit-overdue-future-face ((t (:background "gainsboro"))))
  '(org-habit-ready-face ((t (:background "lime green"))))
  '(org-habit-ready-future-face ((t (:background "PaleGreen2"))))
- '(org-level-1 ((t (:family "IBM Plex Serif Medium" :weight normal :foreground "dark gray" :height 230 :antialias subpixel))))
+ '(org-level-1 ((t (:family "IBM Plex Serif Medm" :weight normal :foreground "dark gray" :height 230 :antialias subpixel))))
  '(org-level-2 ((t (:inherit org-level-1 :foreground "dark cyan" :height 0.9))))
  '(org-level-3 ((t (:inherit org-level-1 :foreground "DeepSkyBlue4" :height 0.8))))
  '(org-level-4 ((t (:inherit org-level-1 :foreground "RoyalBlue4" :height 0.75))))

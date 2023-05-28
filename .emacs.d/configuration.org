@@ -473,6 +473,14 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
     )
 
 #+end_src
+
+- für Libre Office Export:
+  1. Zip für Libre Office-Export installieren: 
+
+     + unzip.exe und zip.exe müssen im selben Ordner sein. 
+     + Pfad anlegen: M-x customize-variable RET exec-path RET
+     + Pfad Ziel: C:/Software/Emacs/_unzip-Package/zip  
+  2. Libre Office Portable installieren
 ** org-bookmark-heading :navigation:
 
 ** TODO [#B] COMMENT Smartparens
@@ -879,42 +887,52 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 #+end_src
 **** n - nächste Schritte
 #+begin_src emacs-lisp :results output silent
-;;--- DEMO-Setup -- Uncomment for use ---
-;; (setq org-agenda-custom-commands
-;;       '(
-;;------------------------
-	 ("n" "Nächste Schritt"
-	      ((todo "WAITING|NEXT"
-	       ((org-agenda-overriding-header "Nächste Schritte")
-      		(org-agenda-sorting-strategy '(todo-state-down priority-down))
-		(org-show-context-detail 'minimal)))
-	       (agenda ""
-       		((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
-	       )))
-	      ((org-agenda-category-filter-preset '("-habit" "-htasks"))
-	       (org-agenda-span 1)
-               (org-deadline-warning-days 0)      
+  ;;--- DEMO-Setup -- Uncomment for use ---
+  ;; (setq org-agenda-custom-commands
+  ;; 	'(
+  ;;------------------------
+	  ("n" "Nächste Schritt"
+	   ( ;; BEGINN  Definition der einzelnen Agenda-Blöcke
+	    (todo "NEXT" ;; [2023-01-05 Do] - was "WAITING|NEXT"
+		  ((org-agenda-overriding-header "Nächste Schritte")
+		   (org-agenda-sorting-strategy '(todo-state-down priority-down))
+		   (org-show-context-detail 'minimal)))
+	    (agenda ""
+		    (    ;; BEGINN Regeln für einzelnen Agenda-Block
+		     (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+		     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT" "WAITING")))
+		     ))  ;; ENDE Regeln für einzelnen Agenda-Block 
+	    (todo "WAITING"
+		  ((org-agenda-overriding-header "Warte auf Rückmeldung")
+		   (org-agenda-sorting-strategy '(todo-state-down priority-down))
+		   (org-show-context-detail 'minimal)))
+	    ) ;; ENDE   Definition der einzelnen Agenda-Blöcke
+	   (  ;; BEGINN Regeln für alle Blöcke
+	    (org-agenda-category-filter-preset '("-habit" "-htasks"))
+	    (org-agenda-span 1)
+	    (org-deadline-warning-days 0)      
+	    ) ;; ENDE   Regeln für alle Blöcke
+	   )
+
+	  ("N" "alle nächsten Schritte" 
+		((agenda ""
+		((org-agenda-span 1)
+		 (org-agenda-overriding-header "Alle nächsten Schritte heute für diese Datei")
+		 (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("NEXT" "WAITING"))) ;;[1]
+		 (org-agenda-sorting-strategy '(time-up todo-state-down))))
+		(todo "WAITING|NEXT"
+		 ((org-agenda-overriding-header "Nächste Schritte für aktuelle Datei")
+		  (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
+		  (org-show-context-detail 'minimal)))
 		))
-	 ("N" "alle nächsten Schritte" 
-	      ((agenda ""
-	      ((org-agenda-span 1)
-	       (org-agenda-overriding-header "Alle nächsten Schritte heute für diese Datei")
-	       (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("NEXT" "WAITING"))) ;[1]
-	       (org-agenda-sorting-strategy '(time-up todo-state-down))))
-	      (todo "WAITING|NEXT"
-	       ((org-agenda-overriding-header "Nächste Schritte für aktuelle Datei")
-      		(org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
-		(org-show-context-detail 'minimal)))
-	      ))
-;;--- DEMO-Setup -- Uncomment for use ---
-;;  ))
-;;------------------------
-	      ;; [1] die funktion "...skip-entry-if" verbirgt alle Treffer in der Agenda. 
-	      ;;     "'todo '("NEXT")" würde alle Tasks mit dem NEXT keyword ausblenden. 
-	      ;;     "'nottodo '("NEXT")" zeigt nur Tasks mit NEXT keyword. 
-
-
+  ;;--- DEMO-Setup -- Uncomment for use ---
+  ;;    ))
+  ;;------------------------
 #+end_src
+  - [1] die Funktion "...skip-entry-if" verbirgt alle Treffer in der Agenda. 
+     ='todo '("NEXT")= würde alle Tasks mit dem NEXT keyword ausblenden. 
+     ='nottodo '("NEXT")= zeigt nur Tasks mit NEXT keyword. 
+
 **** o - Todos ohne Zeitupunkt (stuck)
 #+begin_src emacs-lisp :results output silent
 	 ("o" "TODO ohne Zeitpunkt"
@@ -1138,102 +1156,8 @@ information."
  ;; Den Habit-Graph auf Position (von links) bringen.
  (setq org-habit-graph-column 50)
  #+END_SRC
-** [#B] org-capture templates [1/3] :syncStatus:
-*** TODO Code
-    - Hilfe unter :: [[help:org-capture-templates][org-capture-templates]]
-#+BEGIN_SRC emacs-lisp  :results output silent
-
-  (setq org-capture-templates
-    '(
-      ("i" "inbox Arbeit" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "aInbox")
-	"** %^{Status|PLAN|TODO|IDEE|PROJ|NEXT} [#%^{Priorität eintragen|C|B|A|D}] %?%^{Aufgabe} %^g \n  - Anmerkungen :: %^{Anmerkungen}" 
-	:empty-lines-after 1 :prepend t)
-      ("k" "Kalendereintrag" entry (file+olp+datetree (lambda () (concat org-directory "/calendar.org")) "Events") 
-	"** %^{Title} \n %^t" :time-prompt t)
-      ("m" "Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
-	"** MEET [#%^{Priorität?|C|B|A|D}] %^{was für eine Besprechung?} :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Mitarbeiter-Info][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?")
-      ("r" "Ressort-Meetings")
-      ("rr" "Ressort-Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
-	"** MEET [#%^{Priorität?|C|B|A|D}] Ressortmeeting :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Ressortkonferenz][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?" :clock-in t :empty-lines-after 1 :prepend t :jump-to-captured t)
-      ("rR" "Ressort-Meeting" entry (file+headline (lambda () (concat org-directory "/calendar.org")) "Konferenz")
-	"** MEET [#%^{Priorität?|C|B|A|D}] Ressortmeeting :meet:%^g \n %^t \n  - [[file:arbeit/meetingnotizen.org::*Ressortkonferenz][Meeting-Notizen]]\n  - Anmerkungen :: %^{Anmerkungen}\n%?")            
-      ("a" "Anruf" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
-	"** %? %U :call:interrupt: \n - Anmerkungen :: "
-	:prepend t :clock-in t :clock-resume t :empty-lines-after 1)
-      ("s" "Unterbrechung" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Unterbrechungen")
-	"** %? %U :interrupt: \n - Anmerkungen :: "
-	:clock-in t :clock-resume t :empty-lines-after 1)
-      ("U" "ungeplante Arbeit sofort" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Inbox")
-	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
-	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 2)
-      ("h" "home task")
-      ("hi" "Task Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hInbox")
-	"** %^{Status eintragen|TODO|PLAN} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n SCHEDULED: %^t \n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
-	:empty-lines-after 1)
-      ("hp" "Project oder Idee Home" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hProjekte")
-	"** %^{Status eintragen|IDEE|PROJ} [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} %^g \n\n  - Anmerkungen :: %^{Anmerkungen}\n%?" 
-	:empty-lines-after 1)
-      ("hH" "ungeplantes Todo sofort" entry (file+headline (lambda () (concat org-directory "/htasks.org")) "hInbox")
-	"** PLAN [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgabe} :ungeplant: \n SCHEDULED: %T \n  - Anmerkungen :: %^{Anmerkungen}"
-	:prepend t :clock-in t :clock-keep t :immediate-finish t :jump-to-captured t :empty-lines-after 1)
-      ("t" "Neuer Text oder neue Textidee")
-      ("ta" "Template für neuen Autoren-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|IDEE|SUCHE|ANGEB|BAUFT|VORH} [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:Autor:%^g \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/at-o\n/at-p" :empty-lines-after 1)
-      ("tA" "Template für neuen Autoren-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Autorentexte") 
-	"*** %^{Status|BAUFT|IDEE|SUCHE|ANGEB|VORH} [#%^{Priorität eintragen|B|C|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:Autor:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/atprop \n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/at-o\n/at-p" :empty-lines-after 1)
-      ("tE" "Template für neuen Eigenen-Text mit Deadline" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-	"*** PROJ [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:kur:%^g \nDEADLINE: %^{Fällig bis}t SCHEDULED: %^{Voraussichtlich mit der Recherche starten}t \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
-      ("te" "Template für neuen Eigenen-Text" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Eigene Texte") 
-	"*** IDEE [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] :22#%^{voraussichtliche Ausgabe}:kur:%^g \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
-      ("ti" "Template für unkonkrete Textidee" entry (file+headline (lambda () (concat org-directory "/atasks.org")) "Incubate") 
-	"*** IDEE [#%^{Priorität eintragen|C|B|A|D}] %^{Text-Thema} [/] %^g \n/etdetails\n\n  - Anmerkungen :: %^{Anmerkungen}%?\n\n/etstruktur" :empty-lines-after 1)
-      ("l"                                    ;; Auswahltaste
-      "linkdrop"                              ;; Beschreibungstext
-      entry                                   ;; Typ, kann z.B. auch ein "checkitem" einer liste sein.
-      (file+headline                          ;; Zieltyp, hier eine Überschrift in einer Datei
-	  (lambda () (concat org-directory "/linkdrop.org"))          ;;   entsprechend Zieldatei
-	  "Links")                            ;;   entsprechend Zielüberschrift (so, wenn sie unique ist)
-       "** TODO [#%^{Priorität eintragen|C|B|A|D}] %^{Aufgaben-Beschreibung} 
-       %(org-set-tags-command)\n%c \n\n%^{Notizen}%?"            ;; Template für Capture
-       :prepend t :empty-lines 1 :unnarrowed t )                 ;; weitere Eigenschaften -> siehe Hilfe.
-   ))
-#+END_SRC
-
-*** Snippets
-    #+begin_src
-   \nDEADLINE: %^{Faellig bis}t SCHEDULED: %^{Starten am}t\n
-    #+end_src
-
-*** TODO sinnvolles Capture für Ziele
-*** DONE capture für Anrufe :Verbesserung:
-*** COMMENT Test für Ablage in wöchentlichen oder monatlichen Trees.
-#+begin_src emacs-lisp :results output silent
-(defun org-find-month-in-datetree()
-  (org-datetree-find-date-create (calendar-current-date))
-  (kill-line))
-#+end_src
-
-Then use an org-capture template like this:
-
-
-#+begin_src emacs-lisp :results output silent
-(setq org-capture-templates
-  '(
-   ("w" "Weekly review" plain
-    (file+function (lambda () (concat org-directory "/calendar.org")) org-find-month-in-datetree)
-    "**** TODO Weekly review%?"))))
-#+end_src
-
-To get the same for a weekly date-tree change the function to
-
-#+begin_src emacs-lisp :results output silent
-(defun org-find-week-in-datetree()
-  (org-datetree-find-iso-week-create (calendar-current-date))
-  (kill-line))
-#+end_src
-
-*** Nützliche Links für org-capture
-    - [[https://stackoverflow.com/questions/31663932/how-to-add-tags-completion-to-org-mode-capture][SO-Antwort zu Tags, erklärt auch wie man funktionen im Aufruf nutzt.]]
+** TODO [#B] org-capture templates :extern:
+ - moved to separate file: [[file:c:/org/_config/emacs/capture.org::*Code][Code]]
 ** Projektmanagement
 *** recursive statistic cookie for PROJ status
 #+begin_src emacs-lisp :results output silent
@@ -1357,10 +1281,10 @@ To get the same for a weekly date-tree change the function to
 
   (defun config-org-export-as-docx-via-odt ()
     (interactive)
-    (let ((cmd "C:\\Software\\LibreOffice\\LibreOfficePortablePrevious\\App\\libreoffice\\program\\soffice.exe"))
+    (let ((cmd "C:\\Software\\LibreOffice\\App\\libreoffice\\program\\soffice.exe"))
       (when (and (eq system-type 'windows-nt) (file-exists-p cmd))
         ;; org v8/v9
-        (setq org-odt-convert-processes '(("LibreOffice" "C:\\Software\\LibreOffice\\LibreOfficePortablePrevious\\App\\libreoffice\\program\\soffice.exe --headless --convert-to %f%x --outdir %d %i"))))
+        (setq org-odt-convert-processes '(("LibreOffice" "C:\\Software\\LibreOffice\\App\\libreoffice\\program\\soffice.exe --headless --convert-to %f%x --outdir %d %i"))))
     ))
 
   (config-org-export-as-docx-via-odt)
@@ -1377,8 +1301,10 @@ To get the same for a weekly date-tree change the function to
 ;; These are the hotkeys
 
 ;; CLOCKING: Set default column view headings: Task Priority Effort Clock_Summary
-(setq org-columns-default-format "%45ITEM(Beschreibung) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM %7TODO %10TAGS")
+(setq org-columns-default-format "%45ITEM(Beschreibung) %2PRIORITY %5Effort(Effrt){:} %5CLOCKSUM_T(Today) %7TODO %14SCHEDULED")
 
+;; Set default format in Agenda to global default format
+(setq org-columns-default-format-for-agenta org-columns-default-format)
 ;; Clocking
 ;;---------
 (setq org-clock-persist 'history)
