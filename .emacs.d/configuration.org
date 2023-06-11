@@ -216,117 +216,120 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  - need to input a "space" character -> will it work with ido?
 *** TODO orderless-package
 out of order matching
-** org-clock-convenience :clocking:
- - [[https://github.com/dfeich/org-clock-convenience/blob/master/README.org][Github-Source]]
-#+begin_src emacs-lisp :results output silent
-(use-package org-clock-convenience
-  :ensure t
-  :bind (:map org-agenda-mode-map
-   	   ("<C-up>" . org-clock-convenience-timestamp-up)
-   	   ("<C-down>" . org-clock-convenience-timestamp-down)
-   	   ("<f6>" . org-clock-convenience-fill-gap)
-   	   ("<f7>" . org-clock-convenience-fill-gap-both)))
-#+end_src
-*** Interactive functions
-  - =org-clock-convenience-timestamp-up= and =org-clock-convenience-timestamp-down=:
-    When on a /clocked/ line in the agenda buffer, this function will
-    increase/decrease the time according to the position of the
-    cursor. If the cursor is on the hour field, change the hour. If it
-    is on the minutes field, change the minutes. Undo works on the
-    agenda and on the source buffer.
-  - =org-clock-convenience-fill-gap= modifies the timestamp at point to
-    connect to the previous/next logged time range.
-  - =org-clock-convenience-fill-gap-both= connects both timestamps of
-    the current clock log line at point to fill the interval between
-    the previous and the next clock range. The cursor need not be on a
-    timestamp of the line. This is the most efficient way to fill the
-    interval for a forgotten task.
-  - =org-clock-convenience-goto-ts= goto the associated timestamp in the org
-    file. Position the cursor respective to where the cursor was
-    placed in the agenda view (e.g. on the minutes part of the
-    starting time).
-  - =org-clock-convenience-goto-last-clockout=: goto timestamp of the last
-    clockout (this is based on a real search through the buffer and
-    not based on the saved clockout value).
-
-  Note that the agenda clock changing commands work with *undo* in the
-  same way as other org agenda commands. They will undo in the agenda
-  buffer as well as in the org source buffers. But if the agenda
-  buffer is rebuilt after a change (e.g. by =g=), the undo information
-  is lost.
-  
-  The package also contains a number of utility functions to associate
-  a list with field names with the subgroup of a regular expression and
-  position point at a named field or read its value.
-** unfill (paragraph/region)
- - Source: https://github.com/purcell/unfill
- - Install via Melpa
+** Vertico UI :prot:navigation:
 #+begin_src emacs-lisp
-(use-package unfill)
-#+end_src
-Commands: 
-M-x unfill-region
-M-x unfill-paragraph
-M-x unfill-toggle
-** COMMENT org-roam
-- alternative form Prot (demo Video): =denote=
-download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
-#+begin_src emacs-lisp :results output silent
-    (when (string-equal system-type "windows-nt")
-      (add-to-list 'exec-path "C:/Software/SQLite")
-      (setq org-roam-directory "C:/org/roam")
-;;      (setq org-roam-db-update-method 'immediate)
-;;      (add-hook 'after-init-hook 'org-roam-mode)
-      )
+(use-package vertico
+  :ensure t
+  :config
+  (setq vertico-count 10)
+  (setq vertico-resize nil)
+  (setq vertico-cycle t)
 
+  (vertico-mode 1))
+
+;; (ido-mode -1) ;; deactivated ido mode for this to work [2023-06-11 So]
 #+end_src
-** anki-editor :learning:
-- Vouraussetzungen:
-  1. =sudo apt install anki curl=
-  3. Anki Addon Code: =2055492159= eintippen unter "Addons" / Get Addons
-  4. Log in bei =ankiweb.net= via E-Mail und Passwort
-#+begin_src emacs-lisp :results output silent
-  (use-package anki-editor
-    :config
-    (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
-	  anki-editor-org-tags-as-anki-tags t)
+
+#+RESULTS:
+: t
+*** marginalia UI
+Completion information Package
+#+begin_src emacs-lisp
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode 1)) 
+#+end_src
+
+#+RESULTS:
+: t
+** orderless :prot:
+We can also use regular expressions for search.
+#+begin_src emacs-lisp
+(use-package orderless
+  :ensure t
+  :config
+  (setq orderless-matching-styles
+        '(orderless-prefixes orderless-flex orderless-regexp)) ;; Types of patterns, that orderless tries to use.
+
+  (setq completion-styles '(emacs22 substring orderless) ;; two completion styles =emacs22= then =substring= then =orderless= is first used then =basic=
+	)
+  (setq completion-category-overrides 
+        ;; NOTE 2021-10-25: I am adding `basic' because it works better as a
+        ;; default for some contexts.  Read:
+        ;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50387>.
+        ;;
+        ;; `partial-completion' is a killer app for files, because it
+        ;; can expand ~/.l/s/fo to ~/.local/share/fonts.
+        ;;
+        ;; If `basic' cannot match my current input, Emacs tries the
+        ;; next completion style in the given order.  In other words,
+        ;; `orderless' kicks in as soon as I input a space or one of its
+        ;; style dispatcher characters.
+        '((file (styles . (basic partial-completion orderless)))
+          (project-file (styles . (basic substring partial-completion orderless)))
+          (imenu (styles . (emacs22 substring orderless)))
+          (kill-ring (styles . (emacs22 substring orderless)))
+          (consult-location (styles . (emacs22 substring orderless)))
+          (eglot (styles . (emacs22 substring orderless))))) 
+  
   )
 #+end_src
 
-** dired
-   Standardmäßig alle Details außer Dateinamen ausblenden (toogle mit =(= )
-#+begin_src emacs-lisp :results output silent
-(add-hook 'dired-mode-hook
-	  (lambda()
-	    (dired-hide-details-mode 1)
-	  )
-     )
-(setq ls-lisp-dirs-first t) ;; Ordner in Dired zuerst anzeigen
+#+RESULTS:
+: t
+** savehist :prot:builtin:
+#+begin_src emacs-lisp
+(use-package savehist
+  :ensure nil ; built-in
+  :config
+  (savehist-mode 1))
 #+end_src
-** COMMENT doom-modeline :appearance:
-#+BEGIN_SRC emacs-lisp
-  (use-package doom-modeline
-    :init (doom-modeline-mode 1)
-    :custom (doom-modeline-height 5))
-  (use-package all-the-icons)
+
+**  consult :prot:
+Jumping to Headings  or lines.
+
+ - [ ] imenu functionality
+ - [ ] explore config-options: change behaviour context specific
+#+begin_src emacs-lisp
+(use-package consult
+ :ensure t
+ :config
+ ;; (ryo-modal-keys
+ ;;  ("," ryo-modal-repeat)
+ ;;  ("q" ryo-modal-mode))
+ ;; Use C-s in the minibuffer to search through its history:
+
+ ;; Use C-s to search the history of the specific minibuffer (shell, magit, M-x, ...)
+ (define-key minibuffer-local-map (kbd "C-s") #'consult-history)
+  ) 
 #+end_src
-*** Fix der Modeline-Höhe von [[https://github.com/seagle0128/doom-modeline/issues/187][hier]]
-#+begin_src emacs-lisp :results output silent
-(defun my-doom-modeline--font-height ()
-  "Calculate the actual char height of the mode-line."
-  (+ (frame-char-height) 2))
-(advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
-#+END_SRC
-** COMMENT Emacs Startup Profiler - ESUP
-   #+begin_src emacs-lisp :results output silent
-     (use-package esup
-       :ensure t
-       ;; To use MELPA Stable use ":pin melpa-stable",
-       ;;:pin melpa
-       )   
+
+#+RESULTS:
+: t
+
+*** COMMENT Prots Presets
+#+begin_src emacs-lisp
+(define-key global-map (kbd "M-s M-b") 'consult-buffer)
+  (define-key global-map (kbd "M-s M-f") 'consult-find)
+  (define-key global-map (kbd "M-s M-g") 'consult-grep)
+  (define-key global-map (kbd "M-s M-h") 'consult-history)
+  (define-key global-map (kbd "M-s M-l") 'consult-line)
+  (define-key global-map (kbd "M-s M-m") 'consult-mark)
+  (define-key global-map (kbd "M-s M-s") 'consult-outline)
+  (define-key global-map (kbd "M-s M-y") 'consult-yank-pop) 
 #+end_src
-** TODO Fold-this
-** ido-mode :navigation:
+
+** TODO COMMENT vundo History manager :emacs28:
+#+begin_src emacs-lisp
+;; Requires Emacs 28
+(use-package vundo
+  :ensure t
+  :config
+  (setq vundo-glyph-alist vundo-unicode-symbols)
+  (define-key global-map [remap undo] 'vundo)) ;; remap vundo to undo
+#+end_src
+** COMMENT ido-mode :navigation:
  - [ ] Prots Empfehlung "icmoplete" ist besser integriert ab emacs 27.1 -> nachfolger von ido.
  - Wenn man weiß, wohin man will. 
 *** Beschreibung
@@ -442,6 +445,116 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
   (ido-ubiquitous-mode 1))
 #+end_src
 
+** org-clock-convenience :clocking:
+ - [[https://github.com/dfeich/org-clock-convenience/blob/master/README.org][Github-Source]]
+#+begin_src emacs-lisp :results output silent
+(use-package org-clock-convenience
+  :ensure t
+  :bind (:map org-agenda-mode-map
+   	   ("<C-up>" . org-clock-convenience-timestamp-up)
+   	   ("<C-down>" . org-clock-convenience-timestamp-down)
+   	   ("<f6>" . org-clock-convenience-fill-gap)
+   	   ("<f7>" . org-clock-convenience-fill-gap-both)))
+#+end_src
+*** Interactive functions
+  - =org-clock-convenience-timestamp-up= and =org-clock-convenience-timestamp-down=:
+    When on a /clocked/ line in the agenda buffer, this function will
+    increase/decrease the time according to the position of the
+    cursor. If the cursor is on the hour field, change the hour. If it
+    is on the minutes field, change the minutes. Undo works on the
+    agenda and on the source buffer.
+  - =org-clock-convenience-fill-gap= modifies the timestamp at point to
+    connect to the previous/next logged time range.
+  - =org-clock-convenience-fill-gap-both= connects both timestamps of
+    the current clock log line at point to fill the interval between
+    the previous and the next clock range. The cursor need not be on a
+    timestamp of the line. This is the most efficient way to fill the
+    interval for a forgotten task.
+  - =org-clock-convenience-goto-ts= goto the associated timestamp in the org
+    file. Position the cursor respective to where the cursor was
+    placed in the agenda view (e.g. on the minutes part of the
+    starting time).
+  - =org-clock-convenience-goto-last-clockout=: goto timestamp of the last
+    clockout (this is based on a real search through the buffer and
+    not based on the saved clockout value).
+
+  Note that the agenda clock changing commands work with *undo* in the
+  same way as other org agenda commands. They will undo in the agenda
+  buffer as well as in the org source buffers. But if the agenda
+  buffer is rebuilt after a change (e.g. by =g=), the undo information
+  is lost.
+  
+  The package also contains a number of utility functions to associate
+  a list with field names with the subgroup of a regular expression and
+  position point at a named field or read its value.
+** unfill (paragraph/region)
+ - Source: https://github.com/purcell/unfill
+ - Install via Melpa
+#+begin_src emacs-lisp
+(use-package unfill)
+#+end_src
+Commands: 
+M-x unfill-region
+M-x unfill-paragraph
+M-x unfill-toggle
+** COMMENT org-roam
+- alternative form Prot (demo Video): =denote=
+download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
+#+begin_src emacs-lisp :results output silent
+    (when (string-equal system-type "windows-nt")
+      (add-to-list 'exec-path "C:/Software/SQLite")
+      (setq org-roam-directory "C:/org/roam")
+;;      (setq org-roam-db-update-method 'immediate)
+;;      (add-hook 'after-init-hook 'org-roam-mode)
+      )
+
+#+end_src
+** anki-editor :learning:
+- Vouraussetzungen:
+  1. =sudo apt install anki curl=
+  3. Anki Addon Code: =2055492159= eintippen unter "Addons" / Get Addons
+  4. Log in bei =ankiweb.net= via E-Mail und Passwort
+#+begin_src emacs-lisp :results output silent
+  (use-package anki-editor
+    :config
+    (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
+	  anki-editor-org-tags-as-anki-tags t)
+  )
+#+end_src
+
+** dired
+   Standardmäßig alle Details außer Dateinamen ausblenden (toogle mit =(= )
+#+begin_src emacs-lisp :results output silent
+(add-hook 'dired-mode-hook
+	  (lambda()
+	    (dired-hide-details-mode 1)
+	  )
+     )
+(setq ls-lisp-dirs-first t) ;; Ordner in Dired zuerst anzeigen
+#+end_src
+** COMMENT doom-modeline :appearance:
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1)
+    :custom (doom-modeline-height 5))
+  (use-package all-the-icons)
+#+end_src
+*** Fix der Modeline-Höhe von [[https://github.com/seagle0128/doom-modeline/issues/187][hier]]
+#+begin_src emacs-lisp :results output silent
+(defun my-doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (+ (frame-char-height) 2))
+(advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
+#+END_SRC
+** COMMENT Emacs Startup Profiler - ESUP
+   #+begin_src emacs-lisp :results output silent
+     (use-package esup
+       :ensure t
+       ;; To use MELPA Stable use ":pin melpa-stable",
+       ;;:pin melpa
+       )   
+#+end_src
+** TODO Fold-this
 ** imenu-anywhere :navigation:
 #+begin_src emacs-lisp :results output silent
   (use-package imenu-anywhere

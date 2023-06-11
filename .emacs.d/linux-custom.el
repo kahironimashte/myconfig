@@ -36,7 +36,7 @@
  '(org-safe-remote-resources
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
  '(package-selected-packages
-   '(org-appear org-sticky-header rainbow-delimiters magit ido-completing-read+ org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch)))
+   '(vundo consult orderless marginalia vertico org-appear org-sticky-header rainbow-delimiters magit ido-completing-read+ org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch)))
 ;; FONTS
 ;; -----
 (custom-set-faces
