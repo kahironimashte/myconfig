@@ -11,7 +11,7 @@
    ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
  '(custom-enabled-themes '(whiteboard))
  '(org-agenda-files
-   '("~/org/prsn/karriere.org" "~/org/htasks.org" "~/org/atasks.org" "~/org/calendar.org"))
+   '("~/org/prsn/karriere.org" "~/org/htasks.org" "~/org/br/br.org" "~/org/atasks.org" "~/org/calendar.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up habit-down priority-down category-keep)
      (todo priority-down category-keep)
@@ -36,7 +36,7 @@
  '(org-safe-remote-resources
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
  '(package-selected-packages
-   '(vundo consult orderless marginalia vertico org-appear org-sticky-header rainbow-delimiters magit ido-completing-read+ org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch)))
+   '(corfu org-transclusion vundo consult orderless marginalia vertico org-appear org-sticky-header rainbow-delimiters magit org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch)))
 ;; FONTS
 ;; -----
 (custom-set-faces

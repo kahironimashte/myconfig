@@ -268,11 +268,16 @@ We can also use regular expressions for search.
         ;; style dispatcher characters.
         '((file (styles . (basic partial-completion orderless)))
           (project-file (styles . (basic substring partial-completion orderless)))
-          (imenu (styles . (emacs22 substring orderless)))
+          (imenu (styles . (basic substring orderless)))
           (kill-ring (styles . (emacs22 substring orderless)))
-          (consult-location (styles . (emacs22 substring orderless)))
+          (consult-location (styles . (basic substring)))
           (eglot (styles . (emacs22 substring orderless))))) 
-  
+
+  ;; Ignore case in searches. # case-fold
+  (setq completion-ignore-case t)
+  (setq read-buffer-completion-ignore-case t)
+  (setq read-file-name-completion-ignore-case t)
+  (setq-default case-fold-search t)   ; For general regexp   
   )
 #+end_src
 
@@ -320,7 +325,34 @@ Jumping to Headings  or lines.
   (define-key global-map (kbd "M-s M-y") 'consult-yank-pop) 
 #+end_src
 
-** TODO COMMENT vundo History manager :emacs28:
+**  corfu :prot:
+In -Buffer-Completion
+#+begin_src emacs-lisp
+(use-package corfu
+  :ensure t
+  :config
+  (setq-default tab-always-indent 'complete)
+  
+  (global-corfu-mode 1)
+
+  (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+
+  (define-key corfu-map (kbd "<tab>") #'corfu-complete)
+
+  ;; Adapted from Corfu's manual.
+  (defun contrib/corfu-enable-always-in-minibuffer ()
+    "Enable Corfu in the minibuffer if Vertico is not active.
+Useful for prompts such as `eval-expression' and `shell-command'."
+    (unless (bound-and-true-p vertico--input)
+      (corfu-mode 1)))
+
+  (add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1)) 
+#+end_src
+
+#+RESULTS:
+: t
+
+** TODO vundo History manager :emacs28:
 #+begin_src emacs-lisp
 ;; Requires Emacs 28
 (use-package vundo
@@ -329,6 +361,10 @@ Jumping to Headings  or lines.
   (setq vundo-glyph-alist vundo-unicode-symbols)
   (define-key global-map [remap undo] 'vundo)) ;; remap vundo to undo
 #+end_src
+
+#+RESULTS:
+: t
+
 ** COMMENT ido-mode :navigation:
  - [ ] Prots Empfehlung "icmoplete" ist besser integriert ab emacs 27.1 -> nachfolger von ido.
  - Wenn man weiß, wohin man will. 
@@ -595,6 +631,8 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
      + Pfad Ziel: C:/Software/Emacs/_unzip-Package/zip  
   2. Libre Office Portable installieren
 ** org-bookmark-heading :navigation:
+** transclude
+
 
 ** TODO [#B] COMMENT Smartparens
  - Paket um Klammern etc. zu vervollständigen.
