@@ -6,7 +6,7 @@
 ** file-settings
 #+STARTUP: overview
 #+TODO: TODO FEHLER  | OK DONE
-#+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p) obsolet(o)
+.#+TAGS: Funktionen(f) deaktiviert(d) WindowsOnly(w) LinuxOnly(l) Paket(p) obsolet(o)
 ** Startup
    - disable splash screen and startup message
 #+begin_src emacs-lisp :results output silent
@@ -203,172 +203,23 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 (setq org-archive-location (concat org-directory "/archiv/%s_archive::datetree/"))
 #+end_src
 
-** Inline-Images
+** Inline-Images :appearance:
    - Die Breite des Bildes kann gesetzt werden über =#+ATTR_ORG: :width 100= in der Zeile über dem Link.
  
 #+begin_src emacs-lisp :results output silent
 (setq org-image-actual-width nil)
 #+end_src
 
-* Pakete                                                    :package:
-** COMMENT ausprobieren
-*** TODO Consult-Package Suche
- - need to input a "space" character -> will it work with ido?
-*** TODO orderless-package
-out of order matching
-** Vertico UI :prot:navigation:
-#+begin_src emacs-lisp
-(use-package vertico
-  :ensure t
-  :config
-  (setq vertico-count 10)
-  (setq vertico-resize nil)
-  (setq vertico-cycle t)
-
-  (vertico-mode 1))
-
-;; (ido-mode -1) ;; deactivated ido mode for this to work [2023-06-11 So]
-#+end_src
-
-#+RESULTS:
-: t
-*** marginalia UI
-Completion information Package
-#+begin_src emacs-lisp
-(use-package marginalia
-  :ensure t
-  :config
-  (marginalia-mode 1)) 
-#+end_src
-
-#+RESULTS:
-: t
-** orderless :prot:
-We can also use regular expressions for search.
-#+begin_src emacs-lisp
-(use-package orderless
-  :ensure t
-  :config
-  (setq orderless-matching-styles
-        '(orderless-prefixes orderless-flex orderless-regexp)) ;; Types of patterns, that orderless tries to use.
-
-  (setq completion-styles '(emacs22 substring orderless) ;; two completion styles =emacs22= then =substring= then =orderless= is first used then =basic=
-	)
-  (setq completion-category-overrides 
-        ;; NOTE 2021-10-25: I am adding `basic' because it works better as a
-        ;; default for some contexts.  Read:
-        ;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50387>.
-        ;;
-        ;; `partial-completion' is a killer app for files, because it
-        ;; can expand ~/.l/s/fo to ~/.local/share/fonts.
-        ;;
-        ;; If `basic' cannot match my current input, Emacs tries the
-        ;; next completion style in the given order.  In other words,
-        ;; `orderless' kicks in as soon as I input a space or one of its
-        ;; style dispatcher characters.
-        '((file (styles . (basic partial-completion orderless)))
-          (project-file (styles . (basic substring partial-completion orderless)))
-          (imenu (styles . (basic substring orderless)))
-          (kill-ring (styles . (emacs22 substring orderless)))
-          (consult-location (styles . (basic substring)))
-          (eglot (styles . (emacs22 substring orderless))))) 
-
-  ;; Ignore case in searches. # case-fold
-  (setq completion-ignore-case t)
-  (setq read-buffer-completion-ignore-case t)
-  (setq read-file-name-completion-ignore-case t)
-  (setq-default case-fold-search t)   ; For general regexp   
-  )
-#+end_src
-
-#+RESULTS:
-: t
-** savehist :prot:builtin:
-#+begin_src emacs-lisp
-(use-package savehist
-  :ensure nil ; built-in
-  :config
-  (savehist-mode 1))
-#+end_src
-
-**  consult :prot:
-Jumping to Headings  or lines.
-
- - [ ] imenu functionality
- - [ ] explore config-options: change behaviour context specific
-#+begin_src emacs-lisp
-(use-package consult
- :ensure t
- :config
- ;; (ryo-modal-keys
- ;;  ("," ryo-modal-repeat)
- ;;  ("q" ryo-modal-mode))
- ;; Use C-s in the minibuffer to search through its history:
-
- ;; Use C-s to search the history of the specific minibuffer (shell, magit, M-x, ...)
- (define-key minibuffer-local-map (kbd "C-s") #'consult-history)
-  ) 
-#+end_src
-
-#+RESULTS:
-: t
-
-*** COMMENT Prots Presets
-#+begin_src emacs-lisp
-(define-key global-map (kbd "M-s M-b") 'consult-buffer)
-  (define-key global-map (kbd "M-s M-f") 'consult-find)
-  (define-key global-map (kbd "M-s M-g") 'consult-grep)
-  (define-key global-map (kbd "M-s M-h") 'consult-history)
-  (define-key global-map (kbd "M-s M-l") 'consult-line)
-  (define-key global-map (kbd "M-s M-m") 'consult-mark)
-  (define-key global-map (kbd "M-s M-s") 'consult-outline)
-  (define-key global-map (kbd "M-s M-y") 'consult-yank-pop) 
-#+end_src
-
-**  corfu :prot:
-In -Buffer-Completion
-#+begin_src emacs-lisp
-(use-package corfu
-  :ensure t
-  :config
-  (setq-default tab-always-indent 'complete)
-  
-  (global-corfu-mode 1)
-
-  (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
-
-  (define-key corfu-map (kbd "<tab>") #'corfu-complete)
-
-  ;; Adapted from Corfu's manual.
-  (defun contrib/corfu-enable-always-in-minibuffer ()
-    "Enable Corfu in the minibuffer if Vertico is not active.
-Useful for prompts such as `eval-expression' and `shell-command'."
-    (unless (bound-and-true-p vertico--input)
-      (corfu-mode 1)))
-
-  (add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1)) 
-#+end_src
-
-#+RESULTS:
-: t
-
-** TODO vundo History manager :emacs28:
-#+begin_src emacs-lisp
-;; Requires Emacs 28
-(use-package vundo
-  :ensure t
-  :config
-  (setq vundo-glyph-alist vundo-unicode-symbols)
-  (define-key global-map [remap undo] 'vundo)) ;; remap vundo to undo
-#+end_src
-
-#+RESULTS:
-: t
-
-** COMMENT ido-mode :navigation:
+* Pakete :package:
+** ausprobieren
+*** TODO Minimap
+*** TODO Neotree
+*** TODO valign 
+** COMMENT deaktivierte Pakete
+*** COMMENT ido-mode :navigation:
  - [ ] Prots Empfehlung "icmoplete" ist besser integriert ab emacs 27.1 -> nachfolger von ido.
  - Wenn man weiß, wohin man will. 
-*** Beschreibung
+**** Beschreibung
  This is the built-in framework for interactively narrowing down the
  list of matching candidates when performing a relevant search.  Ido
  underpins functions such as those that change buffers, navigate the
@@ -431,7 +282,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
  of some useful key bindings, type =C-h f ido-find-file RET=.  The
  bindings I define in =ido-common-completion-map= are for consistency
  with their equivalents in =isearch=.
-*** code
+**** code
 #+begin_src emacs-lisp :results output silent
 (use-package ido
   :custom
@@ -481,7 +332,199 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (ido-ubiquitous-mode 1))
 #+end_src
 
-** org-clock-convenience :clocking:
+*** COMMENT org-roam
+- alternative form Prot (demo Video): =denote=
+download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
+#+begin_src emacs-lisp :results output silent
+    (when (string-equal system-type "windows-nt")
+      (add-to-list 'exec-path "C:/Software/SQLite")
+      (setq org-roam-directory "C:/org/roam")
+;;      (setq org-roam-db-update-method 'immediate)
+;;      (add-hook 'after-init-hook 'org-roam-mode)
+      )
+
+#+end_src
+*** COMMENT doom-modeline :appearance:
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1)
+    :custom (doom-modeline-height 5))
+  (use-package all-the-icons)
+#+end_src
+**** Fix der Modeline-Höhe von [[https://github.com/seagle0128/doom-modeline/issues/187][hier]]
+#+begin_src emacs-lisp :results output silent
+(defun my-doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (+ (frame-char-height) 2))
+(advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
+#+END_SRC
+*** COMMENT Emacs Startup Profiler - ESUP
+   #+begin_src emacs-lisp :results output silent
+     (use-package esup
+       :ensure t
+       ;; To use MELPA Stable use ":pin melpa-stable",
+       ;;:pin melpa
+       )   
+#+end_src
+*** TODO [#B] COMMENT Smartparens
+ - Paket um Klammern etc. zu vervollständigen.
+#+BEGIN_SRC emacs-lisp
+(require 'smartparens)
+(require 'smartparens-config)   
+(define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-unwrap-sexp)
+(define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
+#+END_SRC
+This is bold and that is bolder. 
+** Vertico UI :prot:navigation:interface:
+#+begin_src emacs-lisp
+(use-package vertico
+  :ensure t
+  :config
+  (setq vertico-count 10)
+  (setq vertico-resize nil)
+  (setq vertico-cycle t)
+
+  (vertico-mode 1))
+
+;; (ido-mode -1) ;; deactivated ido mode for this to work [2023-06-11 So]
+#+end_src
+
+#+RESULTS:
+: t
+*** marginalia UI
+Completion information Package
+#+begin_src emacs-lisp
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode 1)) 
+#+end_src
+
+#+RESULTS:
+: t
+** orderless :search:navigation:prot:completion:
+We can also use regular expressions for search.
+#+begin_src emacs-lisp
+(use-package orderless
+  :ensure t
+  :config
+  (setq orderless-matching-styles
+        '(orderless-prefixes orderless-flex orderless-regexp)) ;; Types of patterns, that orderless tries to use.
+
+  (setq completion-styles '(emacs22 substring orderless) ;; two completion styles =emacs22= then =substring= then =orderless= is first used then =basic=
+	)
+  (setq completion-category-overrides 
+        ;; NOTE 2021-10-25: I am adding `basic' because it works better as a
+        ;; default for some contexts.  Read:
+        ;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50387>.
+        ;;
+        ;; `partial-completion' is a killer app for files, because it
+        ;; can expand ~/.l/s/fo to ~/.local/share/fonts.
+        ;;
+        ;; If `basic' cannot match my current input, Emacs tries the
+        ;; next completion style in the given order.  In other words,
+        ;; `orderless' kicks in as soon as I input a space or one of its
+        ;; style dispatcher characters.
+        '((file (styles . (basic partial-completion orderless)))
+          (project-file (styles . (basic substring partial-completion orderless)))
+          (imenu (styles . (basic substring orderless)))
+          (kill-ring (styles . (emacs22 substring orderless)))
+          (consult-location (styles . (basic substring)))
+          (eglot (styles . (emacs22 substring orderless))))) 
+
+  ;; Ignore case in searches. # case-fold
+  (setq completion-ignore-case t)
+  (setq read-buffer-completion-ignore-case t)
+  (setq read-file-name-completion-ignore-case t)
+  (setq-default case-fold-search t)   ; For general regexp   
+  )
+#+end_src
+
+#+RESULTS:
+: t
+** savehist :search:prot:builtin:
+#+begin_src emacs-lisp
+(use-package savehist
+  :ensure nil ; built-in
+  :config
+  (savehist-mode 1))
+#+end_src
+
+**  consult :search:navigation:prot:
+Jumping to Headings  or lines.
+
+ - [ ] imenu functionality
+ - [ ] explore config-options: change behaviour context specific
+#+begin_src emacs-lisp
+(use-package consult
+ :ensure t
+ :config
+ ;; (ryo-modal-keys
+ ;;  ("," ryo-modal-repeat)
+ ;;  ("q" ryo-modal-mode))
+ ;; Use C-s in the minibuffer to search through its history:
+
+ ;; Use C-s to search the history of the specific minibuffer (shell, magit, M-x, ...)
+ (define-key minibuffer-local-map (kbd "C-s") #'consult-history)
+  ) 
+#+end_src
+
+#+RESULTS:
+: t
+
+*** COMMENT Prots Presets
+#+begin_src emacs-lisp
+(define-key global-map (kbd "M-s M-b") 'consult-buffer)
+  (define-key global-map (kbd "M-s M-f") 'consult-find)
+  (define-key global-map (kbd "M-s M-g") 'consult-grep)
+  (define-key global-map (kbd "M-s M-h") 'consult-history)
+  (define-key global-map (kbd "M-s M-l") 'consult-line)
+  (define-key global-map (kbd "M-s M-m") 'consult-mark)
+  (define-key global-map (kbd "M-s M-s") 'consult-outline)
+  (define-key global-map (kbd "M-s M-y") 'consult-yank-pop) 
+#+end_src
+
+**  corfu :prot:completion:
+In -Buffer-Completion
+#+begin_src emacs-lisp
+(use-package corfu
+  :ensure t
+  :config
+  (setq-default tab-always-indent 'complete)
+  
+  (global-corfu-mode 1)
+
+  (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+
+  (define-key corfu-map (kbd "<tab>") #'corfu-complete)
+
+  ;; Adapted from Corfu's manual.
+  (defun contrib/corfu-enable-always-in-minibuffer ()
+    "Enable Corfu in the minibuffer if Vertico is not active.
+Useful for prompts such as `eval-expression' and `shell-command'."
+    (unless (bound-and-true-p vertico--input)
+      (corfu-mode 1)))
+
+  (add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1)) 
+#+end_src
+
+#+RESULTS:
+: t
+
+** TODO vundo History manager :emacs28:navigation:
+#+begin_src emacs-lisp
+;; Requires Emacs 28
+(use-package vundo
+  :ensure t
+  :config
+  (setq vundo-glyph-alist vundo-unicode-symbols)
+  (define-key global-map [remap undo] 'vundo)) ;; remap vundo to undo
+#+end_src
+
+#+RESULTS:
+: t
+
+** org-clock-convenience :clocking:orga:
  - [[https://github.com/dfeich/org-clock-convenience/blob/master/README.org][Github-Source]]
 #+begin_src emacs-lisp :results output silent
 (use-package org-clock-convenience
@@ -523,7 +566,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   The package also contains a number of utility functions to associate
   a list with field names with the subgroup of a regular expression and
   position point at a named field or read its value.
-** unfill (paragraph/region)
+** unfill (paragraph/region) :appearance:
  - Source: https://github.com/purcell/unfill
  - Install via Melpa
 #+begin_src emacs-lisp
@@ -533,18 +576,6 @@ Commands:
 M-x unfill-region
 M-x unfill-paragraph
 M-x unfill-toggle
-** COMMENT org-roam
-- alternative form Prot (demo Video): =denote=
-download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
-#+begin_src emacs-lisp :results output silent
-    (when (string-equal system-type "windows-nt")
-      (add-to-list 'exec-path "C:/Software/SQLite")
-      (setq org-roam-directory "C:/org/roam")
-;;      (setq org-roam-db-update-method 'immediate)
-;;      (add-hook 'after-init-hook 'org-roam-mode)
-      )
-
-#+end_src
 ** anki-editor :learning:
 - Vouraussetzungen:
   1. =sudo apt install anki curl=
@@ -558,8 +589,8 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
   )
 #+end_src
 
-** dired
-   Standardmäßig alle Details außer Dateinamen ausblenden (toogle mit =(= )
+** dired :system:
+   Standardmäßig alle Details außer Dateinamen ausblenden - umschaltbar mit Taste =(=
 #+begin_src emacs-lisp :results output silent
 (add-hook 'dired-mode-hook
 	  (lambda()
@@ -568,29 +599,6 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
      )
 (setq ls-lisp-dirs-first t) ;; Ordner in Dired zuerst anzeigen
 #+end_src
-** COMMENT doom-modeline :appearance:
-#+BEGIN_SRC emacs-lisp
-  (use-package doom-modeline
-    :init (doom-modeline-mode 1)
-    :custom (doom-modeline-height 5))
-  (use-package all-the-icons)
-#+end_src
-*** Fix der Modeline-Höhe von [[https://github.com/seagle0128/doom-modeline/issues/187][hier]]
-#+begin_src emacs-lisp :results output silent
-(defun my-doom-modeline--font-height ()
-  "Calculate the actual char height of the mode-line."
-  (+ (frame-char-height) 2))
-(advice-add #'doom-modeline--font-height :override #'my-doom-modeline--font-height)
-#+END_SRC
-** COMMENT Emacs Startup Profiler - ESUP
-   #+begin_src emacs-lisp :results output silent
-     (use-package esup
-       :ensure t
-       ;; To use MELPA Stable use ":pin melpa-stable",
-       ;;:pin melpa
-       )   
-#+end_src
-** TODO Fold-this
 ** imenu-anywhere :navigation:
 #+begin_src emacs-lisp :results output silent
   (use-package imenu-anywhere
@@ -609,9 +617,7 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
   ;;    (let ((push-mark-before-goto-char t))
   ;;       (ido-imenu)))
 #+end_src
-** TODO Minimap
-** TODO Neotree
-** Nov-mode                                                         :content:
+** Nov-mode :content:
    - Paket um epub-Dateien in Emacs zu lesen.
 #+begin_src emacs-lisp :results output silent
   (use-package nov
@@ -631,18 +637,30 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
      + Pfad Ziel: C:/Software/Emacs/_unzip-Package/zip  
   2. Libre Office Portable installieren
 ** org-bookmark-heading :navigation:
-** transclude
+** TODO org-transclusion :content:
+to include parts of Text from other documents (with sync-option)
 
+installed [2023-07-01 Sa]
+#+begin_src emacs-lisp
+(use-package org-transclusion
+  :ensure t
+)
+#+end_src
 
-** TODO [#B] COMMENT Smartparens
- - Paket um Klammern etc. zu vervollständigen.
-#+BEGIN_SRC emacs-lisp
-(require 'smartparens)
-(require 'smartparens-config)   
-(define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-unwrap-sexp)
-(define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
-#+END_SRC
-This is bold and that is bolder. 
+#+RESULTS:
+
+** TODO org-remark :content:
+to make annotations to org-files
+
+installed [2023-07-01 Sa]
+#+begin_src emacs-lisp
+(use-package org-remark
+  :ensure t
+)
+#+end_src
+
+#+RESULTS:
+
 ** steam :orga:
    - Importiert die Steam-Spiele als org-mode Liste.
 #+BEGIN_SRC emacs-lisp
@@ -662,7 +680,8 @@ Usage
 In org-mode, you can click links in order to run your games. This will bring up a pop-up, asking if it is safe to run the lisp-code. If this annoys you, put this line at the top of your .org-file: #-*- org-confirm-elisp-link-function: nil; -*-
 
 If you insert the logotype images into org-mode, make sure to turn on org-display-inline-images. You can also put #+STARTUP:inlineimages at the top of your .org-file.
-** Use =minions= to hide all minor modes
+** minion-mode :appearance:
+Use =minions= to hide all minor modes
 
 H. R. S: I never want to see a minor mode, and manually adding =:diminish= to every
 use-package declaration is a hassle. This uses =minions= to hide all the minor
@@ -678,13 +697,12 @@ I'd rather skip it.
            minions-mode-line-delimiters '("" . ""))
      (minions-mode 1))
 #+end_src
-** TODO valign 
 ** which-key :help:
  #+begin_src elisp
 (use-package which-key
   :config (which-key-mode))
 #+end_src
-** yaml-mode
+** yaml-mode :coding:
    - für espanso config-files.
 #+begin_src emacs-lisp :results output silent
 (use-package yaml-mode)
