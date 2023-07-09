@@ -375,6 +375,18 @@ download sqlite3 and add it to exe-path, confir with (executable-find "sqlite3")
 (define-key smartparens-mode-map (kbd "S-<backspace>") 'sp-backward-unwrap-sexp)
 #+END_SRC
 This is bold and that is bolder. 
+** olivetti-mode :appearance:
+Zentriert den Text in einer schmaleren Spalte, um das Lesen zu vereinachen. Der Modus wird nur aktiviert, wenn eine gewisse Buffer-Breite anzeigbar ist.
+#+begin_src emacs-lisp
+(use-package olivetti
+  :ensure t
+  :config
+  (setq olivetti-style 'fancy) ;; use margins
+  (setq olivetti-body-width 54)
+  )
+#+end_src
+
+
 ** Vertico UI :prot:navigation:interface:
 #+begin_src emacs-lisp
 (use-package vertico
@@ -656,10 +668,75 @@ installed [2023-07-01 Sa]
 #+begin_src emacs-lisp
 (use-package org-remark
   :ensure t
-)
+  :config
+  (org-remark-global-tracking-mode +1)
+
+  (defface org-remark-highlighter-background-info
+    '((((class color) (min-colors 88) (background light))
+       :underline "RoyalBlue4" :background "LightSkyBlue1")
+      (((class color) (min-colors 88) (background dark))
+       :underline "LightSkyBlue1" :background "RoyalBlue4")
+      (t
+       :inherit highlight :inverse-video t))
+    "Face for the highlighter pen that marks background information.")
+  (org-remark-create "hintergrund"
+                     'org-remark-highlighter-background-info
+                     '(CATEGORY "background" help-echo "Good to know"))
+
+  (defface org-remark-highlighter-action
+    '((((class color) (min-colors 88) (background light))
+       :underline "forest green" :background "pale green")
+      (((class color) (min-colors 88) (background dark))
+       :underline "pale green" :background "dark green")
+      (t
+       :inherit highlight :inverse-video t))
+    "Face for the highlighter pen that marks calls to action.")
+  (org-remark-create "calltoaction"
+		     'org-remark-highlighter-action
+		     '(CATEGORY "action" help-echo "This is how to do it"))
+
+  (defface org-remark-highlighter-warning
+    '((((class color) (min-colors 88) (background light))
+       :underline "chocolate" :background "LightSalmon1")
+      (((class color) (min-colors 88) (background dark))
+       :underline "LightSalmon1" :background "chocolate4")
+      (t
+       :inherit highlight :inverse-video t))
+    "Face for the highlighter pen that marks calls to action.")
+  (org-remark-create "warning"
+		     'org-remark-highlighter-warning
+		     '(CATEGORY "waring" help-echo "Pay Attention to this!"))
+
+    (defface org-remark-highlighter-clarify
+    '((((class color) (min-colors 88) (background light))
+       :underline "DeepPink4" :background "LightPink1")
+      (((class color) (min-colors 88) (background dark))
+       :underline "LightPink1" :background "DeepPink4")
+      (t
+       :inherit highlight :inverse-video t))
+    "Face for the highlighter pen that marks unclear points, that sould be clarified.")
+  (org-remark-create "clarify"
+		     'org-remark-highlighter-clarify
+		     '(CATEGORY "clarify" help-echo "I need to clarify this."))
+
+    (defface org-remark-highlighter-share
+    '((((class color) (min-colors 88) (background light))
+       :underline "gray35" :background "gray81")
+      (((class color) (min-colors 88) (background dark))
+       :underline "gray81" :background "gray35")
+      (t
+       :inherit highlight :inverse-video t))
+    "Face for the highlighter pen that marks content that I would like to share with somebody.")
+  (org-remark-create "share"
+		     'org-remark-highlighter-share
+		     '(CATEGORY "clarify" help-echo "I could share this with someone."))  
+  )
+
+
 #+end_src
 
 #+RESULTS:
+: t
 
 ** steam :orga:
    - Importiert die Steam-Spiele als org-mode Liste.

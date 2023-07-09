@@ -42,7 +42,7 @@
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
  '(package-selected-packages
-   '(org-remark org-transclusion vundo corfu consult orderless marginalia vertico org-sticky-header unfill org-clock-convenience modus-themes esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+))
+   '(olivetti org-remark org-transclusion vundo corfu consult orderless marginalia vertico org-sticky-header unfill org-clock-convenience modus-themes esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+))
  '(reb-re-syntax 'string)
  '(visible-bell t))
 (custom-set-faces
