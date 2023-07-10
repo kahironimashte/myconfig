@@ -469,16 +469,23 @@ Jumping to Headings  or lines.
  - [ ] explore config-options: change behaviour context specific
 #+begin_src emacs-lisp
 (use-package consult
- :ensure t
- :config
- ;; (ryo-modal-keys
- ;;  ("," ryo-modal-repeat)
- ;;  ("q" ryo-modal-mode))
- ;; Use C-s in the minibuffer to search through its history:
+  :ensure t
+  :config
+  (ryo-modal-keys
+   ("s" (
+	 ("j" consult-outline)
+	;; ("f" consult-find) ;; ist für Projekte/Dateisuche
+	;; ("g" consult-grep)
+	;;  ("h" consult-history) ;; ERROR: No conulst-histories configured for org-mode
+	 ("l" consult-line)
+	 ("m" consult-mark)
+	 ("y" consult-yank-pop))))
 
- ;; Use C-s to search the history of the specific minibuffer (shell, magit, M-x, ...)
- (define-key minibuffer-local-map (kbd "C-s") #'consult-history)
-  ) 
+   ;; Use C-s in the minibuffer to search through its history:
+
+   ;; Use C-s to search the history of the specific minibuffer (shell, magit, M-x, ...)
+   (define-key minibuffer-local-map (kbd "C-s") #'consult-history)
+   ) 
 #+end_src
 
 #+RESULTS:
