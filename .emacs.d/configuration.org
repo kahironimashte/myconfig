@@ -684,7 +684,7 @@ installed [2023-07-01 Sa]
       (((class color) (min-colors 88) (background dark))
        :underline "LightSkyBlue1" :background "RoyalBlue4")
       (t
-       :inherit highlight :inverse-video t))
+       :inherit highlight))
     "Face for the highlighter pen that marks background information.")
   (org-remark-create "hintergrund"
                      'org-remark-highlighter-background-info
@@ -696,7 +696,7 @@ installed [2023-07-01 Sa]
       (((class color) (min-colors 88) (background dark))
        :underline "pale green" :background "dark green")
       (t
-       :inherit highlight :inverse-video t))
+       :inherit highlight))
     "Face for the highlighter pen that marks calls to action.")
   (org-remark-create "calltoaction"
 		     'org-remark-highlighter-action
@@ -708,7 +708,7 @@ installed [2023-07-01 Sa]
       (((class color) (min-colors 88) (background dark))
        :underline "LightSalmon1" :background "chocolate4")
       (t
-       :inherit highlight :inverse-video t))
+       :inherit highlight))
     "Face for the highlighter pen that marks calls to action.")
   (org-remark-create "warning"
 		     'org-remark-highlighter-warning
@@ -720,7 +720,7 @@ installed [2023-07-01 Sa]
       (((class color) (min-colors 88) (background dark))
        :underline "LightPink1" :background "DeepPink4")
       (t
-       :inherit highlight :inverse-video t))
+       :inherit highlight))
     "Face for the highlighter pen that marks unclear points, that sould be clarified.")
   (org-remark-create "clarify"
 		     'org-remark-highlighter-clarify
@@ -732,7 +732,7 @@ installed [2023-07-01 Sa]
       (((class color) (min-colors 88) (background dark))
        :underline "gray81" :background "gray35")
       (t
-       :inherit highlight :inverse-video t))
+       :inherit highlight))
     "Face for the highlighter pen that marks content that I would like to share with somebody.")
   (org-remark-create "share"
 		     'org-remark-highlighter-share
