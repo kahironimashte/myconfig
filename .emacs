@@ -30,7 +30,7 @@
 
 ;; use-package aktivieren und alle pakete installieren, die von der config verlangt werden.
 (require 'use-package)
-(setq use-package-always-ensure t)
+(setq use-package-always-ensure t) ;; if theres no :ensure setting, its :ensure t
 
 ;; use Melpa-Org-Version instead of builtin. Vorher habe ich die neueste org-Version aus Melpa installiert.
 ;;(assq-delete-all 'org package--builtins);; deactivated [2021-02-24 Mi 23:22]

@@ -667,9 +667,52 @@ installed [2023-07-01 Sa]
 #+end_src
 
 #+RESULTS:
+** transient-mode
+#+begin_src emacs-lisp
+(use-package transient
+  :ensure t
+  :config
+  (transient-define-prefix prot-prefix-file nil
+    "Transient with file commands."
+    [["File or directory"
+      ("f" "find-file" find-file)
+      ("F" "find-file-other-window" find-file-other-window)
+      ("s" "sechond transient buffer" prot-prefix-test)]
+     ["Directory only"
+      ("d" "dired" dired)
+      ("D" "dired-other-window" dired-other-window)]]
+     ["Documentation"
+      ("l" "find-library" find-library)
+      ("m" "man" man)])
+
+  (transient-define-prefix prot-prefix-test nil
+    "Transient with file commands."
+    ["second transient buffer"
+      ("q" "find-file" find-file)
+      ("Q" "find-file-other-window" find-file-other-window)]))
+#+end_src
+
+#+RESULTS:
+: t
+
+Value after the face is =set for the frame=. Nil means all frames.
+=list-frames= lists all the frames. You can select a specific frame. A
+symbol semantically represents the "proper name" while a string is
+"just" a vector of characters with no explicit meaning. This is a
+convention, not enforced in the code.
+#+begin_src emacs-lisp
+(set-face-attribute 'transient-key nil :foreground "dark magenta" :weight 'bold)
+(set-face-attribute 'transient-heading nil :underline t :weight 'unspecified)
+#+end_src
+
+#+RESULTS:
+*** Ressources
+ - showcase: https://github.com/positron-solutions/transient-showcase
+ - Manual: https://magit.vc/manual/transient/
+ - Manual in info-mode: [[info:transient#Top][transient#Top]]
 
 ** TODO org-remark :content:
-to make annotations to org-files
+... is a package to annotate org-files
 
 installed [2023-07-01 Sa]
 #+begin_src emacs-lisp
@@ -678,6 +721,15 @@ installed [2023-07-01 Sa]
   :config
   (org-remark-global-tracking-mode +1)
 
+#+end_src
+
+*** _Define highlighters_
+... for different purposes and different styles:
+1. higlighter face
+2. create higligher  
+
+Each highlighter uses a category to filter the marginalia file by. 
+#+begin_src emacs-lisp
   (defface org-remark-highlighter-background-info
     '((((class color) (min-colors 88) (background light))
        :underline "RoyalBlue4" :background "LightSkyBlue1")
@@ -737,9 +789,29 @@ installed [2023-07-01 Sa]
   (org-remark-create "share"
 		     'org-remark-highlighter-share
 		     '(CATEGORY "clarify" help-echo "I could share this with someone."))  
-  )
 
-
+#+end_src
+*** Define transient-buffers
+... to quickly select org-remark features and higlihgters
+#+begin_src emacs-lisp
+  (transient-define-prefix my/org-remark-prefix nil
+    "Transient with org-remark commands."
+    [["Highlighter"
+      ("a" "action" org-remark-mark-calltoaction)
+      ("h" "Hintergrund" org-remark-mark-hintergrund)
+      ("w" "warning" org-remark-mark-warning)
+      ("c" "clarify" org-remark-mark-clarify)
+      ("s" "share" org-remark-mark-share)]
+     ["Navigate annotations"
+      ("n" "go to next annotation" org-remark-view-next)
+      ("p" "go to previous annotation" org-remark-view-prev)
+      ("v" "go to next annotation" org-remark-view)      
+      ("o" "go to next annotation" org-remark-open)]
+     ["Edit annotations"
+      ("x" "delete annotation" org-remark-delete)
+      ("r" "remove annotation, keep notes" org-remark-remove)    ;; delete notes with C-u prefix
+      ("s" "switch highlighter" org-remark-change)]])
+)
 #+end_src
 
 #+RESULTS:
@@ -2075,7 +2147,10 @@ org-narrow-to-subtree
 
 **** m
 #+begin_src emacs-lisp :results output silent
-    ("m"
+    ("m" my/org-remark-prefix)
+#+end_src
+
+***** archived anki-editor keys
      (("a" ;anki-editor-commands
       (("n" anki-editor-insert-note)
        ("x" anki-editor-mode)
@@ -2087,8 +2162,7 @@ org-narrow-to-subtree
        ("h" anki-editor-export-subtree-to-html)
        ("H" anki-editor-convert-region-to-html))
       ))
-     )
-#+end_src
+
 
 **** r
 #+begin_src emacs-lisp
