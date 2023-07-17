@@ -2855,7 +2855,7 @@ Put this in your init file: (setq dired-dwim-target t). Then, go to dired, split
 ** Editing
 *** Cheatsheet für Editing-Befehle
 *** Tastenkürzel anpassen
-** Versionierung (git)
+** DONE Versionierung (git)
 ** Termine Synchronisieren (tickler)
 ** File-Struktur überarbeiten (arbeit/home/someday)
 ** Erweiterungen
@@ -2883,5 +2883,4 @@ Put this in your init file: (setq dired-dwim-target t). Then, go to dired, split
 ** Gestalten
 *** Grundlagen Emacs Lisp
 *** JS-Modes und Webdev-Modes
-* COMMENT Subtree for tests
 
