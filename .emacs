@@ -68,6 +68,10 @@
 (setq capture-org-file (concat filedir "_config/emacs/capture.org"))
 (org-babel-load-file capture-org-file)
 
+;; Lade Custom agendas aus eigner Datei
+(setq customagendas-org-file (concat filedir "_config/emacs/customagendas.org"))
+(org-babel-load-file customagendas-org-file)
+
 ;; Benchmark Startup
 (add-hook 'emacs-startup-hook
           (lambda ()

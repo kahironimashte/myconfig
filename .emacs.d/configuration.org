@@ -83,101 +83,11 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
  (global-set-key (kbd "<f6>")  'macro-statusnow)
    #+end_src
    - [2021-09-20 Mo] : war " er uuzTns   " , zwei mal nach unten und expansion.
-** Keyboard-Shortuts :keys:
+** Keyboard-Shortcuts :keys:
  - [[*Agenda custom commands][Agenda custom commands]]
 *** for org-agendas
-**** Keyboard :Funktionen:
-#+begin_src emacs-lisp :results output silent
-  ;; Org-Agendas
-  ;; -----------
-   (global-set-key (kbd "<f12>") 'kahiro-agenda-next-work-tasks) 
-   (global-set-key (kbd "<S-f12>") 'kahiro-agenda-home-tasks) 
-  
-  (defun kahiro-agenda-next-work-tasks (&optional arg) ;; Shift+<f12>
-    (interactive "P")
-    (org-agenda arg "n" nil))
-  
-  (defun kahiro-agenda-home-tasks (&optional arg) ;; Shift+<f12>
-    (interactive "P")
-    (org-agenda arg "h" nil))
-  
-  (defun kahiro-agenda-next-buffer-tasks (&optional arg) ;; <f12>
-    (interactive "P")
-    (org-agenda arg "n" 'buffer))
-  
-  ;; nur als Beispiel, statt t kann man auch 'buffer | 'subtree | 'region verwenden.
-  (defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
-    (interactive "P")
-    (org-agenda arg "gh" 'subtree))
-  
-  (defun kahiro-all-tasks-for-buffer (&optional arg) ;; ungenutzt seit [2021-05-07 Fr]
-    (interactive "P")
-    (org-agenda arg "t" t))
-  
-#+end_src
-**** Keypad :Funktionen:
-#+begin_src emacs-lisp :results output silent
-;; Org-Agendas
-;; -----------
-
- (global-set-key (kbd "<kp-0>") 'kahiro-kp-0) 
-(defun kahiro-kp-0 (&optional arg)
-  (interactive "P")
-  (org-agenda arg "dt" nil)) ;; Arbeits-Tasks heute
-
- (global-set-key (kbd "<kp-1>") 'kahiro-kp-1)
-(defun kahiro-kp-1 (&optional arg)
-  (interactive "P")
-  (org-agenda arg "da" nil)) ;; Arbeits-Tasks heute
-
- (global-set-key (kbd "<kp-2>") 'kahiro-kp-2) 
-(defun kahiro-kp-2 (&optional arg)
-  (interactive "P")
-  (org-agenda arg "db" nil)) ;; BR-Tasks heute
-
- (global-set-key (kbd "<kp-3>") 'kahiro-kp-3) 
-(defun kahiro-kp-3 (&optional arg)
-  (interactive "P")
-  (org-agenda arg "dh" nil)) ;; Home-Tasks heute
-
- (global-set-key (kbd "<kp-4>") 'kahiro-kp-4) 
-(defun kahiro-kp-4 (&optional arg)
-  (interactive "P")
-  (org-agenda arg "d4" 'buffer)) ;; Alle Projekte des Buffers
-
- (global-set-key (kbd "<kp-5>") 'kahiro-kp-5) 
-(defun kahiro-kp-5 (&optional arg)
-  (interactive "P")
-  (org-agenda arg "d1" nil)) ;; Arbeits-Tasks + Calendar
-
- (global-set-key (kbd "<kp-6>") 'kahiro-kp-6) 
-
-
- (global-set-key (kbd "<kp-7>") 'kahiro-kp-7) 
-(defun kahiro-kp-7 (&optional arg)
-  (interactive "P")
-  (org-agenda arg "d3" nil)) ;; Alle Autorentexte
-
- (global-set-key (kbd "<kp-8>") 'kahiro-kp-8) 
-(defun kahiro-kp-8 (&optional arg)
-  (interactive "P")
-  (org-agenda arg "d6" nil)) ;; Autorentexte bestellt und da
-
- (global-set-key (kbd "<kp-9>") 'kahiro-kp-9) 
-(defun kahiro-kp-9 (&optional arg)
-  (interactive "P")
-  (org-agenda arg "d9" nil)) ;; Autorentexte Idee und Suche
-
-
-(global-set-key (kbd "<kp-decimal>") 'kahiro-agenda-for-tasks-in-subtree) 
-(defun kahiro-agenda-for-tasks-in-subtree (&optional arg)
-  (interactive "P")
-  (org-agenda arg "gh" 'subtree))
-   ;; narrowing hier nur als Beispiel:
-   ;; statt t kann man auch die Optionen
-   ;; 'buffer | 'subtree | 'region verwenden.
-
-#+end_src
+ausgelagert in eigene Datei
+ - Linux [[file:~/org/_config/emacs/customagendas.org::*Keyboard-Shortcuts][Keyboard-Shortcuts]]
 *** for org-columns
 #+begin_src emacs-lisp :results output silent
 (with-eval-after-load "org-colview"
@@ -395,6 +305,148 @@ Zentriert den Text in einer schmaleren Spalte, um das Lesen zu vereinachen. Der 
 #+end_src
 
 
+** COMMENT key-cast-mode
+#+begin_src emacs-lisp
+(use-package keycast
+  :ensure t
+  :config
+  ;; (dolist (input '(self-insert-command org-self-insert-command))
+  ;;   (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
+  ;; 
+  ;; (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
+  ;;   (add-to-list 'keycast-substitute-alist `(,event nil)))
+  ) 
+#+end_src
+
+#+RESULTS:
+
+** COMMENT repeat-mode
+Package is built-in.
+Only works for commands, that are designed to work with it. The function goes through the emacs object map and searches for the repeat-property.
+
+#+begin_src emacs-lisp :results output silent
+(use-package repeat
+  :ensure nil ; built-in
+  :config
+  (repeat-mode 1)) 
+#+end_src
+
+*** COMMENT explanation
+the =obarray= is a huge array with all the =symbols= that emacs knows about. It's huge.
+
+We want to filter out all the symbols with the "=repeat-map= property.
+#+begin_src elisp
+(get 'other-window 'repeat-map)  ;; => other-window-repeat-map
+
+#+end_src
+#+begin_src emacs-lisp
+;; This function and the `let' one below are the better way:
+(defun my-command-is-repeatable-p (symbol)
+  "Return non-nil if SYMBOL is a repeatable command."
+  ;; =commandp= checks if =symbol= is a command, so that we can repeat it. 
+  (and (commandp symbol)
+       (get symbol 'repeat-map)))
+;; check if the symbol has the repeat-map property.)
+
+;; We could also use a =defun= arround this let to make the code interactive.
+(let ((repeatable-collection))
+  (mapatoms
+   ;; calls every symbol in a specific obarray, which defaults to the emacs obarray
+   (lambda (symbol)
+     ;; is anonymous, becaus we just call it inside this loop. We don't want to reuse it outside the loop
+     ;; two conditions: symbol must be a command and have the =repeat-map= property.
+     (when (my-command-is-repeatable-p symbol)
+       (push symbol repeatable-collection))))
+  	   ;; add the result to the collection =repeatable=
+  repeatable-collection)
+  ;; returns the collection =repeatable=
+#+end_src
+
+#+RESULTS:
+| undo                             |
+| outline-demote                   |
+| shrink-window                    |
+| other-window                     |
+| shrink-window-horizontally       |
+| outline-next-visible-heading     |
+| tab-previous                     |
+| tab-move                         |
+| next-error                       |
+| previous-error                   |
+| tab-next                         |
+| tab-bar-move-tab-backward        |
+| outline-previous-visible-heading |
+| enlarge-window-horizontally      |
+| outline-backward-same-level      |
+| outline-forward-same-level       |
+| outline-promote                  |
+| forward-page                     |
+| backward-page                    |
+| outline-up-heading               |
+| enlarge-window                   |
+| outline-move-subtree-down        |
+| outline-move-subtree-up          |
+
+org-table-transpose-table-at-point
+
+#+begin_src emacs-lisp
+;; Not so good way of achieving the same result: Because symbols are not checked, and there can be double entries, because functions and variables with the same name can coexist.
+(let ((collection))
+  (mapatoms
+   (lambda (symbol)
+     ;; (and (commandp symbol)
+     ;;      (get symbol 'repeat-map))
+     (push (get symbol 'repeat-map) collection)))
+  (delq nil collection))
+
+;; Fuction delq explained
+(delq nil '(nil one nil two nil three))
+;; => (one two three)
+
+;; Function delet-dups explained
+(delete-dups '(one one two two three three))
+;; => (one two three) 
+#+end_src		
+
+*** configuration of repeatable commands
+Repeat mode checks if the command has a value for the repeat-map. And then it checks this kemap and finds the key to activate the function with a single key.
+Repeat-mode -> look at =command=, if it has =repeat= property, activate the keymap =value of repeat property=. -> Keymap is activated and can contain a complete modal editing layer.
+
+[ COMMAND ] --find repeat map--> [ REPEAT KEYMAP ] --find key of the command--> [ KEY ] --use the key again--> [ COMMAND ] 
+
+_Hint:_ If we want all the commands available in the same repeat key-map we just add them to the same repeat-key-map. If we do not want them available, we have to define the command in a separate repeat-keymap.
+#+begin_src emacs-lisp
+;; The `defvar-keymap' is for Emacs 29+. or with the compat pakage to use newer commands in older emacs-versions (comes with for ex. with vertico)
+(defvar-keymap my-org-repeat-map ;; <-- emacs calls this keymap location
+  :repeat t
+  "l" #'org-forward-heading-same-level
+  "h" #'org-backward-heading-same-level 
+  "n" #'org-next-visible-heading
+  "p" #'org-previous-visible-heading
+  "o" #'other-window
+  )
+
+
+
+#+end_src
+
+#+RESULTS:
+: my-org-repeat-map
+
+instead of =map "n"= we could use multi-key-commands with =(kbd "C-n")=, but not =(kbd "n o")= for a sequence.
+
+#+begin_example emacs-lisp
+;; Same as above for Emacs 28
+(defvar my-org-repeat-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "n" #'org-next-visible-heading)
+    (define-key map "p" #'org-previous-visible-heading)
+    map))
+
+(put #'org-next-visible-heading 'repeat-map 'my-org-repeat-map)
+(put #'org-previous-visible-heading 'repeat-map 'my-org-repeat-map) 
+#+end_example
+_Hint:_ use begin_example instead of begin_src to not tangle a block.
 ** Vertico UI :prot:navigation:interface:
 #+begin_src emacs-lisp
 (use-package vertico
@@ -1068,313 +1120,9 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
      - aussortiert weil nervig
 ** [#B] Agenda-Mode
    - [[*for org-agendas][Link zu Keyboard-Shortcuts]]
-*** TODO [#A] Agenda custom commands
-**** Hilfe
-  - [[help:org-agenda-custom-commands][Helpfile]]
-  - [[*for org-agendas][Key-Definitionen]]
-**** COMMENT f - gefilterte Agendas
-#+begin_src emacs-lisp :results output silent
-         ("f" . "gefiltere Agendas")
-	 ("f1" "alles ohne Habits" 
-	      ((agenda ""
-	      (
-	       (org-agenda-category-filter-preset '("-habit"))
-               (org-agenda-sorting-strategy '(priority-down))
-	       (org-agenda-overriding-header "No Habits")
-	       (org-agenda-span 1)
-               (org-deadline-warning-days 0)      
-	      )))
-	 )
-#+end_src
-**** d - tägliche Übersichten
-#+begin_src emacs-lisp :results output silent
-(setq my/org-agenda-custom-commands-d
-      '(
-	("d" . "Tägliche Übersichen und Filter")
-        ("dt" occur-tree (concat "^" org-outline-regexp " *" "\\(TODO\\|NEXT\\)")
-	 ((org-show-context-detail 'minimal)))
-        ("da" "Wichtigste Arbeits-Tasks heute" agenda ""
-	 ((org-agenda-span 1)
-	  (org-agenda-overriding-header "Heute - Aktuelle Ausgabe, Kalender, Inbox")
-	  (org-agenda-category-filter-preset '("-habit" "-htasks" "-br"))
-	  (org-agenda-sorting-strategy '(todo-state-down priority-down deadline-down scheduled-down ))
-	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	  ))
-        ("db" "Wichtigste BR-Tasks heute"
-	 ((todo "NEXT" ((org-agenda-overriding-header "Als nächstes für den BR erledigen")) )
-	  (todo "TODO" ((org-agenda-overriding-header "weitere BR-Aufgaben:")
-		    (org-agenda-max-entries 5)
-		      )))
-	 ((org-agenda-category-filter-preset '("-habit" "-htasks" "-atasks"))
-	  (org-agenda-sorting-strategy '(todo-state-down priority-down deadline-down scheduled-down ))
-	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	  ))
-        ("dh" "Wichtigste Home-Tasks heute" agenda ""
-	 ((org-agenda-span 1)
-	  (org-agenda-overriding-header "Was heute ansteht:")
-	  (org-agenda-category-filter-preset '("-habit" "-br" "-atasks"))
-	  (org-agenda-sorting-strategy '(todo-state-down priority-down deadline-down scheduled-down ))
-	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	  ))
-
-        ("d1" "Wichtigste Arbeits-Tasks" agenda ""
-	 ((org-agenda-span 1)
-	  (org-agenda-overriding-header "Heute - Aktuelle Ausgabe, Kalender, Inbox")
-	  (org-agenda-category-filter-preset '("-habit" "-htasks"))
-	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	  ))
-	("d4" "Alle Projekte des Buffers" todo "PROJ"
-	 ((org-agenda-overriding-header "Alle Projekte des Buffers")
-	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	  ))
-	("d7" "Alle Todos des Buffers" todo "TODO"
-	 ((org-agenda-overriding-header "Alle 1-Schritt Todos des Buffers")
-	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	  ))
-	("d2" "alle Tasks ohne Habits" agenda ""
-	 ((org-agenda-span 1)
-	  (org-agenda-overriding-header "Heute ohne Habits")
-	  (org-agenda-category-filter-preset '("-habit"))
-	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	  ))
-	("d5" "Review" agenda ""
-	 ((org-agenda-span 1)
-	  (org-agenda-overriding-header "Heute ohne Habits")
-	  (org-agenda-category-filter-preset '("-habit"))
-	  (org-agenda-clockreport-mode t)
-	  (org-agenda-show-log 'clockcheck)
-	  ))
-	("d8" "Arbeit - Inbox" tags-todo "inbox"
-	 ((org-agenda-overriding-header "Arbeit - Inbox")
-	  (org-agenda-sorting-strategy '(deadline-down scheduled-down priority-down todo-state-down))
-	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	  ))
-	;; ("d5" "Nächste Schritte für Inbox" 
-	;;      ((todo "WAITING|NEXT"
-	;;       ((org-agenda-overriding-header "Nächste Schritte für Inbox")
-	;;        (org-agenda-sorting-strategy '(todo-state-down priority-down))
-	;;        (org-show-context-detail 'minimal)))
-	;;       (agenda ""
-	;;        ((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
-	;;       )))
-	;;      ((org-agenda-category-filter-preset '("+inbox"))
-	;;       (org-agenda-span 1)
-	;;       (org-deadline-warning-days 0)
-	;; ))
-	("d3" "Alle Autorentexte" 
-	 ((tags-todo "TODO=\"BAUFT\"|TODO=\"VORH\"+Autor"
-		     ((org-agenda-overriding-header "Alle offenen Autorentexte"))
-		     )
-	  (tags-todo "TODO=\"PROJ\"+kur"
-		     ((org-agenda-overriding-header "Geplante eigene Texte"))
-		     )
-	  (tags-todo "TODO=\"PROJ\"+Autor"
-		     ((org-agenda-overriding-header "Eingeplante Autorentexte"))
-		     ))
-	 ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
-	 )
-	("d6" "Autorentexte bestellt und da" 
-	 ((tags-todo "TODO=\"IDEE\"+kur"
-		     ((org-agenda-overriding-header "Ideen für eigene Texte"))
-		     )
-	  (tags-todo "TODO=\"IDEE\"+Autor"
-		     ((org-agenda-overriding-header "Ideen für Autorentexte und Redaktionsaufträge"))
-		     ))
-	 ((org-agenda-sorting-strategy '(todo-state-down priority-down)))
-	 )
-	("d9" "Autorentexte Idee und Suche" tags-todo "TODO=\"SUCHE\"|TODO=\"ANGEB\""
-	 ((org-agenda-overriding-header "Texte die angeboten wurden oder einen Autoren suchen")
-	  (org-agenda-sorting-strategy '(todo-state-down priority-down))
-	  (org-agenda-category-filter-preset '("-habit" "-htasks"))
-	  ))
-	)) ;; setq-Ende
-#+end_src
-
-**** g/h - eigene Agendas
-#+begin_src emacs-lisp :results output silent
-(setq my/org-agenda-custom-commands-g
-      '(
-	("g" . "My Custom Agendas")
-	("gA" "alle Autorentexte" tags "Autor|AUTOR<>\"\""
-	 ((org-agenda-sorting-strategy '(todo-state-down)
-				       )))
-	("gb" "Autorentexte via Properties" 
-	 (
-	  (tags-todo "TODO=\"NEXT\"+AUTOR<>\"\""
-		     ((org-agenda-overriding-header "Texte von Autoren")))
-	  (tags "TODO=\"WAITING\"+AUTOR<>\"\""
-		((org-agenda-overriding-header "\nWarte auf Rückmeldung")))
-	  (tags "TODO=\"TODO\"+AUTOR<>\"\""
-		((org-agenda-overriding-header "\nBestellt")))
-	  (tags "TODO=\"PLAN\"+AUTOR<>\"\""
-		((org-agenda-overriding-header "\nVorschläge"))))
-	 ((org-agenda-compact-blocks t))
-	 )
-	("g-" "Nur Deadlines" agenda "Diesen Monat" (
-						     (org-agenda-span 'month)
-						     (org-agenda-time-grid nil)
-						     (org-agenda-show-all-dates nil)
-						     (org-agenda-entry-types '(:deadline)) ;; this entry excludes :scheduled
-						     (org-deadline-warning-days 0) ))
-	("gp" "PLAN und TODO in Agenda-Files" agenda ""
-	 ((org-agenda-span 1)
-	  (org-agenda-overriding-header "PLAN und TODO in Agenda-Files")
-	  (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("PLAN" "TODO"))) ;[1]
-	  (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
-	  (org-deadline-warning-days 0)
-	  ))
-	("gh" "Agenda für heute" agenda ""
-	 ((org-agenda-span 1)
-	  (org-agenda-overriding-header "Alle Aufgaben für heute")
-	  (org-deadline-warning-days 0)))
-	("gw" "Agenda für diese Woche" agenda ""
-	 ((org-agenda-span 7)
-	  (org-agenda-overriding-header "Alle Aufgaben für die nächsten 7 Tage")
-	  (org-deadline-warning-days 3)))
-	("gk" "Themen für Konferenzen" tags "Konferenz"
-	 ((org-agenda-orverriding-header "Offene Themen für Konferenzen")
-	  ))
-	)) ; setq-end
-
-(setq my/org-agenda-custom-commands-h
-      '(
-	("h" "home Tasks + Calendar"
-	 ((todo "WAITING|NEXT"
-		((org-agenda-overriding-header "Nächste Schritte")
-		 (org-agenda-sorting-strategy '(todo-state-down priority-down))
-		 (org-show-context-detail 'minimal)))
-	  (agenda ""
-		  ((org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
-		   )))
-	 ((org-agenda-category-filter-preset '("-inbox" "-atasks" "-xa" "-reg")) ;;"+htasks|+calendar"
-	  (org-agenda-span 1)
-	  (org-deadline-warning-days 1)      
-	  ))
-	)) ;; setq-end
-#+end_src
-**** k - zu klären
-     #+begin_src emacs-lisp :results output silent
-(setq my/org-agenda-custom-commands-k
-      '(
-	("k" "zu klären"
-	 ((tags-todo "klären"
-		     ((org-agenda-overriding-header "Was zu klären ist:")
-		      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-		      ))
-	  ;; (agenda ""
-	  ;;    ((org-agenda-span 1)
-	  ;;     (org-agenda-overriding-header "Heute - Nur Arbeits-Tasks")
-	  ;;     (org-agenda-files `(,(concat org-directory "/atasks.org")))
-	  ;;     (org-agenda-category-filter-preset '("-habit"))
-	  ;;     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-	  ;;     ))
-	  )
-	 )
-	)) ;;setq-end
-#+end_src
-**** n - nächste Schritte
-#+begin_src emacs-lisp :results output silent
-(setq my/org-agenda-custom-commands-n
-      '(
-	("n" "Nächste Schritt"
-	 ( ;; BEGINN  Definition der einzelnen Agenda-Blöcke
-	  (todo "NEXT" ;; [2023-01-05 Do] - was "WAITING|NEXT"
-		((org-agenda-overriding-header "Nächste Schritte")
-		 (org-agenda-sorting-strategy '(todo-state-down priority-down))
-		 (org-show-context-detail 'minimal)))
-	  (agenda ""
-		  (    ;; BEGINN Regeln für einzelnen Agenda-Block
-		   (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
-		   (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT" "WAITING")))
-		   ))  ;; ENDE Regeln für einzelnen Agenda-Block 
-	  (todo "WAITING"
-		((org-agenda-overriding-header "Warte auf Rückmeldung")
-		 (org-agenda-sorting-strategy '(todo-state-down priority-down))
-		 (org-show-context-detail 'minimal)))
-	  ) ;; ENDE   Definition der einzelnen Agenda-Blöcke
-	 (  ;; BEGINN Regeln für alle Blöcke
-	  (org-agenda-category-filter-preset '("-habit" "-htasks"))
-	  (org-agenda-span 1)
-	  (org-deadline-warning-days 0)      
-	  ) ;; ENDE   Regeln für alle Blöcke
-	 )
-
-	("N" "alle nächsten Schritte" 
-	 ((agenda ""
-		  ((org-agenda-span 1)
-		   (org-agenda-overriding-header "Alle nächsten Schritte heute für diese Datei")
-		   (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo '("NEXT" "WAITING"))) ;;[1]
-		   (org-agenda-sorting-strategy '(time-up todo-state-down))))
-	  (todo "WAITING|NEXT"
-		((org-agenda-overriding-header "Nächste Schritte für aktuelle Datei")
-		 (org-agenda-sorting-strategy '(time-up todo-state-down priority-down))
-		 (org-show-context-detail 'minimal)))
-	  ))
-)) ;; setq-end
-#+end_src
-  - [1] die Funktion "...skip-entry-if" verbirgt alle Treffer in der Agenda. 
-     ='todo '("NEXT")= würde alle Tasks mit dem NEXT keyword ausblenden. 
-     ='nottodo '("NEXT")= zeigt nur Tasks mit NEXT keyword. 
-
-**** o - Todos ohne Zeitupunkt (stuck)
-#+begin_src emacs-lisp :results output silent
-(setq my/org-agenda-custom-commands-o
-      '(
-
-	("o" "TODO ohne Zeitpunkt"
-         ((todo ""
-                ((org-agenda-overriding-header "\nUnscheduled TODO")
-                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
-		 )))	
-	 )
-	)) ;; setq-end
-#+end_src
-**** p - Planung (Arbeit)
-#+begin_src emacs-lisp :results output silent
-(setq my/org-agenda-custom-commands-p
-      '(
-	 ("p" . "Ansichten für die Planung")
-	 ("pi" "Inbox-Aufgaben nach Priorität" tags-todo "TODO=\"TODO\"+inbox)")
-	 ("pp" "Inbox-Aufgaben zum Terminieren" tags-todo "TODO=\"NEXT\"+inbox")
-))
-#+end_src
-**** TODO COMMENT Erläuterungen
-  - Hilfe unter :: [[help:org-agenda-custom-commands][org-agenda-custom-commands]]
-  - Beipiele :: [[https://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][worg]], 
- #+BEGIN_SRC emacs-lisp :results output silent
- ;; default agenda commands
- (setq org-agenda-custom-commands
-    '(
-      ("o"                                        ;; Key
-       "heutige Tasks im aktuellen Buffer"        ;; Beschreibung
-       agenda                                     ;; Typ
-       ""                                         ;; Suche, muss ggf. leer sein ""
-       (
-     ;; (org-agenda-overriding-restriction (current-buffer)) ;; für aktuellen Buffer
-	(org-agenda-span 1))
-      )
-      ("g" tags-tree "g" ((org-show-context-detail 'ancestors)))
-      ("w" tags-tree "w" ((org-show-context-detail 'ancestors)))
-     )
- )
-  #+END_SRC
-**** Merge all agenda-custom-comand code blocks
- #+BEGIN_SRC emacs-lisp :results output silent
-;; AGENDA MODES
-;;--------------
-(setq org-agenda-custom-commands
-      (cl-concatenate 'list
-		        ;; boundp checks if value part of list is set.
-		      (if (boundp 'my/org-agenda-custom-commands-p) my/org-agenda-custom-commands-p)
-		      (if (boundp 'my/org-agenda-custom-commands-o) my/org-agenda-custom-commands-o)
-		      (if (boundp 'my/org-agenda-custom-commands-n) my/org-agenda-custom-commands-n)
-		      (if (boundp 'my/org-agenda-custom-commands-k) my/org-agenda-custom-commands-k)
-		      (if (boundp 'my/org-agenda-custom-commands-g) my/org-agenda-custom-commands-g)
-		      (if (boundp 'my/org-agenda-custom-commands-h) my/org-agenda-custom-commands-h)
-		      (if (boundp 'my/org-agenda-custom-commands-d) my/org-agenda-custom-commands-d)
-		      ))
-#+end_src
-
+*** Agenda custom commands :ausgelagert:
+ - moved to separate file:
+   - Linux [[file:~/org/_config/emacs/customagendas.org::*Custom Agendas][Custom Agendas]]
 *** Generelle Agenda Einstellungen
 #+begin_src emacs-lisp :results output silent
 (setq org-agenda-skip-scheduled-if-done t
@@ -1515,7 +1263,9 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
  (setq org-habit-graph-column 50)
  #+END_SRC
 ** org-capture templates :ausgelagert:
- - moved to separate file: [[file:c:/org/_config/emacs/capture.org::*Code][Code]]
+ - moved to separate file:
+   - Windows: [[file:c:/org/_config/emacs/capture.org::*Code][Code]]
+   - Linux: [[file:~/org/_config/emacs/capture.org::*Code][Code]]
 ** Projektmanagement
 *** recursive statistic cookie for PROJ status
 #+begin_src emacs-lisp :results output silent
