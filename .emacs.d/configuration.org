@@ -1548,6 +1548,19 @@ Each day counts with WORKTIME-PER-DAY hours."
 #+end_src
 
 ** Todos
+*** Konzept
+ - _Projektarbeit_: Die Todos sind zu jedem Ende der Sequenz nach Wichtigkeit sortiert. =HELP= ist das wichtigste/dringendste Projekt-Keyword und =NEXT=  das wichtiste TODO-Keyword.
+   - HELP: Aufgaben, wo ich Unterstützung brauche, und allein nicht weiterkomme.
+   - DECIS: Ich/Wir müssen eine Entscheidung treffen, bevor es weiter gehen kann
+   - DELEG: Das Abgeben an andere, die die Aufgabe besser erledigen können
+   - SPLIT: Teile eine Aufgabe, die zu groß ist in kleinere Schritte auf; eine gute Gelegenheit sich den Ablauf nochmal konkret bewusst zu machen.
+   - PROJ: Todos mit mehren Teilschritten; ein Ziel zu notieren hilft bei der späteren Bewertung, ob es weiter verfolgt werden soll.
+   - MEET: Terminierte Treffen mit anderen Leuten
+   - PLAN: Dinge, die optional erledigt werden sollen
+   - WAITING: Aufgabe benötigt  Input von anderen Personen, bevor sie weiter bearbeitet werden kann.
+   - DATE: Angedachte Treffen für die noch ein Termin gefunden werden soll.
+   - TODO: Aufgaben, die abgearbeitet werden sollen.
+   - NEXT: Wichtige Aufgabe, die erledigt wird, sobald Zeit ist.
 *** Todo-Status und -Sequenzen
 Options: 
  - ! :: Timestamp
@@ -1556,10 +1569,11 @@ Options:
  #+begin_src emacs-lisp :results output silent
  (setq org-todo-keywords
    '(
-     (sequence "PROJ(j!)" "SPLIT(x)" "DELEG(l@)" "HELP(h@)" "MEET(m)" "|" "CANC(c)")   ;; Plan
-     (sequence "IDEE(i!)" "SUCHE(s!)" "ANGEB(a!)" "BAUFT(b!)" "VORH(v!)" "|" "DONE(d)")   ;; Textstaus
-     (sequence "WAITING(w!/!)" "PLAN(p)" "DECIS(e!/@)" "TODO(t)" "NEXT(n)" "|" "DONE(d)")             ;; Actionlist
-    ))
+     ;; Textarbeit
+     (sequence "IDEE(i!)" "SUCHE(f!)" "ANGEB(a!)" "BAUFT(b!)" "VORH(v!)" "|" "CANC(c)")
+     ;; Projetarbeit
+     (sequence "HELP(h@)" "DECIS(e!/@)" "DELEG(l@)" "SPLIT(s)" "PROJ(j!)" "MEET(m)"  "PLAN(p)" "WAITING(w!/!)" "DATE(x)" "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+    )) 
  #+end_src
   es ginge auch nur:  (sequence "|"  "CANC(c)")
 *** Todo Cookie recursiv
