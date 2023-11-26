@@ -45,14 +45,15 @@ Emacs speichert Dateien wenn sie offen sind unter kryptischen Dateinamen (#datei
 #+end_src
 
 *** Saving Desktop Sessions
+disabled [2023-11-19 So] because of cluttering up list - reenabled [2023-11-26 So 14:44] because alternative not yet configured
   #+BEGIN_SRC emacs-lisp
   ;; SAVING DESKTOP SESSIONS
   ;;------------------------
- ;;(require 'desktop)
-;; (when (eq system-type 'windows-nt)
-;;     (desktop-change-dir "C:/Software/Emacs/Desktops/")
-;;  )
- (desktop-save-mode 1)
+ (require 'desktop)
+(when (eq system-type 'windows-nt)
+    (desktop-change-dir "C:/Software/Emacs/Desktops/")
+ )
+(desktop-save-mode 1)
  #+END_SRC
 
  #+RESULTS:
@@ -697,14 +698,39 @@ M-x unfill-toggle
 #+end_src
 
 ** dired :system:
-   Standardmäßig alle Details außer Dateinamen ausblenden - umschaltbar mit Taste =(=
+*** hide-details-mode
+Standardmäßig alle Details außer Dateinamen ausblenden - umschaltbar mit Taste =(=
 #+begin_src emacs-lisp :results output silent
 (add-hook 'dired-mode-hook
-	  (lambda()
+	  (lambda()   ;; mostly appropriate to call more than one function.
 	    (dired-hide-details-mode 1)
 	  )
      )
 (setq ls-lisp-dirs-first t) ;; Ordner in Dired zuerst anzeigen
+#+end_src
+
+**** COMMENT alterative solution
+What this does is the same as above but without writing the lambda. It is an easyer synthax. Hooks always call functions and modes are functions (and variables)
+#+begin_src emacs-lisp :results output silent
+(add-hook 'dired-mode-hook 'dired-hide-details-mode) 
+#+end_src
+
+*** nerd-icons-dired-mode
+before first use: M-x =nerd-icons-install-fonts= and restart
+#+begin_src emacs-lisp :results output silent
+(use-package nerd-icons-dired
+  :ensure t
+  :config 
+  ;; vv siehe alternative solutions
+  (add-hook 'dired-mode-hook #'nerd-icons-dired-mode))
+#+end_src
+
+*** dwim-copy
+When you try to copy to a place that doesn't exist, it creates the directory right away.
+#+begin_src emacs-lisp :results output silent
+(setq dired-recursive-copies 'always)
+(setq dired-recursive-deletes 'always)
+(setq dired-create-destination-dirs 'ask) 
 #+end_src
 ** imenu-anywhere :navigation:
 #+begin_src emacs-lisp :results output silent
@@ -2315,6 +2341,11 @@ Ich musste noch das deutsche Wörterbuch installieren, bevor es klappt: sudo apt
   )
  #+END_SRC
 * Appearance :appearance:
+** Window-Control
+#+begin_src emacs-lisp :results output silent
+(setq even-window-sizes 'height-only)
+(setq window-combination-resize t) ;; even out split windows |  |  | -> | | | | instead of |  | | |
+#+end_src
 ** Modus-Themes
 #+begin_src emacs-lisp :results output silent
 (use-package emacs
@@ -2604,6 +2635,38 @@ Legt die Spalte fest, auf die Tags angeordnet werden sollen. Durch Schriftarten 
 (setq split-width-threshold 80))
 #+end_src
 
+
+control the display of one buffer in a window, here the "Calendar" buffer
+#+begin_src emacs-lisp :results output silent
+(setq display-buffer-alist
+      '(
+        ("\\*Calendar.*\\'"
+         (display-buffer-reuse-window display-buffer-below-selected)
+         (dedicated . t)
+         (window-height . fit-window-to-buffer))
+        )) 
+#+end_src
+
+#+begin_src emacs-lisp :results output silent
+(defun delete-other-windows-horizontally (&optional window)
+  "Delete the windows in the same row with WINDOW, but not WINDOW itself.
+This may be a useful alternative binding for \\[delete-other-windows]
+ if you often split windows vertically."
+  (interactive)
+  (let* ((window (or window (selected-window)))
+	 ;; ^^ the preceding Element is known to the subsequent element. "window" is either the selected window or the one passed to the function (see optional argument)
+         (edges (window-edges window)) ;; assing value of =(window-edges (selected-window))= to "edges"
+         (w window) ;; create variable "w" and assign value of "windows" to it 
+         delenda) ;; create empty variable
+    (while (not (eq (setq w (next-window w 1)) window))
+      ;; for as long as we cycle throuhg the windows and we are not on the current window, ...
+      (let ((e (window-edges w)))
+        (when (and (= (nth 1 e) (nth 1 edges))
+                   (= (nth 3 e) (nth 3 edges)))
+	  ;; ... check if the window has the same edges as the current window
+          (push w delenda))))
+    (mapc 'delete-window delenda))) 
+#+end_src
 * COMMENT Notizen
 
 ** Difference in Files

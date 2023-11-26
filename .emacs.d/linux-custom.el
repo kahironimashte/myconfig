@@ -37,7 +37,7 @@
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
  '(org-use-fast-todo-selection 'expert)
  '(package-selected-packages
-   '(keycast use-package corfu org-transclusion vundo consult orderless marginalia vertico org-appear org-sticky-header rainbow-delimiters magit org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch))
+   '(nerd-icons-dired keycast use-package corfu org-transclusion vundo consult orderless marginalia vertico org-appear org-sticky-header rainbow-delimiters magit org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch))
  '(reb-re-syntax 'string)
  '(warning-suppress-types '((org-element-cache))))
 ;; FONTS
