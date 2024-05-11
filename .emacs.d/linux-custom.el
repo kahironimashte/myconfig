@@ -11,7 +11,7 @@
    ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
  '(custom-enabled-themes '(whiteboard))
  '(org-agenda-files
-   '("~/org/br/br.org" "~/org/htasks.org" "~/org/calendar.org" "~/org/atasks.org"))
+   '("/home/fabian/org/htasks.org" "/home/fabian/org/atasks.org" "/home/fabian/org/br/br.org" "/home/fabian/org/calendar.org"))
  '(org-agenda-sorting-strategy
    '((agenda time-up habit-down priority-down category-keep)
      (todo priority-down category-keep)
@@ -37,7 +37,7 @@
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
  '(org-use-fast-todo-selection 'expert)
  '(package-selected-packages
-   '(nerd-icons-dired keycast use-package corfu org-transclusion vundo consult orderless marginalia vertico org-appear org-sticky-header rainbow-delimiters magit org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch))
+   '(notmuch notmuch-labeler notmuch-maildir notmuch-transient nerd-icons-dired keycast use-package corfu org-transclusion vundo consult orderless marginalia vertico org-appear org-sticky-header rainbow-delimiters magit org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch))
  '(reb-re-syntax 'string)
  '(warning-suppress-types '((org-element-cache))))
 ;; FONTS
