@@ -1584,6 +1584,9 @@ Each day counts with WORKTIME-PER-DAY hours."
     ("sv" . "src java")
     ("svt" . "src java :noweb yes")
     ("svn" . "src java :tangle no")
+    ("sp" . "src python :results output")
+    ("spt" . "src python :noweb yes")
+    ("spn" . "src python :tangle no")
     ("sr" . "src R")
     ("ss" . "src emacs-lisp :results output silent")
     ("sh" . "src shell")
@@ -1659,6 +1662,23 @@ Options:
  ;; Handy key definition
  (define-key global-map "\M-Q" 'unfill-paragraph)
  #+END_SRC
+** org-babel
+Enable python and shell as languages for org babel.
+#+begin_src emacs-lisp :results output silent
+(org-babel-do-load-languages
+ 'org-babel-load-languages '(
+			     (shell . t)
+			     (python . t))
+ )
+#+end_src
+** COMMENT local setup on linux
+Außerdem habe ich /usr/bin/python auf python3 symbolisch verlinkt mit
+#+begin_src shell
+cd /usr/bin
+ln -s ./python3 /python
+#+end_src
+so dass jeder Aufruf von "python" jetzt "python3" startet. _Dieser Schritt muss für jedes Linux-System ggf. neu ausgeführt werden._
+
 
 * Custom Functions
 
