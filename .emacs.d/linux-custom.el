@@ -37,7 +37,7 @@
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
  '(org-use-fast-todo-selection 'expert)
  '(package-selected-packages
-   '(notmuch notmuch-labeler notmuch-maildir notmuch-transient nerd-icons-dired keycast use-package corfu org-transclusion vundo consult orderless marginalia vertico org-appear org-sticky-header rainbow-delimiters magit org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch))
+ '(markdown-mode notmuch notmuch-labeler notmuch-maildir notmuch-transient nerd-icons-dired keycast use-package corfu org-transclusion vundo consult orderless marginalia vertico org-appear org-sticky-header rainbow-delimiters magit org-remark olivetti unfill ess org-clock-convenience which-key imenu-anywhere anki-editor minions yaml-mode steam yasnippet ztree smex ryo-modal org-recur org-bullets nov modus-themes json-mode js2-mode ido-yes-or-no el-patch))
  '(reb-re-syntax 'string)
  '(warning-suppress-types '((org-element-cache))))
 ;; FONTS
@@ -94,4 +94,5 @@
  '(org-verbatim ((t (:inherit shadow :foreground "honeydew4"))))
  '(secondary-selection ((t (:background "misty rose"))))
  '(shadow ((t (:foreground "honeydew2"))))
- '(variable-pitch ((t (:family "IBM Plex Sans Text" :height 152 :weight normal)))))
+ '(variable-pitch ((t (:family "IBM Plex Sans Text" :height 152 :weight normal))))
+ '(whitespace-line ((t (:foreground "dark blue")))))

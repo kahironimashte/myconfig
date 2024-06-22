@@ -1325,6 +1325,59 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
  ;; Den Habit-Graph auf Position (von links) bringen.
  (setq org-habit-graph-column 50)
  #+END_SRC
+*** Clockcheck
+org-agenda-clock-consistency-checks’s value is
+#+begin_src emacs-lisp :results output silent
+(setq org-agenda-clock-consistency-checks
+      '(:max-duration "10:00" :min-duration 0 :max-gap "0:01" :gap-ok-around
+		      ("4:00" "13:00")
+		      :default-face
+		      ((:background "DarkRed")
+		       (:foreground "white"))
+		      :overlap-face nil :gap-face nil :no-end-time-face nil :long-face nil :short-face nil))
+#+end_src
+
+**** from the Org-Manual:
+This is a property list, with the following keys:
+
+#+begin_example
+:max-duration    Mark clocking chunks that are longer than this time.
+                 This is a time string like "HH:MM", or the number
+                 of minutes as an integer.
+
+:min-duration    Mark clocking chunks that are shorter that this.
+                 This is a time string like "HH:MM", or the number
+                 of minutes as an integer.
+
+:max-gap         Mark gaps between clocking chunks that are longer than
+                 this duration.  A number of minutes, or a string
+                 like "HH:MM".
+
+:gap-ok-around   List of times during the day which are usually not working
+                 times.  When a gap is detected, but the gap contains any
+                 of these times, the gap is *not* reported.  For example,
+                 if this is ("4:00" "13:00") then gaps that contain
+                 4:00 in the morning (i.e. the night) and 13:00
+                 (i.e. a typical lunch time) do not cause a warning.
+                 You should have at least one time during the night in this
+                 list, or otherwise the first task each morning will trigger
+                 a warning because it follows a long gap.
+#+end_example
+
+Furthermore, the following properties can be used to define faces for
+issue display.
+
+:default-face         the default face, if the specific face is undefined
+:overlap-face         face for overlapping clocks
+:gap-face             face for gaps between clocks
+:no-end-time-face     face for incomplete clocks
+:long-face            face for clock intervals that are too long
+:short-face           face for clock intervals that are too short
+
+  This variable was introduced, or its default value was changed, in
+  version 24.1 of Emacs.
+  You can customize this variable.
+
 ** org-capture templates :ausgelagert:
  - moved to separate file:
    - Windows: [[file:c:/org/_config/emacs/capture.org::*Code][Code]]
@@ -1463,6 +1516,7 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
  
 #+end_src
 ** Clocking / Aufwand
+ - [[info:org#Resolving idle time][Info-Document for org#Resolving idle time]]
 #+begin_src emacs-lisp :results output silent
 ;; CLOCKING: global Effort estimate values
 (setq org-global-properties
@@ -1479,7 +1533,8 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 ;; Clocking
 ;;---------
 (setq org-clock-persist 'history)
-(org-clock-persistence-insinuate) ;; Erklaerung
+(org-clock-persistence-insinuate) ;; Info: Runs hooks for clocking persistance.
+(setq org-clock-idle-time 15) ;; Nach 15 Minuten Idle, kommt die Frage, ob die Zeit anders zugeteilt werden soll (resolving idle time)
 #+end_src
 *** TODO [#C] Erklärung für org-clock-persistence-insinuate
 *** Clock-Report bis auf 3 Level tief
@@ -1550,7 +1605,7 @@ oauth2-auth-and-store, oauth2-url-retrieve-synchronously
      )
 )
 #+end_src
-** FEHLER COMMENT org-table :Funktionen:
+** FEHLER org-table                                      :Funktionen:
 [2021-07-28 Mi]- Probleme beim Laden
    #+begin_src emacs-lisp :results output silent
 (defun calcFunc-dateDiffToHMS (date1 date2 worktime-per-day)
@@ -1585,8 +1640,8 @@ Each day counts with WORKTIME-PER-DAY hours."
     ("svt" . "src java :noweb yes")
     ("svn" . "src java :tangle no")
     ("sp" . "src python :results output")
-    ("spt" . "src python :noweb yes")
-    ("spn" . "src python :tangle no")
+;;    ("spt" . "src python :noweb yes")
+;;    ("spn" . "src python :tangle no")
     ("sr" . "src R")
     ("ss" . "src emacs-lisp :results output silent")
     ("sh" . "src shell")
@@ -2292,6 +2347,7 @@ org-narrow-to-subtree
 	    ("S" org-agenda-sunrise-sunset)
 	    ("T" org-agenda-show-tags)
 	    ("U" org-agenda-bulk-unmark)
+	    ("W" org-agenda-write)
 	    ("X" org-agenda-clock-cancel)
 	    ("[" org-agenda-manipulate-query-add)
 	    ("]" org-agenda-manipulate-query-subtract)
