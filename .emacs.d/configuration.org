@@ -77,13 +77,13 @@ disabled [2023-11-19 So] because of cluttering up list - reenabled [2023-11-26 S
 #+begin_src emacs-lisp :results output silent
 (setq org-loop-over-headlines-in-active-region t)
 #+end_src
-** makros
+** COMMENT makros
    #+begin_src emacs-lisp :results output silent
   (fset 'macro-statusnow
 	(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote (" er uuzTns" 0 "%d")) arg)))
- (global-set-key (kbd "<f6>")  'macro-statusnow)
    #+end_src
    - [2021-09-20 Mo] : war " er uuzTns   " , zwei mal nach unten und expansion.
+   - [2024-06-23 So] deaktiviert, da kein Einsatz für Tagebuch mehr.
 ** Keyboard-Shortcuts :keys:
  - [[*Agenda custom commands][Agenda custom commands]]
 *** for org-agendas
@@ -634,14 +634,16 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 ** org-clock-convenience :clocking:orga:
  - [[https://github.com/dfeich/org-clock-convenience/blob/master/README.org][Github-Source]]
+ - [2024-06-23 So] F-Keys deaktiviert weil selten benutzt
 #+begin_src emacs-lisp :results output silent
 (use-package org-clock-convenience
   :ensure t
   :bind (:map org-agenda-mode-map
    	   ("<C-up>" . org-clock-convenience-timestamp-up)
    	   ("<C-down>" . org-clock-convenience-timestamp-down)
-   	   ("<f6>" . org-clock-convenience-fill-gap)
-   	   ("<f7>" . org-clock-convenience-fill-gap-both)))
+   	   ;;("<f6>" . org-clock-convenience-fill-gap)
+   	   ;;("<f7>" . org-clock-convenience-fill-gap-both)
+	   ))
 #+end_src
 *** Interactive functions
   - =org-clock-convenience-timestamp-up= and =org-clock-convenience-timestamp-down=:
@@ -2230,6 +2232,8 @@ org-narrow-to-subtree
 (define-key universal-argument-map (kbd "u") 'universal-argument-more)
 #+END_SRC
 
+**** deaktivierte
+
 *** Single Binds
     Hier wird nur ein Key einem anderen zugewiesen oder einer Funktion. Das heißt alle Befehle werden mit nur einem Tastendruck ausgeführt.
 #+BEGIN_SRC emacs-lisp :results output silent
@@ -2402,9 +2406,18 @@ org-narrow-to-subtree
  (global-set-key (kbd "<f2>") 'toggle-window-split)
  (global-set-key (kbd "<S-f2>") 'enlarge-window-horizontally)
  (global-set-key (kbd "<s-f2>") 'shrink-window-horizontally)
+ (global-set-key (kbd "<f6>") '(lambda () (interactive)(org-capture nil "ra")))
+ (global-set-key (kbd "<f7>") '(lambda () (interactive)(org-capture nil "rz")))
+
+
  ;; (global-set-key (kbd "<s-f1>") 'pop-global-mark) ;; Jump in the document
  ;; (global-set-key (kbd "<s-f2>") 'xah-pop-local-mark-ring)
 #+end_src
+ - f1 :: help-prefix
+ - f3 :: record macro
+ - f4 :: execute macro
+ - f5 :: change modus themes
+
 *** Switch windows
 #+begin_src emacs-lisp :results output silent
 (defun toggle-window-split ()
