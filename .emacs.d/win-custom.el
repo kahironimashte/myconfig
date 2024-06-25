@@ -42,7 +42,7 @@
  '(org-startup-align-all-tables t)
  '(org-tags-column 0)
  '(package-selected-packages
-   '(csv-mode olivetti org-remark org-transclusion vundo corfu consult orderless marginalia vertico org-sticky-header unfill org-clock-convenience modus-themes esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+))
+   '(nerd-icons-dired csv-mode olivetti org-remark org-transclusion vundo corfu consult orderless marginalia vertico org-sticky-header unfill org-clock-convenience modus-themes esup anki-editor minions imenu-anywhere yaml-mode yasnippet which-key use-package smartparens ryo-modal org-recur org-caldav org-bullets org-bookmark-heading nov ido-completing-read+))
  '(reb-re-syntax 'string)
  '(visible-bell t))
 
@@ -66,7 +66,7 @@
  '(org-checkbox-statistics-todo ((t (:inherit org-todo))))
  '(org-column ((t (:inherit default :background "grey90" :strike-through nil :underline nil :slant normal :weight normal))))
  '(org-column-title ((t (:inherit default :background "grey90" :foreground "DeepSkyBlue4" :underline t :weight bold :family "IBM Plex Mono Text"))))
- '(org-date ((t (:inherit fixed-pitch :foreground "Purple"))))
+ '(org-date ((t (:inherit fixed-pitch :foreground "Purple" :underline nil))))
  '(org-document-title ((t (:inherit default :weight bold :foreground "black" :height 1.3 :underline nil))))
  '(org-done ((t (:inherit org-todo :foreground "honeydew3"))))
  '(org-drawer ((t (:inherit org-special-keyword))))

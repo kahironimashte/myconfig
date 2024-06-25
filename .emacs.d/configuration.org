@@ -1193,7 +1193,7 @@ Aus Video Tutorial: https://www.youtube.com/watch?v=xmBovJvQ3KU Soll gut sein, u
 (setq org-agenda-skip-scheduled-if-done t
       org-agenda-skip-deadline-if-done t
       org-agenda-skip-deadline-prewarning-if-scheduled t
-      org-deadline-warning-days 2)
+      org-deadline-warning-days 7)
 
 (add-hook 'org-agenda-mode-hook
 	  (lambda()
@@ -1666,7 +1666,7 @@ Each day counts with WORKTIME-PER-DAY hours."
 
 ** Tag-Vererbung
 #+begin_src emacs-lisp :results output silent
-(setq org-tags-exclude-from-inheritance '("Autor" "Fokus" "TB" "leer" "kur" "gut" "2022" "Reportage" "Portrait" "ContentLeitstand" "CL"))
+(setq org-tags-exclude-from-inheritance '("BR" "KBR" "Präsenz" "Virtuell" "ohnemich" "Autor" "Fokus" "TB" "leer" "kur" "gut" "2022" "Reportage" "Portrait" "ContentLeitstand" "CL"))
 ;;(setq org-use-tag-inheritance nil)
 #+end_src
 
